@@ -27,7 +27,7 @@
                                 <th>Coste Unitario</th>
                                 <th>Tipo</th>
                                 <th>PDF</th>
-                                <th>Eliminarr</th>
+                                <th>Eliminar</th>
                             </tr>
                         </thead>
                         <tbody>
