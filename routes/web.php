@@ -30,7 +30,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::post('/contratos/eliminar_prod', [App\Http\Controllers\ContratosController::class, 'eliminar_prod'])->name('contratos.eliminar_prod');
     Route::post('/contratos/update/{id}', [App\Http\Controllers\ContratosController::class, 'update'])->name('contratos.update');
     Route::get('/contratos/pdf/{id}', [App\Http\Controllers\ContratosController::class, 'pdf'])->name('contratos.pdf');
-    
+
 
     // CLIENTES/PROVEEDORES
     Route::get('/cli_prov', [App\Http\Controllers\CliProvController::class, 'index'])->name('cli_prov.index');
@@ -41,6 +41,13 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     // PROVEEDORES
     Route::get('/proveedores', [App\Http\Controllers\ProveedoresController::class, 'index'])->name('proveedores.index');
 
+    // ALBARANES
+    Route::get('/albaranes', [App\Http\Controllers\AlbaranesController::class, 'index'])->name('albaranes.index');
+    Route::post('/albaranes/create', [App\Http\Controllers\AlbaranesController::class, 'create'])->name('albaranes.create');
+    Route::get('/albaranes/{id}', [App\Http\Controllers\AlbaranesController::class, 'show'])->name('albaranes.show');
+    Route::post('/albaranes/asignar_prod_albaran/{albaran}', [App\Http\Controllers\AlbaranesController::class, 'asginarProd'])->name('albaranes.asginarProd');
+    Route::get('/albaranes/pdf/{id}', [App\Http\Controllers\AlbaranesController::class, 'pdf'])->name('albaranes.pdf');
+   
 
     // PRODUCTOS
     Route::get('/productos', [App\Http\Controllers\ProductosController::class, 'index'])->name('productos.index');
@@ -73,7 +80,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/costes', [App\Http\Controllers\CostesController::class, 'index'])->name('costes.index');
     Route::post('/costes/create', [App\Http\Controllers\CostesController::class, 'create'])->name('costes.create');
     Route::post('/costes/cargar_entidades', [App\Http\Controllers\CostesController::class, 'cargar_entidades'])->name('costes.cargar_entidades');
-   
+
 
     // EMPLEADOS
     Route::get('/empleados', [App\Http\Controllers\EmpleadosController::class, 'index'])->name('empleados.index');

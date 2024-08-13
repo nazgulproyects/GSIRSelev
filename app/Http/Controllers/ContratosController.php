@@ -96,8 +96,10 @@ class ContratosController extends BaseController
     public function pdf($id)
     {
 
+        $contrato = Contratos::find($id);
         $data = [
-            'id' => $id
+            'id' => $id,
+            'contrato' => $contrato
         ];
 
         // Renderiza la vista como un PDF

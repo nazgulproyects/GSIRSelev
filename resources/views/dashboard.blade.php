@@ -47,6 +47,7 @@
                 <!-- <x-button-link href="/planificacion_rutas" style="background-color: green;">PLANIFICACIÓN RUTAS</x-button-link> -->
             </div>
             <div class="d-flex justify-content-around mt-4">
+                <x-button-link href="/albaranes" class="custom-button">ALBARANES</x-button-link>
                 <!-- <x-button-link href="/recogidas">RECOGIDAS</x-button-link> -->
                 <!-- <x-button-link href="/app_conductor">APP CONDUCTOR</x-button-link> -->
                 <!-- <x-button-link href="/calendario" style="background-color: darkcyan;">CALENDARIO</x-button-link> -->
