@@ -194,26 +194,24 @@
                         <table id="table" class="display">
                             <thead>
                                 <tr>
-                                    <th>Tipo</th>
-                                    <th>Descripción</th>
                                     <th>Fecha</th>
+                                    <th>Descripción</th>
                                     <th>Coste</th>
                                     <th>Eliminar</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($mantenimientos as $mant)
+                                @foreach ($costes_mant as $coste_mant)
                                     <tr>
-                                        <td>{{$mant->tipo}}</td>
-                                        <td>{{$mant->descripcion}}</td>
                                         <td>
-                                            @if($mant->fecha != null)
-                                                {{ \Carbon\Carbon::parse($mant->fecha)->format('d/m/Y H:i') }}
+                                            @if($coste_mant->fecha != null)
+                                                {{ \Carbon\Carbon::parse($coste_mant->fecha)->format('d/m/Y') }}
                                             @endif
                                         </td>
-                                        <td>{{$mant->coste}} €</td>
+                                        <td>{{$coste_mant->descripcion}}</td>
+                                        <td>{{$coste_mant->valor}} €</td>
                                         <td>
-                                            <x-danger-button type="button" onclick="eliminarFila('{{$mant->id}}');">
+                                            <x-danger-button type="button" onclick="eliminarFila('{{$coste_mant->id}}');">
                                                 <i class="fa-solid fa-xmark fa-fade"></i>
                                             </x-danger-button>
                                         </td>
@@ -232,22 +230,12 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header d-flex justify-content-center">
-                <h4 class="modal-title text-center"><b>CREAR NUEVO VEHÍCULO</b></h4>
+                <h4 class="modal-title text-center"><b>NUEVO MANTENIMIENTO VEHÍCULO</b></h4>
             </div>
-            <form action='/mantenimientos/create/{{$vehiculo->id}}' method="POST" enctype="multipart/form-data"
+            <form action='/costes/create_mant/{{$vehiculo->id}}' method="POST" enctype="multipart/form-data"
                 class="form-horizontal">
                 {{ csrf_field() }}
                 <div class="modal-body">
-                    <div class="form-group row">
-                        <x-label class="col-sm-3 col-form-label">Tipo:</x-label>
-                        <div class="col-sm-9">
-                            <select name="tipo_mant" id="tipo_mant" class="form-control" style="width: 100%;">
-                                <option disabled selected value>Seleccionar tipo</option>
-                                <option value="Tractora">Tractora</option>
-                                <option value="Remolque">Remolque</option>
-                            </select>
-                        </div>
-                    </div>
                     <div class="form-group row">
                         <x-label class="col-sm-3 col-form-label">Fecha:</x-label>
                         <div class="col-sm-9">
@@ -280,7 +268,7 @@
 
 <!-- MODAL ELIMINAR FILA -->
 @include('utils.notificaciones.eliminar_fila', [
-    'metodo' => '/mantenimientos/destroy',
+    'metodo' => '/costes/destroy',
     'texto' => '¿Estás seguro que quieres eliminar este mantenimiento?'
 ])
 

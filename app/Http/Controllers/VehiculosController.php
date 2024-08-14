@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Mantenimientos;
-use App\Models\PuntoRecogida;
+use App\Models\Costes;
 use App\Models\Vehiculos;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -55,8 +54,8 @@ class VehiculosController extends BaseController
     public function show($id)
     {
         $vehiculo = Vehiculos::find($id);
-        $mantenimientos = Mantenimientos::where('vehiculo_id', $id)->get();
-        return view('vehiculos.show')->with(compact('vehiculo', 'mantenimientos'));
+        $costes_mant = Costes::where('aplicado_a', 'vehiculo')->where('entidad_id', $id)->where('tipo', 'MANTENIMIENTO')->get();
+        return view('vehiculos.show')->with(compact('vehiculo', 'costes_mant'));
     }
 
 

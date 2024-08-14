@@ -71,15 +71,12 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::post('/vehiculos/update/{id}', [App\Http\Controllers\VehiculosController::class, 'update'])->name('vehiculos.update');
 
 
-    // MANTENIMIENTOS
-    Route::post('/mantenimientos/create/{vehiculo}', [App\Http\Controllers\MantenimientoController::class, 'create'])->name('mantenimientos.create');
-    Route::post('/mantenimientos/destroy', [App\Http\Controllers\MantenimientoController::class, 'destroy'])->name('mantenimientos.destroy');
-
-
     // COSTES
     Route::get('/costes', [App\Http\Controllers\CostesController::class, 'index'])->name('costes.index');
     Route::post('/costes/create', [App\Http\Controllers\CostesController::class, 'create'])->name('costes.create');
+    Route::post('/costes/create_mant/{vehiculo}', [App\Http\Controllers\CostesController::class, 'create_mant'])->name('costes.create_mant');
     Route::post('/costes/cargar_entidades', [App\Http\Controllers\CostesController::class, 'cargar_entidades'])->name('costes.cargar_entidades');
+    Route::post('/costes/destroy', [App\Http\Controllers\CostesController::class, 'destroy'])->name('costes.destroy');
 
 
     // EMPLEADOS
