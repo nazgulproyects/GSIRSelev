@@ -108,12 +108,9 @@
                     <div class="form-group row row align-items-center">
                         <x-label class="col-sm-3 col-form-label">Valor:</x-label>
                         <div class="col-sm-7">
-                            <x-input type="number" step="0.01" name="valor" class="form-control" value=""
-                                style="text-align: right;"></x-input>
+                            <x-input type="number" step="0.01" name="valor" class="form-control" value="" style="text-align: right;"></x-input>
                         </div>
-                        <div class="col-sm-2 text-start">
-                            €
-                        </div>
+                        <div class="col-sm-2 text-start">€</div>
                     </div>
                     <div class="form-group row">
                         <x-label class="col-sm-3 col-form-label">Descripción:</x-label>

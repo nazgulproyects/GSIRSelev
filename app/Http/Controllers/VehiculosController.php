@@ -95,6 +95,13 @@ class VehiculosController extends BaseController
 
     public function destroy(Request $request)
     {
+        // 1 primero borrar los costes
+        $costes = Costes::where('aplicado_a', 'vehiculo')->where('entidad_id', $request->id_eliminar)->get();
+        foreach ($costes as $coste) {
+            $coste->delete();
+        }
+
+        // 2 eliminarmos el vehiculo
         $vehiculo = Vehiculos::find($request->id_eliminar);
         $vehiculo->delete();
 
