@@ -78,15 +78,13 @@
                                 <div class="form-group row">
                                     <x-label class="col-sm-3 col-form-label">Username:</x-label>
                                     <div class="col-sm-9">
-                                        <x-input type="text" name="username" class="form-control"
-                                            value="{{$empleado->username}}" />
+                                        <x-input type="text" name="username" class="form-control" value="{{$empleado->username}}" />
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <x-label class="col-sm-3 col-form-label">Contraseña:</x-label>
                                     <div class="col-sm-9">
-                                        <x-input type="password" name="password" class="form-control"
-                                            value=""></x-input>
+                                        <x-input type="password" name="password" class="form-control" value=""></x-input>
                                     </div>
                                 </div>
                             </div>

@@ -20,6 +20,7 @@
                         <thead>
                             <tr>
                                 <th>Id</th>
+                                <th>Username</th>
                                 <th>Nombre</th>
                                 <th>Apellidos</th>
                                 <th>Email</th>
@@ -32,6 +33,7 @@
                             @foreach($empleados as $empleado)
                             <tr>
                                 <td><x-nav-link href="/empleados/{{$empleado->id}}">{{ str_pad($empleado->id, 4, '0', STR_PAD_LEFT) }}</x-nav-link></td>
+                                <td>{{$empleado->username}}</td>
                                 <td>{{$empleado->name}}</td>
                                 <td>{{$empleado->surname}}</td>
                                 <td>{{$empleado->email}}</td>
@@ -60,6 +62,12 @@
             <form action='/empleados/create' method="POST" enctype="multipart/form-data" class="form-horizontal">
                 {{ csrf_field() }}
                 <div class="modal-body">
+                <div class="form-group row">
+                        <x-label class="col-sm-3 col-form-label">Username*:</x-label>
+                        <div class="col-sm-9">
+                            <x-input type="text" name="username" class="form-control" value="" required></x-input>
+                        </div>
+                    </div>
                     <div class="form-group row">
                         <x-label class="col-sm-3 col-form-label">Nombre:</x-label>
                         <div class="col-sm-9">

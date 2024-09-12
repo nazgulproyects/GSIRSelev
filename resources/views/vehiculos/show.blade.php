@@ -29,8 +29,7 @@
                                 <div class="form-group row">
                                     <x-label class="col-sm-3 col-form-label">Nombre:</x-label>
                                     <div class="col-sm-9">
-                                        <x-input type="text" name="nombre" class="form-control"
-                                            value="{{$vehiculo->nombre}}"></x-input>
+                                        <x-input type="text" name="nombre" class="form-control" value="{{$vehiculo->nombre}}"></x-input>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -38,37 +37,63 @@
                                     <div class="col-sm-9">
                                         <select name="tipo" id="tipo_select" class="form-control" style="width: 100%;">
                                             <option disabled selected value>Seleccionar tipo</option>
-                                            <option value="Tractora">Tractora</option>
-                                            <option value="Remolque">Remolque</option>
+                                            <option value="Furgona">Furgona</option>
+                                            <option value="Camion">Camión</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <x-label class="col-sm-3 col-form-label">Propiedad:</x-label>
+                                    <div class="col-sm-9">
+                                        <select name="propiedad" id="propiedad_select" class="form-control" style="width: 100%;">
+                                            <option disabled selected value>Seleccionar propiedad</option>
+                                            <option value="Propio">Propio</option>
+                                            <option value="Alquilado">Alquilado</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <x-label class="col-sm-3 col-form-label">Matricula:</x-label>
                                     <div class="col-sm-9">
-                                        <x-input type="text" name="matricula" class="form-control"
-                                            value="{{$vehiculo->matricula}}"></x-input>
+                                        <x-input type="text" name="matricula" class="form-control" value="{{$vehiculo->matricula}}"></x-input>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <x-label class="col-sm-3 col-form-label">Marca:</x-label>
+                                    <div class="col-sm-9">
+                                        <x-input type="text" name="marca" class="form-control" value="{{$vehiculo->marca}}"></x-input>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <x-label class="col-sm-3 col-form-label">Modelo:</x-label>
+                                    <div class="col-sm-9">
+                                        <x-input type="text" name="modelo" class="form-control" value="{{$vehiculo->modelo}}"></x-input>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <x-label class="col-sm-3 col-form-label">Seguro:</x-label>
                                     <div class="col-sm-9">
-                                        <x-input type="date" name="seguro" class="form-control"
-                                            value="{{$vehiculo->seguro}}"></x-input>
+                                        <x-input type="date" name="seguro" class="form-control" value="{{$vehiculo->seguro}}"></x-input>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <x-label class="col-sm-3 col-form-label">ITV:</x-label>
                                     <div class="col-sm-9">
-                                        <x-input type="date" name="itv" class="form-control"
-                                            value="{{$vehiculo->itv}}"></x-input>
+                                        <x-input type="date" name="itv" class="form-control" value="{{$vehiculo->itv}}"></x-input>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <x-label class="col-sm-3 col-form-label">ADR:</x-label>
                                     <div class="col-sm-9">
-                                        <x-input type="date" name="adr" class="form-control"
-                                            value="{{$vehiculo->adr}}"></x-input>
+                                        <x-input type="date" name="adr" class="form-control" value="{{$vehiculo->adr}}"></x-input>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <x-label class="col-sm-3 col-form-label">Capacidad:</x-label>
+                                    <div class="col-sm-9">
+                                        <x-input type="number" step="0.01" name="capacidad" class="form-control"
+                                            value="{{ $vehiculo->capacidad }}">
+                                        </x-input>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -83,44 +108,19 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="form-group row">
-                                    <x-label class="col-sm-3 col-form-label">Capacidad:</x-label>
-                                    <div class="col-sm-9">
-                                        <x-input type="number" step="0.01" name="capacidad" class="form-control"
-                                            value="{{ $vehiculo->capacidad }}">
-                                        </x-input>
-                                    </div>
-                                </div>
                             </div>
                             <div class="col-6">
                                 <div class="form-group row">
                                     <x-label class="col-sm-3 col-form-label">Empresa:</x-label>
                                     <div class="col-sm-9">
-                                        <select name="empresa" id="empresa_select" class="form-control"
-                                            style="width: 100%;">
+                                        <select name="empresa" id="empresa_select" class="form-control" style="width: 100%;">
                                             <option disabled selected value>Seleccionar empresa</option>
-                                            <option value="EMPRESA 1">EMPRESA 1</option>
-                                            <option value="EMPRESA 2">EMPRESA 2</option>
+                                            <option value="SOLUCIO CIRCULAR S.L.">SOLUCIO CIRCULAR S.L.</option>
+                                            <option value="TATA GENARO S.L.">TATA GENARO S.L.</option>
                                         </select>
                                     </div>
                                 </div>
-                                <div class="form-group row">
-                                    <x-label class="col-sm-3 col-form-label">Estado:</x-label>
-                                    <div class="col-sm-9">
-                                        <select name="estado" id="estado_select" class="form-control"
-                                            style="width: 100%;">
-                                            <option disabled selected value></option>
-                                            <option value="Alta">Alta</option>
-                                            <option value="Baja">Baja</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <x-label class="col-sm-3 col-form-label">Amortización:</x-label>
-                                    <div class="col-sm-9">
-                                        <x-input type="date" name="fecha_amortizacion" class="form-control" value="{{$vehiculo->fecha_amortizacion}}"></x-input>
-                                    </div>
-                                </div>
+
                                 <div class="form-group row align-items-center">
                                     <x-label class="col-sm-3 col-form-label">Tara:</x-label>
                                     <div class="col-sm-7">
@@ -142,6 +142,17 @@
                                     </div>
                                     <div class="col-sm-2 text-start">Kg</div>
                                 </div>
+                                <div class="form-group row">
+                                    <x-label class="col-sm-3 col-form-label">Estado:</x-label>
+                                    <div class="col-sm-9">
+                                        <select name="estado" id="estado_select" class="form-control"
+                                            style="width: 100%;">
+                                            <option disabled selected value></option>
+                                            <option value="Alta">Alta</option>
+                                            <option value="Baja">Baja</option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="form-group row align-items-center">
                                     <x-label class="col-sm-3 col-form-label">Consumo:</x-label>
                                     <div class="col-sm-7">
@@ -159,7 +170,24 @@
                                         Km
                                     </div>
                                 </div>
-
+                                <div class="form-group row">
+                                    <x-label class="col-sm-3 col-form-label">Fecha amortización:</x-label>
+                                    <div class="col-sm-9">
+                                        <x-input type="date" name="fecha_amortizacion" class="form-control" value="{{$vehiculo->fecha_amortizacion}}"></x-input>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <x-label class="col-sm-3 col-form-label">Empresa aseguradora:</x-label>
+                                    <div class="col-sm-9">
+                                        <x-input type="text" name="empresa_aseguradora" class="form-control" value="{{$vehiculo->empresa_aseguradora}}"></x-input>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <x-label class="col-sm-3 col-form-label">Nº Póliza:</x-label>
+                                    <div class="col-sm-9">
+                                        <x-input type="text" name="poliza" class="form-control" value="{{$vehiculo->poliza}}"></x-input>
+                                    </div>
+                                </div>
 
                             </div>
                         </div>
@@ -270,6 +298,7 @@
         });
 
         $('#tipo_select').val('{{$vehiculo->tipo}}').change();
+        $('#propiedad_select').val('{{$vehiculo->propiedad}}').change();
         $('#ud_medida_select').val('{{$vehiculo->ud_medida}}').change();
         $('#empresa_select').val('{{$vehiculo->empresa}}').change();
         $('#estado_select').val('{{$vehiculo->estado}}').change();

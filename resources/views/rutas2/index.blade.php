@@ -1,6 +1,7 @@
 <x-app-layout>
     @section('rutas')
-    <x-nav-link href="#" active>Rutas</x-nav-link>
+    <x-nav-link href="{{ route('rutas2.index') }}"
+        :active="request()->routeIs('rutas2.index')">Rutas</x-nav-link>
     @endsection
 
     <div class="mt-2">
@@ -18,15 +19,21 @@
                     <table id="table" class="display">
                         <thead>
                             <tr>
-                                <th>Id</th>
-                                <th>Nombre</th>
+                                <th style="text-align: center;">INFO RUTA</th>
+                                <th style="text-align: center;">Fecha</th>
+                                <th>Trabajador</th>
+                                <th>Núm. Puntos recogida</th>
                             </tr>
                         </thead>
                         <tbody>
+                            @foreach ($resultado as $reg)
                             <tr>
-                                <td></td>
-                                <td></td>
+                                <td style="text-align: center;"><a href="/rutanew_info/{{$reg['fecha']}}/{{$reg['trabajador']}}"><i class="fa-solid fa-circle-info fa-xl" style="color: #007fcd;"></i></a></td>
+                                <td style="text-align: center;"><span style="display: none;">{{$reg['fecha']}}</span>{{ \Carbon\Carbon::parse($reg['fecha'])->format('d/m/Y') }}</td>
+                                <td>{{$reg['trabajador']}}</td>
+                                <td>{{$reg['total']}}</td>
                             </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -54,7 +61,7 @@
                 </div>
                 <div class="modal-footer">
                     <div class="row-3 d-flex justify-content-end">
-                        <x-button type="submit">Crear Ruta</x-button>
+                        <x-button type="submit">IMPORTAR</x-button>
                     </div>
                 </div>
             </form>
@@ -87,7 +94,11 @@
                 'sSearch': 'Buscar:'
             },
             'scrollX': true,
-            'order': [],
+            'order': [
+                [
+                    '1', 'desc'
+                ]
+            ],
             'lengthMenu': [30],
             bInfo: false,
             showNEntries: false,

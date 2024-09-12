@@ -13,7 +13,25 @@ class RutaNew extends Model
     protected $table = 'rutas_new';
 
     protected $fillable = [
-        'proveedor_id',  // Agrega este campo
-        // Otros campos que necesites asignar masivamente
+        'proveedor_id',  
+        'fecha_retirada', 
+        'proveedor',
+        'cif',
+        'email',
+        'poblacion',
+        'provincia_pais',
+        'trabajador',
+        'tipo',
+        'grupo',
+        'bidones',
+        'garrafas',
+        'litros',
+        'kilos',
+        'total_kilos',
+        'residuo',
+        'importe',
+        'forma_pago',
+        'suministro',
+        'deposito',
     ];
 }

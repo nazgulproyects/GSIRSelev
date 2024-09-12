@@ -21,6 +21,7 @@ class EmpleadosController extends BaseController
     public function create(Request $request)
     {
         $empleado = new User();
+        $empleado->username = $request->username;
         $empleado->name = $request->name;
         $empleado->surname = $request->surname;
         $empleado->email = $request->email;
@@ -43,7 +44,10 @@ class EmpleadosController extends BaseController
         $empleado->name = $request->name;
         $empleado->surname = $request->surname;
         $empleado->email = $request->email;
-        if ($request->password != null) $empleado->password = bcrypt($request->password);        
+
+        $empleado->username = $request->username;
+        if ($request->password != null) $empleado->password = bcrypt($request->password);
+               
         $empleado->tipo = $request->tipo;
         $empleado->dni = $request->dni;
         $empleado->telefono = $request->telefono;

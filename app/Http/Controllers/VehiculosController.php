@@ -32,7 +32,10 @@ class VehiculosController extends BaseController
         $vehiculo = new Vehiculos();
         $vehiculo->nombre = $request->nombre;
         $vehiculo->tipo = $request->tipo;
+        $vehiculo->propiedad = $request->propiedad;
         $vehiculo->matricula = $request->matricula;
+        $vehiculo->marca = $request->marca;
+        $vehiculo->modelo = $request->modelo;
         $vehiculo->seguro = $request->seguro;
         $vehiculo->itv = $request->itv;
         $vehiculo->adr = $request->adr;
@@ -46,6 +49,8 @@ class VehiculosController extends BaseController
         $vehiculo->consumo = $request->consumo;
         $vehiculo->kilometraje = $request->kilometraje;
         $vehiculo->fecha_amortizacion = $request->fecha_amortizacion;
+        $vehiculo->empresa_aseguradora = $request->empresa_aseguradora;
+        $vehiculo->poliza = $request->poliza;
         $vehiculo->save();
 
         return back()->with('notification', 'Vehiculo creado correctamente.');
@@ -64,7 +69,10 @@ class VehiculosController extends BaseController
         $vehiculo = Vehiculos::find($id);
         $vehiculo->nombre = $request->nombre;
         $vehiculo->tipo = $request->tipo;
+        $vehiculo->propiedad = $request->propiedad;
         $vehiculo->matricula = $request->matricula;
+        $vehiculo->marca = $request->marca;
+        $vehiculo->modelo = $request->modelo;
         $vehiculo->seguro = $request->seguro;
         $vehiculo->itv = $request->itv;
         $vehiculo->adr = $request->adr;
@@ -78,6 +86,8 @@ class VehiculosController extends BaseController
         $vehiculo->consumo = $request->consumo;
         $vehiculo->kilometraje = $request->kilometraje;
         $vehiculo->fecha_amortizacion = $request->fecha_amortizacion;
+        $vehiculo->empresa_aseguradora = $request->empresa_aseguradora;
+        $vehiculo->poliza = $request->poliza;
         $vehiculo->save();
 
         return back()->with('notification', 'Vehiculo guardado correctamente.');

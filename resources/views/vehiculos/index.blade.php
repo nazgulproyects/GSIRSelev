@@ -59,7 +59,7 @@
 </x-app-layout>
 
 <div class="modal" tabindex="-1" role="dialog" id="modalNuevoVehiculo">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header d-flex justify-content-center">
                 <h4 class="modal-title text-center"><b>CREAR NUEVO VEHÍCULO</b></h4>
@@ -67,115 +67,157 @@
             <form action='/vehiculos/create' method="POST" enctype="multipart/form-data" class="form-horizontal">
                 {{ csrf_field() }}
                 <div class="modal-body">
-                    <div class="form-group row">
-                        <x-label class="col-sm-3 col-form-label">Nombre:</x-label>
-                        <div class="col-sm-9">
-                            <x-input type="text" name="nombre" class="form-control" value=""></x-input>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group row">
+                                <x-label class="col-sm-3 col-form-label">Nombre:</x-label>
+                                <div class="col-sm-9">
+                                    <x-input type="text" name="nombre" class="form-control" value=""></x-input>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <x-label class="col-sm-3 col-form-label">Tipo:</x-label>
+                                <div class="col-sm-9">
+                                    <select name="tipo" class="form-control" style="width: 100%;">
+                                        <option disabled selected value>Seleccionar tipo</option>
+                                        <option value="Furgona">Furgona</option>
+                                        <option value="Camion">Camión</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <x-label class="col-sm-3 col-form-label">Propiedad:</x-label>
+                                <div class="col-sm-9">
+                                    <select name="propiedad" id="propiedad" class="form-control" style="width: 100%;">
+                                        <option disabled selected value>Seleccionar propiedad</option>
+                                        <option value="Propio">Propio</option>
+                                        <option value="Alquilado">Alquilado</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <x-label class="col-sm-3 col-form-label">Matricula:</x-label>
+                                <div class="col-sm-9">
+                                    <x-input type="text" name="matricula" class="form-control" value=""></x-input>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <x-label class="col-sm-3 col-form-label">Marca:</x-label>
+                                <div class="col-sm-9">
+                                    <x-input type="text" name="marca" class="form-control" value=""></x-input>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <x-label class="col-sm-3 col-form-label">Modelo:</x-label>
+                                <div class="col-sm-9">
+                                    <x-input type="text" name="modelo" class="form-control" value=""></x-input>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <x-label class="col-sm-3 col-form-label">Seguro:</x-label>
+                                <div class="col-sm-9">
+                                    <x-input type="date" name="seguro" class="form-control" value=""></x-input>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <x-label class="col-sm-3 col-form-label">ITV:</x-label>
+                                <div class="col-sm-9">
+                                    <x-input type="date" name="itv" class="form-control" value=""></x-input>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <x-label class="col-sm-3 col-form-label">ADR:</x-label>
+                                <div class="col-sm-9">
+                                    <x-input type="date" name="adr" class="form-control" value=""></x-input>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <x-label class="col-sm-3 col-form-label">Capacidad:</x-label>
+                                <div class="col-sm-9">
+                                    <x-input type="number" step="0.01" name="capacidad" class="form-control" value=""></x-input>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <x-label class="col-sm-3 col-form-label">Ud. Medida:</x-label>
+                                <div class="col-sm-9">
+                                    <select name="ud_medida" class="form-control" style="width: 100%;">
+                                        <option disabled selected value>Seleccionar ud. medida</option>
+                                        <option value="KG">KG</option>
+                                        <option value="L">L</option>
+                                        <option value="Bidones">Bidones</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group row">
+                                <x-label class="col-sm-3 col-form-label">Empresa:</x-label>
+                                <div class="col-sm-9">
+                                    <select name="empresa" class="form-control" style="width: 100%;">
+                                        <option disabled selected value>Seleccionar empresa</option>
+                                        <option value="SOLUCIO CIRCULAR S.L.">SOLUCIO CIRCULAR S.L.</option>
+                                        <option value="TATA GENARO S.L.">TATA GENARO S.L.</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <x-label class="col-sm-3 col-form-label">Tara:</x-label>
+                                <div class="col-sm-9">
+                                    <x-input type="number" step="0.01" name="tara" class="form-control" value=""></x-input>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <x-label class="col-sm-3 col-form-label">PMA:</x-label>
+                                <div class="col-sm-9">
+                                    <x-input type="number" step="0.01" name="PMA" class="form-control" value=""></x-input>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <x-label class="col-sm-3 col-form-label">Carga Útil:</x-label>
+                                <div class="col-sm-9">
+                                    <x-input type="number" step="0.01" name="carga_util" class="form-control" value=""></x-input>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <x-label class="col-sm-3 col-form-label">Estado:</x-label>
+                                <div class="col-sm-9">
+                                    <x-input type="text" name="estado" class="form-control" value="Alta" readonly></x-input>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <x-label class="col-sm-3 col-form-label">Consumo:</x-label>
+                                <div class="col-sm-9">
+                                    <x-input type="number" step="0.01" name="consumo" class="form-control" value=""></x-input>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <x-label class="col-sm-3 col-form-label">Kilometraje:</x-label>
+                                <div class="col-sm-9">
+                                    <x-input type="number" step="1" name="kilometraje" class="form-control" value=""></x-input>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <x-label class="col-sm-3 col-form-label">Fecha amortización:</x-label>
+                                <div class="col-sm-9">
+                                    <x-input type="date" name="fecha_amortizacion" class="form-control" value=""></x-input>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <x-label class="col-sm-3 col-form-label">Empresa aseguradora:</x-label>
+                                <div class="col-sm-9">
+                                    <x-input type="text" name="empresa_aseguradora" class="form-control" value=""></x-input>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <x-label class="col-sm-3 col-form-label">Nº Póliza:</x-label>
+                                <div class="col-sm-9">
+                                    <x-input type="text" name="poliza" class="form-control" value=""></x-input>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group row">
-                        <x-label class="col-sm-3 col-form-label">Tipo:</x-label>
-                        <div class="col-sm-9">
-                            <select name="tipo" class="form-control" style="width: 100%;">
-                                <option disabled selected value>Seleccionar tipo</option>
-                                <option value="Tractora">Tractora</option>
-                                <option value="Remolque">Remolque</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <x-label class="col-sm-3 col-form-label">Matricula:</x-label>
-                        <div class="col-sm-9">
-                            <x-input type="text" name="matricula" class="form-control" value=""></x-input>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <x-label class="col-sm-3 col-form-label">Seguro:</x-label>
-                        <div class="col-sm-9">
-                            <x-input type="date" name="seguro" class="form-control" value=""></x-input>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <x-label class="col-sm-3 col-form-label">ITV:</x-label>
-                        <div class="col-sm-9">
-                            <x-input type="date" name="itv" class="form-control" value=""></x-input>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <x-label class="col-sm-3 col-form-label">ADR:</x-label>
-                        <div class="col-sm-9">
-                            <x-input type="date" name="adr" class="form-control" value=""></x-input>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <x-label class="col-sm-3 col-form-label">Capacidad:</x-label>
-                        <div class="col-sm-9">
-                            <x-input type="number" step="0.01" name="capacidad" class="form-control" value=""></x-input>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <x-label class="col-sm-3 col-form-label">Ud. Medida:</x-label>
-                        <div class="col-sm-9">
-                            <select name="ud_medida" class="form-control" style="width: 100%;">
-                                <option disabled selected value>Seleccionar ud. medida</option>
-                                <option value="KG">KG</option>
-                                <option value="L">L</option>
-                                <option value="Bidones">Bidones</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <x-label class="col-sm-3 col-form-label">Empresa:</x-label>
-                        <div class="col-sm-9">
-                            <select name="empresa" class="form-control" style="width: 100%;">
-                                <option disabled selected value>Seleccionar empresa</option>
-                                <option value="EMPRESA 1">EMPRESA 1</option>
-                                <option value="EMPRESA 2">EMPRESA 2</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <x-label class="col-sm-3 col-form-label">Tara:</x-label>
-                        <div class="col-sm-9">
-                            <x-input type="number" step="0.01" name="tara" class="form-control" value=""></x-input>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <x-label class="col-sm-3 col-form-label">PMA:</x-label>
-                        <div class="col-sm-9">
-                            <x-input type="number" step="0.01" name="PMA" class="form-control" value=""></x-input>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <x-label class="col-sm-3 col-form-label">Carga Útil:</x-label>
-                        <div class="col-sm-9">
-                            <x-input type="number" step="0.01" name="carga_util" class="form-control" value=""></x-input>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <x-label class="col-sm-3 col-form-label">Estado:</x-label>
-                        <div class="col-sm-9">
-                            <x-input type="text" name="estado" class="form-control" value="Alta" readonly></x-input>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <x-label class="col-sm-3 col-form-label">Consumo:</x-label>
-                        <div class="col-sm-9">
-                            <x-input type="number" step="0.01" name="consumo" class="form-control" value=""></x-input>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <x-label class="col-sm-3 col-form-label">Kilometraje:</x-label>
-                        <div class="col-sm-9">
-                            <x-input type="number" step="1" name="kilometraje" class="form-control" value=""></x-input>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <x-label class="col-sm-3 col-form-label">Fecha amortización:</x-label>
-                        <div class="col-sm-9">
-                            <x-input type="date" name="fecha_amortizacion" class="form-control" value=""></x-input>
-                        </div>
-                    </div>
+
+
                 </div>
                 <div class="modal-footer">
                     <div class="row-3 d-flex justify-content-end">

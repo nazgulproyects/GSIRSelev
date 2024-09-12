@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Imports\ImportRutaNew;
 use App\Models\PuntoRecogida;
 use App\Models\Ruta;
+use App\Models\RutaNew;
 use App\Models\RutasPuntosRecogida;
 use App\Models\User;
 use App\Models\Vehiculos;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -168,7 +170,26 @@ class RutasController extends BaseController
     // RUTAS NEW
     public function rutas2()
     {
-        return view('rutas2.index');
+        $datos = RutaNew::all();
+
+        // Agrupar por fecha (solo la parte de fecha sin hora) y trabajador
+        $resultado = $datos->groupBy(function ($item) {
+            // Extraemos solo la fecha (sin hora)
+            return Carbon::parse($item['fecha_retirada'])->toDateString();
+        })->map(function ($group, $fecha) {
+            return $group->groupBy('trabajador')->map(function ($trabajadores, $trabajador) use ($fecha) {
+                return [
+                    'fecha' => $fecha,
+                    'trabajador' => $trabajador,
+                    'total' => $trabajadores->count(),
+                ];
+            });
+        });
+
+        // Convertir el resultado a un formato más legible si es necesario
+        $resultado = $resultado->flatten(1);
+
+        return view('rutas2.index')->with(compact('resultado'));
     }
 
     public function importarExcel(Request $request)
@@ -181,11 +202,16 @@ class RutasController extends BaseController
         $nombreOriginal = $archivo->getClientOriginalName();
         $rutaArchivo = $archivo->storeAs('rutas', $nombreOriginal);
 
-
         // PASO 2: Importar los datos y guardarlos en la tabla
         Excel::import(new ImportRutaNew, $archivo);
 
-        // Si necesitas inspeccionar la ruta guardada
-        dd('Archivo guardado en: ' . $rutaArchivo);
+        return back();
+    }
+
+    public function info_ruta($fecha, $trabajador)
+    {
+        $puntos_ruta = RutaNew::whereDate('fecha_retirada', $fecha)->where('trabajador', $trabajador)->get();
+
+        return view('rutas2.ruta_info')->with(compact('puntos_ruta', 'fecha', 'trabajador'));
     }
 }

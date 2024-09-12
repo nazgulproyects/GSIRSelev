@@ -96,6 +96,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     // RUTAS
     Route::get('/rutas2', [App\Http\Controllers\RutasController::class, 'rutas2'])->name('rutas2.index');
     Route::post('/rutas2/importar_excel', [App\Http\Controllers\RutasController::class, 'importarExcel'])->name('rutas2.create');
+    Route::get('/rutanew_info/{fecha}/{trabajador}', [App\Http\Controllers\RutasController::class, 'info_ruta'])->name('rutas2.info_ruta');
 
     // RUTAS
     Route::get('/rutas', [App\Http\Controllers\RutasController::class, 'index'])->name('rutas.index');
