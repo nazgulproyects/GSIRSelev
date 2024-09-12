@@ -118,49 +118,36 @@
                                 <div class="form-group row">
                                     <x-label class="col-sm-3 col-form-label">Amortización:</x-label>
                                     <div class="col-sm-9">
-                                        <x-input type="date" name="fecha_amortizacion" class="form-control"
-                                            value="{{$vehiculo->fecha_amortizacion}}"></x-input>
+                                        <x-input type="date" name="fecha_amortizacion" class="form-control" value="{{$vehiculo->fecha_amortizacion}}"></x-input>
                                     </div>
                                 </div>
                                 <div class="form-group row align-items-center">
                                     <x-label class="col-sm-3 col-form-label">Tara:</x-label>
                                     <div class="col-sm-7">
-                                        <x-input type="number" step="0.01" name="tara" class="form-control"
-                                            value="{{$vehiculo->tara}}" style="text-align: right;"></x-input>
+                                        <x-input type="number" step="0.01" name="tara" class="form-control" value="{{$vehiculo->tara}}" style="text-align: right;"></x-input>
                                     </div>
-                                    <div class="col-sm-2 text-start">
-                                        Kg
-                                    </div>
+                                    <div class="col-sm-2 text-start">Kg</div>
                                 </div>
                                 <div class="form-group row align-items-center">
                                     <x-label class="col-sm-3 col-form-label">PMA:</x-label>
                                     <div class="col-sm-7">
-                                        <x-input type="number" step="0.01" name="PMA" class="form-control"
-                                            value="{{$vehiculo->PMA}}" style="text-align: right;"></x-input>
+                                        <x-input type="number" step="0.01" name="PMA" class="form-control" value="{{$vehiculo->PMA}}" style="text-align: right;"></x-input>
                                     </div>
-                                    <div class="col-sm-2 text-start">
-                                        Kg
-                                    </div>
+                                    <div class="col-sm-2 text-start">Kg</div>
                                 </div>
                                 <div class="form-group row align-items-center">
                                     <x-label class="col-sm-3 col-form-label">Carga Útil:</x-label>
                                     <div class="col-sm-7">
-                                        <x-input type="number" step="0.01" name="carga_util" class="form-control"
-                                            value="{{$vehiculo->carga_util}}" style="text-align: right;"></x-input>
+                                        <x-input type="number" step="0.01" name="carga_util" class="form-control" value="{{$vehiculo->carga_util}}" style="text-align: right;"></x-input>
                                     </div>
-                                    <div class="col-sm-2 text-start">
-                                        Kg
-                                    </div>
+                                    <div class="col-sm-2 text-start">Kg</div>
                                 </div>
                                 <div class="form-group row align-items-center">
                                     <x-label class="col-sm-3 col-form-label">Consumo:</x-label>
                                     <div class="col-sm-7">
-                                        <x-input type="number" step="0.01" name="consumo" class="form-control"
-                                            value="{{$vehiculo->consumo}}" style="text-align: right;"></x-input>
+                                        <x-input type="number" step="0.01" name="consumo" class="form-control" value="{{$vehiculo->consumo}}" style="text-align: right;"></x-input>
                                     </div>
-                                    <div class="col-sm-2 text-start">
-                                        L/100 Km
-                                    </div>
+                                    <div class="col-sm-2 text-start">L/100 Km</div>
                                 </div>
                                 <div class="form-group row align-items-center">
                                     <x-label class="col-sm-3 col-form-label">Kilometraje:</x-label>
@@ -202,20 +189,20 @@
                             </thead>
                             <tbody>
                                 @foreach ($costes_mant as $coste_mant)
-                                    <tr>
-                                        <td>
-                                            @if($coste_mant->fecha != null)
-                                                {{ \Carbon\Carbon::parse($coste_mant->fecha)->format('d/m/Y') }}
-                                            @endif
-                                        </td>
-                                        <td>{{$coste_mant->descripcion}}</td>
-                                        <td>{{$coste_mant->valor}} €</td>
-                                        <td>
-                                            <x-danger-button type="button" onclick="eliminarFila('{{$coste_mant->id}}');">
-                                                <i class="fa-solid fa-xmark fa-fade"></i>
-                                            </x-danger-button>
-                                        </td>
-                                    </tr>
+                                <tr>
+                                    <td>
+                                        @if($coste_mant->fecha != null)
+                                        {{ \Carbon\Carbon::parse($coste_mant->fecha)->format('d/m/Y') }}
+                                        @endif
+                                    </td>
+                                    <td>{{$coste_mant->descripcion}}</td>
+                                    <td>{{$coste_mant->valor}} €</td>
+                                    <td>
+                                        <x-danger-button type="button" onclick="eliminarFila('{{$coste_mant->id}}');">
+                                            <i class="fa-solid fa-xmark fa-fade"></i>
+                                        </x-danger-button>
+                                    </td>
+                                </tr>
                                 @endforeach
                             </tbody>
                         </table>
@@ -258,7 +245,7 @@
                 </div>
                 <div class="modal-footer">
                     <div class="row-3 d-flex justify-content-end">
-                        <x-button cla type="submit">Crear Mantenimiento</x-button>
+                        <x-button type="submit">Crear Mantenimiento</x-button>
                     </div>
                 </div>
             </form>
@@ -268,15 +255,15 @@
 
 <!-- MODAL ELIMINAR FILA -->
 @include('utils.notificaciones.eliminar_fila', [
-    'metodo' => '/costes/destroy',
-    'texto' => '¿Estás seguro que quieres eliminar este mantenimiento?'
+'metodo' => '/costes/destroy',
+'texto' => '¿Estás seguro que quieres eliminar este mantenimiento?'
 ])
 
 <!-- MODAL DE CONFIRMACION -->
 @include('utils.notificaciones.confirmacion_ok')
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
 
         $('#tipo_mant').select2({
             dropdownParent: $("#modalNuevoMantenimiento"),

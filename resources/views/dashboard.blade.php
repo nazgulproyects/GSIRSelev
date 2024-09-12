@@ -43,10 +43,11 @@
             <div class="d-flex justify-content-around mt-4">
                 <x-button-link href="/costes" class="custom-button">COSTES</x-button-link>
                 <x-button-link href="/cli_prov" class="custom-button">(CLIENTES/PROVEEDORES)</x-button-link>
-                <x-button-link href="/rutas" class="custom-button">RUTAS</x-button-link>
+                <x-button-link href="/rutas2" class="custom-button">RUTAS</x-button-link>
                 <!-- <x-button-link href="/planificacion_rutas" style="background-color: green;">PLANIFICACIÓN RUTAS</x-button-link> -->
             </div>
             <div class="d-flex justify-content-around mt-4">
+                <x-button-link href="/rutas" class="custom-button">(RUTAS - OLD)</x-button-link>
                 <x-button-link href="/albaranes" class="custom-button">ALBARANES</x-button-link>
                 <!-- <x-button-link href="/recogidas">RECOGIDAS</x-button-link> -->
                 <!-- <x-button-link href="/app_conductor">APP CONDUCTOR</x-button-link> -->

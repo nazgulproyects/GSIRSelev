@@ -47,7 +47,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/albaranes/{id}', [App\Http\Controllers\AlbaranesController::class, 'show'])->name('albaranes.show');
     Route::post('/albaranes/asignar_prod_albaran/{albaran}', [App\Http\Controllers\AlbaranesController::class, 'asginarProd'])->name('albaranes.asginarProd');
     Route::get('/albaranes/pdf/{id}', [App\Http\Controllers\AlbaranesController::class, 'pdf'])->name('albaranes.pdf');
-   
+
 
     // PRODUCTOS
     Route::get('/productos', [App\Http\Controllers\ProductosController::class, 'index'])->name('productos.index');
@@ -94,6 +94,10 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::post('/puntos_recogida/update/{id}', [App\Http\Controllers\PuntosRecogidaController::class, 'update'])->name('puntos_recogida.update');
 
     // RUTAS
+    Route::get('/rutas2', [App\Http\Controllers\RutasController::class, 'rutas2'])->name('rutas2.index');
+    Route::post('/rutas2/importar_excel', [App\Http\Controllers\RutasController::class, 'importarExcel'])->name('rutas2.create');
+
+    // RUTAS
     Route::get('/rutas', [App\Http\Controllers\RutasController::class, 'index'])->name('rutas.index');
     Route::post('/rutas/create', [App\Http\Controllers\RutasController::class, 'create'])->name('rutas.create');
     Route::get('/rutas/{ruta}', [App\Http\Controllers\RutasController::class, 'show'])->name('rutas.show');
@@ -118,5 +122,4 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/app_conductor/abrir_ruta/{id}', [App\Http\Controllers\AppConductorController::class, 'show'])->name('app_conductor.show');
     Route::post('/app_conductor/productos_pr', [App\Http\Controllers\AppConductorController::class, 'productos_pr'])->name('app_conductor.productos_pr');
     Route::post('/app_conductor/guardar_albaran', [App\Http\Controllers\AppConductorController::class, 'guardar_albaran'])->name('app_conductor.guardar_albaran');
-
 });

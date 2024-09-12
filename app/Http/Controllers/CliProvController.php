@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CliProv;
 use App\Models\Contratos;
 use App\Models\PuntoRecogida;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -18,7 +19,7 @@ class CliProvController extends BaseController
     public function index()
     {
         $cli_prov = CliProv::all();
-
+       
 
         // Calcular proximos dias de recogida
         foreach ($cli_prov as $c_p) {
@@ -46,9 +47,10 @@ class CliProvController extends BaseController
     public function create(Request $request)
     {
         $cli_prov = new CliProv();
+        $cli_prov->tipo = $request->tipo;
         $cli_prov->nombre = $request->nombre;
-        $cli_prov->fecha_antiguedad = $request->fecha_antiguedad;
-        $cli_prov->tramo_actual_comision = $request->tramo_actual_comision;
+        //$cli_prov->fecha_antiguedad = $request->fecha_antiguedad;
+        //$cli_prov->tramo_actual_comision = $request->tramo_actual_comision;
         $cli_prov->save();
 
         return back()->with('notification', 'Registro creado correctamente.');
@@ -59,7 +61,8 @@ class CliProvController extends BaseController
         $cli_prov = CliProv::find($id);
         $puntos_recogida = PuntoRecogida::where('cli_prov_id', $id)->get();
         $contratos = Contratos::where('cli_prov_id', $id)->get();
-        return view('cli_prov.show')->with(compact('cli_prov', 'puntos_recogida', 'contratos'));
+        $comerciales = User::where('tipo', 'Comercial')->get();
+        return view('cli_prov.show')->with(compact('cli_prov', 'puntos_recogida', 'contratos', 'comerciales'));
     }
 
     public function update(Request $request, $id)

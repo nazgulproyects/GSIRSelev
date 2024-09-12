@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\ImportRutaNew;
 use App\Models\PuntoRecogida;
 use App\Models\Ruta;
 use App\Models\RutasPuntosRecogida;
@@ -11,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
+use Maatwebsite\Excel\Facades\Excel;
 
 class RutasController extends BaseController
 {
@@ -103,7 +105,7 @@ class RutasController extends BaseController
         // dejamos el punto recogida como asignado a una ruta
         $punto_recogida = PuntoRecogida::find($request->punto_recogida_id);
         $punto_recogida->asignado_a_ruta = $ruta_id;
-       // $punto_recogida->asignado_a_contrato = $contrato->id;
+        // $punto_recogida->asignado_a_contrato = $contrato->id;
         $punto_recogida->save();
 
         return back()->with('notification', 'Punto de recogida asignado a la ruta correctamente.');
@@ -159,5 +161,31 @@ class RutasController extends BaseController
             $ruta_pr->save();
         }
         return response()->json('OK');
+    }
+
+
+
+    // RUTAS NEW
+    public function rutas2()
+    {
+        return view('rutas2.index');
+    }
+
+    public function importarExcel(Request $request)
+    {
+        // PASO 1 GUARDAR EL ARCHIVO EXCEL
+        $request->validate([
+            'archivo' => 'required|file|mimes:xlsx,xls',
+        ]);
+        $archivo = $request->file('archivo');
+        $nombreOriginal = $archivo->getClientOriginalName();
+        $rutaArchivo = $archivo->storeAs('rutas', $nombreOriginal);
+
+
+        // PASO 2: Importar los datos y guardarlos en la tabla
+        Excel::import(new ImportRutaNew, $archivo);
+
+        // Si necesitas inspeccionar la ruta guardada
+        dd('Archivo guardado en: ' . $rutaArchivo);
     }
 }
