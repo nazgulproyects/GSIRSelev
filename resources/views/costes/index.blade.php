@@ -19,7 +19,7 @@
                     <table id="table" class="display">
                         <thead>
                             <tr>
-                                <th>Tipoou</th>
+                                <th>Tipo</th>
                                 <th>Fecha</th>
                                 <th>Descripción</th>
                                 <th>Valor</th>
