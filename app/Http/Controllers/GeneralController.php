@@ -11,8 +11,7 @@ use consultaWS;
 
 
 //include_once('C:\xampp\htdocs\GSIR\app\LinkWS\WebServices.php');
-include_once(__DIR__ . '/../app/LinkWS/WebServices.php');
-
+include_once('\Home directory\nsir.selevbiogroup.es\app\LinkWS\WebServices.php');
 
 class GeneralController extends BaseController
 {
