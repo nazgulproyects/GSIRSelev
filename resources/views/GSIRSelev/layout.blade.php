@@ -12,7 +12,6 @@
   @yield('styles')
 
   <!-- con este include hacemos referencia a los adornos en la parte de arriba de la web -->
-  @include('complementos.adornos_arriba')
 
   <style>
     /* Estilos básicos para simular una app móvil */
@@ -93,19 +92,8 @@
   <!-- Contenido dinámico -->
   @yield('content')
 
-  <!-- con este include hacemos referencia a todos los scripts, plugins, etc de la web -->
-  @include('complementos.listado_scripts')
-
-  <!-- con este include hacemos referencia a la gestión de visitas de la web -->
-  @include('complementos.visitas_registros_include')
-
   @yield('scripts')
 
-  <!-- con este include hacemos referencia a los adornos de la parte de abajo de la web -->
-  @include('complementos.adornos_abajo')
-
-  <!-- con este include hacemos referencia al mantenimiento de la web -->
-  @include('admin.mantenimiento_web.aviso_mantenimiento')
 
 </body>
 
