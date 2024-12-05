@@ -10,7 +10,9 @@ use consultaPageWS;
 use consultaWS;
 
 
-include_once('C:\xampp\htdocs\GSIR\app\LinkWS\WebServices.php');
+//include_once('C:\xampp\htdocs\GSIR\app\LinkWS\WebServices.php');
+include_once(__DIR__ . '/../app/LinkWS/WebServices.php');
+
 
 class GeneralController extends BaseController
 {
@@ -90,7 +92,7 @@ class GeneralController extends BaseController
     if (sizeof($res) > 0) dd($res['faultstring']);
 
     dd($res);
-    
+
     return view('dashboard');
   }
 }
