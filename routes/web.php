@@ -17,7 +17,7 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
-//Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
+Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
 
     Route::get('/menu_principal', [App\Http\Controllers\GeneralController::class, 'menu_principal'])->name('menu_principal');
 
@@ -123,4 +123,4 @@ Route::get('/', function () {
     Route::get('/app_conductor/abrir_ruta/{id}', [App\Http\Controllers\AppConductorController::class, 'show'])->name('app_conductor.show');
     Route::post('/app_conductor/productos_pr', [App\Http\Controllers\AppConductorController::class, 'productos_pr'])->name('app_conductor.productos_pr');
     Route::post('/app_conductor/guardar_albaran', [App\Http\Controllers\AppConductorController::class, 'guardar_albaran'])->name('app_conductor.guardar_albaran');
-//});
+});

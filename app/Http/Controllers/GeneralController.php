@@ -11,6 +11,6 @@ class GeneralController extends BaseController
     use AuthorizesRequests, ValidatesRequests;
 
     public function menu_principal(){
-        return view('auth.register');
+        return view('dashboard');
     }
 }
