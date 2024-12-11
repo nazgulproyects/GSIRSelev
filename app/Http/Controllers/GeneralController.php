@@ -41,7 +41,7 @@ class GeneralController extends BaseController
 
     // ========================= GUARDAR DATOS NAVISION (WEB SERVICE) ==========================
     if (iniciaWSlocal()) {
-      $consultaWS = new consultaWS('Biocom%20Energ%C3%ADa%2C%20S.L.%20ARRANQUE', 'WSComunicacionWEB', 'http://SRVBC.nuovasesac.es:7347/BIOCOM/WS');
+      $consultaWS = new consultaWS('Biocom%20Energ%C3%ADa%2C%20S.L.%20ARRANQUE', 'WSComunicacionWEB', 'http://10.1.0.104:7347/BIOCOM/WS'); //SRVBC.nuovasesac.es
      
       $params = array(
         'codPedido' => $codPedido,
