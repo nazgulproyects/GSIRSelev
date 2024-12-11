@@ -22,7 +22,7 @@ class GeneralController extends BaseController
 
     $codPedido = 'PV24-0123';
     $fCarga = '';
-    $hLlegadaCisterna = '2024-12-05 10:00:00.000';
+    $hLlegadaCisterna = '2024-12-06 10:00:00.000';
     $hEntradaCargadero = '10:00';
     $hSalidaCisterna = '2024-12-05 10:00:00.000';
     $hMuestraCisterna = '10:00';
