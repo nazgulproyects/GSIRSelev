@@ -19,7 +19,7 @@ class GeneralController extends BaseController
 
   public function menu_principal()
   {
-
+    dd('a');
     $codPedido = 'PV24-0123';
     $fCarga = '';
     $hLlegadaCisterna = '2024-12-06 10:00:00.000';
@@ -42,7 +42,7 @@ class GeneralController extends BaseController
     // ========================= GUARDAR DATOS NAVISION (WEB SERVICE) ==========================
     if (iniciaWSlocal()) {
       $consultaWS = new consultaWS('Biocom%20Energ%C3%ADa%2C%20S.L.%20ARRANQUE', 'WSComunicacionWEB', 'http://10.1.0.104:7347/BIOCOM/WS'); //SRVBC.nuovasesac.es
-     
+
       $params = array(
         'codPedido' => $codPedido,
         'fCarga' => $fCarga,
@@ -83,7 +83,7 @@ class GeneralController extends BaseController
       //Finalizamos la conexion
       finalizaWS();
     }
-    
+
 
 
     // Mostrar por pantalla si hay algun error
