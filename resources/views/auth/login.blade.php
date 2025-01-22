@@ -2,7 +2,7 @@
 
   <x-authentication-card class="">
     <!-- Agregado padding y margen automático para centrar -->
-    <x-slot name="logo">
+    <x-slot name="logo" >
       <img src="{{ asset('images/logo-selev-biogroup.png') }}" width="250">
     </x-slot>
 
