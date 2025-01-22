@@ -19,7 +19,6 @@ class GeneralController extends BaseController
 
   public function menu_principal()
   {
-    dd('pruebass');
 
     return view('dashboard');
   }
