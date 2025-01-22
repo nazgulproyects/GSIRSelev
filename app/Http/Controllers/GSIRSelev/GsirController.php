@@ -26,6 +26,7 @@ class GsirController extends Controller
   {
     $empresa = $request->empresa;
     session(['empresa' => $empresa]);
+    
     return view('GSIRSelev.principal')->with(compact('empresa'));
   }
 
