@@ -20,6 +20,6 @@ class GeneralController extends BaseController
   public function menu_principal()
   {
 
-    return view('dashboard');
+    return view('selector_empresa');
   }
 }

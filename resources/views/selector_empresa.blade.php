@@ -28,28 +28,21 @@
 </style>
 <x-app-layout>
 
-  <div class="navbar">
-    <div class="left-section">
-      <h1>@yield('navbar-title', 'Mi App')</h1>
-    </div>
-    <div class="right-section">
-      <a href="/modulos"><i class="fa-solid fa-right-from-bracket fa-xl"></i></a>
-    </div>
+  @section('titulo_cabecera', 'Selector Empresa')
+
+
+  <div class="row d-flex justify-content-center">
+      <img src="{{ asset('images/logo-selev-biogroup.png') }}" alt="Logo" style="max-width: 70%; margin-top: 30px;">
+   
   </div>
 
-  <div class="text-center mt-4">
-    <img src="{{ asset('images/logo-selev-biogroup.png') }}" alt="Logo" style="max-width: 70%;">
-  </div>
 
-  <div class="d-flex justify-content-center align-items-center" style="min-height: 65vh;">
+  <div class="d-flex justify-content-center align-items-center" style="min-height: 40vh;">
+
     <!-- Card centrada -->
-
-
     <div class="card shadow-lg" style="width: 20rem;">
 
       <div class="card-body">
-
-
 
         <form action="/gsir_selev/principal" method="POST" enctype="multipart/form-data" class="form-horizontal">
           {{ csrf_field() }}
@@ -63,7 +56,7 @@
             </div>
           </div>
 
-          <div class="d-flex justify-content-center">
+          <div class="d-flex justify-content-center mt-4">
             <button type="submit" class="btn btn-secondary" style="background-color: #79B329; width: 200px;">SELECCIONAR</button>
           </div>
 
@@ -72,5 +65,5 @@
       </div>
     </div>
   </div>
-  
+
 </x-app-layout>

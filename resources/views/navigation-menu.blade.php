@@ -1,14 +1,15 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+<nav x-data="{ open: false }" class="border-b" style="background-color: #79b329 !important;">
     <!-- Primary Navigation Menu -->
     <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
                 <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('menu_principal') }}">
-                        <!-- <x-application-mark class="block h-9 w-auto" /> -->
-                        <img src="{{ asset('images/logo_general.png') }}" width="40">
-                    </a>
+                <div class="shrink-0 flex items-center" style="color: white;">
+                    <b>@yield('titulo_cabecera')</b> 
+                    <!-- <a href="{{ route('menu_principal') }}"> -->
+                    <!-- <x-application-mark class="block h-9 w-auto" /> -->
+                    <!-- <img src="{{ asset('images/logo_general.png') }}" width="40"> -->
+                    <!-- </a> -->
                 </div>
 
 

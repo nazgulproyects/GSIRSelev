@@ -30,7 +30,7 @@
       </div>
 
       <div class="flex items-center justify-center mt-4">
-        <x-button class="ms-4">ENTRAR</x-button>
+        <x-button class="ms-4" style="background-color: #79b329;">ENTRAR</x-button>
       </div>
     </form>
   </x-authentication-card>
