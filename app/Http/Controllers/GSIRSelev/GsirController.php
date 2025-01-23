@@ -29,6 +29,11 @@ class GsirController extends Controller
 
   public function principal(Request $request)
   {
+    
+    $datos = DB::connection('mavaser')->table('dbo.MAVASER, S_L_$Sales Comment Line')->get();
+
+    dd($datos);
+
     $empresa = $request->empresa;
     session(['empresa' => $empresa]);
 

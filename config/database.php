@@ -93,6 +93,16 @@ return [
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
 
+
+        'mavaser' => [
+            'driver' => 'sqlsrv',
+            'host' => '10.6.0.254',
+            'port' => '1433',
+            'database' => 'SELEV_BC',
+            'username' => 'bioweb',
+            'password' => 'bioweb',
+        ],
+
     ],
 
     /*
@@ -125,7 +135,7 @@ return [
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
-            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_database_'),
+            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_') . '_database_'),
         ],
 
         'default' => [
