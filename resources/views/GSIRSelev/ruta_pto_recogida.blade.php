@@ -1,6 +1,14 @@
+@section('botones_barra_superior')
+<a href="/gsir_selev/ruta/123" style="background-color: white;" class="inline-flex items-center justify-center p-3 rounded-md text-gray-600 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
+  <i class="fa-solid fa-chevron-left fa-xl ml-1 mr-1"></i>
+</a>
+
+<button style="background-color: white;" class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 ml-2" onclick="location.reload()">
+  <i class="fa-solid fa-rotate"></i>
+</button>
+@endsection
+
 <x-app-layout>
-
-
 
     <style>
         .list-container {

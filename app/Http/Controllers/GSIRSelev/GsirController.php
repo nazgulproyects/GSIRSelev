@@ -22,11 +22,16 @@ class GsirController extends Controller
     return view('GSIRSelev.empresa');
   }
 
+  public function empresa_back()
+  {
+    return view('selector_empresa');
+  }
+
   public function principal(Request $request)
   {
     $empresa = $request->empresa;
     session(['empresa' => $empresa]);
-    
+
     return view('GSIRSelev.principal')->with(compact('empresa'));
   }
 

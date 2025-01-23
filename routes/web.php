@@ -28,6 +28,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
   Route::group([], function () {
     Route::get('/gsir_selev', [App\Http\Controllers\GSIRSelev\GsirController::class, 'gsir_selev'])->name('gsir_selev.home');
     Route::post('/gsir_selev/empresa', [App\Http\Controllers\GSIRSelev\GsirController::class, 'empresa'])->name('gsir_selev.empresa');
+    Route::get('/gsir_selev/empresa_back', [App\Http\Controllers\GSIRSelev\GsirController::class, 'empresa_back'])->name('gsir_selev.empresa_back');
 
     Route::post('/gsir_selev/principal', [App\Http\Controllers\GSIRSelev\GsirController::class, 'principal'])->name('gsir_selev.principal');
     Route::get('/gsir_selev/principal_get', [App\Http\Controllers\GSIRSelev\GsirController::class, 'principal_get'])->name('gsir_selev.principal_get');

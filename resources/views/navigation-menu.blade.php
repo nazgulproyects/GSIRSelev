@@ -9,18 +9,10 @@
 
             <!-- Botones a la derecha -->
             <div class="flex items-center ">
-                <!-- Botón de Logout -->
-                <form method="POST" action="{{ route('logout') }}" x-data class="m-0 p-0">
-                    @csrf
-                    <button type="submit" style="background-color: white;" class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 mr-2">
-                        <i class="fa-solid fa-user-xmark"></i>
-                    </button>
-                </form>
 
-                <!-- Botón de Reload -->
-                <button style="background-color: white;" class="inline-flex items-center justify-center p-2 rounded-md text-gray-600" onclick="location.reload()">
-                    <i class="fa-solid fa-rotate"></i>
-                </button>
+                @yield('botones_barra_superior')
+
+                
             </div>
         </div>
     </div>
