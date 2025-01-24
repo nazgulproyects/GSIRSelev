@@ -63,6 +63,17 @@ return [
             ]) : [],
         ],
 
+        'mavaser' => [
+            'driver' => 'sqlsrv',
+            'host' => '10.6.0.254',
+            'port' => '1433',
+            'database' => 'SELEV_BC',
+            'username' => 'bioweb',
+            'password' => 'bioweb',
+        ],
+
+
+
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
@@ -77,6 +88,8 @@ return [
             'search_path' => 'public',
             'sslmode' => 'prefer',
         ],
+
+
 
         'sqlsrv' => [
             'driver' => 'sqlsrv',
@@ -94,14 +107,7 @@ return [
         ],
 
 
-        'mavaser' => [
-            'driver' => 'sqlsrv',
-            'host' => '10.6.0.254',
-            'port' => '1433',
-            'database' => 'SELEV_BC',
-            'username' => 'bioweb',
-            'password' => 'bioweb',
-        ],
+
 
     ],
 
