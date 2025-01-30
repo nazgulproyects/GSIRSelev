@@ -5,11 +5,12 @@
             <!-- Logo -->
             <div class="flex items-center" style="color: white;">
                 <b>@yield('titulo_cabecera')</b>
+                
             </div>
 
             <!-- Botones a la derecha -->
             <div class="flex items-center ">
-
+                <span class="mr-2" style="color: white;">{{ explode(' ', auth()->user()->name)[0] }}</span>
                 @yield('botones_barra_superior')
 
                 

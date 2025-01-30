@@ -19,7 +19,8 @@ class GeneralController extends BaseController
 
   public function menu_principal()
   {
-
-    return view('selector_empresa');
+    
+    return view('GSIRSelev.principal');
+    //return view('selector_empresa');
   }
 }

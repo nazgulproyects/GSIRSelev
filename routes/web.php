@@ -33,21 +33,37 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::post('/gsir_selev/principal', [App\Http\Controllers\GSIRSelev\GsirController::class, 'principal'])->name('gsir_selev.principal');
     Route::get('/gsir_selev/principal_get', [App\Http\Controllers\GSIRSelev\GsirController::class, 'principal_get'])->name('gsir_selev.principal_get');
 
-    // RUTAS
-    Route::get('/gsir_selev/rutas', [App\Http\Controllers\GSIRSelev\GsirController::class, 'rutas'])->name('gsir_selev.rutas');
-    Route::get('/gsir_selev/ruta/{id}', [App\Http\Controllers\GSIRSelev\GsirController::class, 'ruta_info'])->name('gsir_selev.ruta_info');
-    Route::get('/gsir_selev/ruta/pto_recogida/{id}', [App\Http\Controllers\GSIRSelev\GsirController::class, 'ruta_pto_recogida_info'])->name('gsir_selev.ruta_pto_recogida_info');
+
     Route::get('/gsir_selev/pdf_albaran/{recogida_id}', [App\Http\Controllers\GSIRSelev\GsirController::class, 'pdf_albaran'])->name('gsir_selev.pdf_albaran');
 
-    // VEHICULOS
-    Route::get('/gsir_selev/vehiculos', [App\Http\Controllers\GSIRSelev\GsirController::class, 'vehiculos'])->name('gsir_selev.vehiculos');
+
 
     // PLANTA
     Route::get('/gsir_selev/planta', [App\Http\Controllers\GSIRSelev\GsirController::class, 'planta'])->name('gsir_selev.planta');
 
     // GASTOS
     Route::get('/gsir_selev/gastos', [App\Http\Controllers\GSIRSelev\GsirController::class, 'gastos'])->name('gsir_selev.gastos');
+
+    // ADMIN
+    Route::get('/gsir_selev/admin', [App\Http\Controllers\ADMIN\AdminController::class, 'index'])->name('gsir_selev.admin');
   });
+
+  //==============================
+  // RUTAS
+  //==============================
+  Route::get('/rutas', [App\Http\Controllers\RUTAS\RutasController::class, 'index'])->name('rutas.index');
+
+  Route::get('/ruta/pto_recogida/{ruta}', [App\Http\Controllers\RUTAS\RutasController::class, 'pto_recogida_info'])->where('ruta', '.*')->name('rutas.pto_recogida_info');
+  Route::get('/ruta/{ruta}', [App\Http\Controllers\RUTAS\RutasController::class, 'info'])->where('ruta', '.*')->name('rutas.info');
+  Route::post('/ruta/info_cliente', [App\Http\Controllers\RUTAS\RutasController::class, 'info_cliente'])->where('ruta', '.*')->name('rutas.info_cliente');
+
+
+
+  //==============================
+  // VEHICULOS
+  //==============================
+  Route::get('/vehiculos', [App\Http\Controllers\VEHICULOS\VehiculosController::class, 'index'])->name('vehiculos.index');
+  Route::post('/vehiculos/info_ajax', [App\Http\Controllers\VEHICULOS\VehiculosController::class, 'info_ajax'])->name('vehiculos.info_ajax');
 
 
   // CONTRATOS
@@ -92,13 +108,6 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
   Route::post('/recogidas/destroy', [App\Http\Controllers\RecogidasController::class, 'destroy'])->name('recogidas.destroy');
 
 
-  // VEHICULOS
-  Route::get('/vehiculos', [App\Http\Controllers\VehiculosController::class, 'index'])->name('vehiculos.index');
-  Route::post('/vehiculos/create', [App\Http\Controllers\VehiculosController::class, 'create'])->name('vehiculos.create');
-  Route::post('/vehiculos/destroy', [App\Http\Controllers\VehiculosController::class, 'destroy'])->name('vehiculos.destroy');
-  Route::get('/vehiculos/{id}', [App\Http\Controllers\VehiculosController::class, 'show'])->name('vehiculos.show');
-  Route::post('/vehiculos/update/{id}', [App\Http\Controllers\VehiculosController::class, 'update'])->name('vehiculos.update');
-
 
   // COSTES
   Route::get('/costes', [App\Http\Controllers\CostesController::class, 'index'])->name('costes.index');
@@ -122,26 +131,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
   Route::get('/puntos_recogida/{id}', [App\Http\Controllers\PuntosRecogidaController::class, 'show'])->name('puntos_recogida.show');
   Route::post('/puntos_recogida/update/{id}', [App\Http\Controllers\PuntosRecogidaController::class, 'update'])->name('puntos_recogida.update');
 
-  // RUTAS
-  Route::get('/rutas2', [App\Http\Controllers\RutasController::class, 'rutas2'])->name('rutas2.index');
-  Route::post('/rutas2/importar_excel', [App\Http\Controllers\RutasController::class, 'importarExcel'])->name('rutas2.create');
-  Route::get('/rutanew_info/{fecha}/{trabajador}', [App\Http\Controllers\RutasController::class, 'info_ruta'])->name('rutas2.info_ruta');
 
-  // RUTAS
-  Route::get('/rutas', [App\Http\Controllers\RutasController::class, 'index'])->name('rutas.index');
-  Route::post('/rutas/create', [App\Http\Controllers\RutasController::class, 'create'])->name('rutas.create');
-  Route::get('/rutas/{ruta}', [App\Http\Controllers\RutasController::class, 'show'])->name('rutas.show');
-  Route::post('/rutas/update/{ruta}', [App\Http\Controllers\RutasController::class, 'update'])->name('rutas.update');
-  Route::post('/rutas_destroy', [App\Http\Controllers\RutasController::class, 'destroy'])->name('rutas.destroy');
-
-  Route::post('/rutas/valor_orden/{ruta_id}', [App\Http\Controllers\RutasController::class, 'valor_orden'])->name('rutas.valor_orden');
-
-  Route::post('/rutas/asignar_punto_recogida/{ruta_id}', [App\Http\Controllers\RutasController::class, 'asignar_punto_recogida'])->name('rutas.asignar_punto_recogida');
-  Route::post('/rutas/coordenadas_pr', [App\Http\Controllers\RutasController::class, 'coordenadas_pr'])->name('rutas.coordenadas_pr');
-  Route::post('/rutas/rutas_pr_eliminar', [App\Http\Controllers\RutasController::class, 'rutas_pr_eliminar'])->name('rutas.rutas_pr_eliminar');
-
-  // PLANIFICACION RUTAS
-  Route::get('/planificacion_rutas', [App\Http\Controllers\PlanificacionRutasController::class, 'index'])->name('planificacion_rutas.index');
 
   // CALENDARIO
   Route::get('/calendario', [App\Http\Controllers\CalendarioController::class, 'index'])->name('calendario.index');

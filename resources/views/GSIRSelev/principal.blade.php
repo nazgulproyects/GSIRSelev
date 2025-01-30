@@ -19,9 +19,9 @@
 
 
   <div class="row d-flex justify-content-center mt-4">
-    @if(session('empresa') == 'SELEV')
+    @if(auth()->user()->empresa == 'SELEV')
     <img src="{{ asset('images/logo_selev.png') }}" alt="Logo" style="max-width: 70%;">
-    @elseif(session('empresa') == 'REMITTEL')
+    @elseif(auth()->user()->empresa == 'REMITTEL')
     <img src="{{ asset('images/logo_remittel.png') }}" alt="Logo" style="max-width: 70%;">
     @else
     <img src="{{ asset('images/logo_selev.png') }}" alt="Logo" style="max-width: 70%;">
@@ -31,7 +31,7 @@
 
   <div style="display: flex; justify-content: center;">
     <div style="margin-top: 10%">
-      <a href="/gsir_selev/rutas" class="btn" style="background-color: #79B329; width: 300px; height: 60px; border-radius: 10px; color: white; display: flex; align-items: center; justify-content: flex-start; margin: 0; padding-left: 10px;">
+      <a href="/rutas" class="btn" style="background-color: #79B329; width: 300px; height: 60px; border-radius: 10px; color: white; display: flex; align-items: center; justify-content: flex-start; margin: 0; padding-left: 10px;">
         <div style="flex-shrink: 0;">
           <i class="fa-solid fa-route fa-xl"></i>
         </div>
@@ -39,7 +39,7 @@
           <b>RUTAS</b>
         </div>
       </a>
-      <a href="/gsir_selev/vehiculos" class="btn mt-4" style="background-color: #ffaa37; width: 300px; height: 60px; border-radius: 10px; color: white; display: flex; align-items: center; justify-content: flex-start; margin: 0; padding-left: 10px;">
+      <a href="/vehiculos" class="btn mt-4" style="background-color: #ffaa37; width: 300px; height: 60px; border-radius: 10px; color: white; display: flex; align-items: center; justify-content: flex-start; margin: 0; padding-left: 10px;">
         <div style="flex-shrink: 0;">
           <i class="fa-solid fa-truck fa-xl"></i>
         </div>
@@ -61,6 +61,14 @@
         </div>
         <div style="flex-grow: 1; text-align: center;">
           <b>GASOLINA / DIETAS</b>
+        </div>
+      </a>
+      <a href="/gsir_selev/admin" class="btn mt-4" style="background-color: #a771ff; width: 300px; height: 60px; border-radius: 10px; color: white; display: flex; align-items: center; justify-content: flex-start; margin: 0; padding-left: 10px;">
+        <div style="flex-shrink: 0;">
+          <i class="fa-solid fa-gear fa-xl"></i>
+        </div>
+        <div style="flex-grow: 1; text-align: center;">
+          <b>ADMIN</b>
         </div>
       </a>
     </div>

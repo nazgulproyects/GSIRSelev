@@ -1,10 +1,10 @@
 @section('botones_barra_superior')
-<a href="/gsir_selev/ruta/123" style="background-color: white;" class="inline-flex items-center justify-center p-3 rounded-md text-gray-600 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
-  <i class="fa-solid fa-chevron-left fa-xl ml-1 mr-1"></i>
+<a href="/ruta/{{ urlencode($punto_recogida_nav->{'No_ ruta'}) }}" style="background-color: white;" class="inline-flex items-center justify-center p-3 rounded-md text-gray-600 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
+    <i class="fa-solid fa-chevron-left fa-xl ml-1 mr-1"></i>
 </a>
 
 <button style="background-color: white;" class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 ml-2" onclick="location.reload()">
-  <i class="fa-solid fa-rotate"></i>
+    <i class="fa-solid fa-rotate"></i>
 </button>
 @endsection
 
@@ -69,8 +69,8 @@
         }
 
         .map-icon {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 26px;
             margin-left: 10px;
         }
 
@@ -183,7 +183,6 @@
         }
     </style>
 
-
     @section('titulo_cabecera', 'Recogida')
 
 
@@ -195,7 +194,7 @@
 
 
     <div class="button-container">
-        <b style="min-width: 300px; background-color: #c6c6c6; padding-top: 4px; padding-left: 10px;">RDR22/000766: CONSUM, S. COOP. V. (BETXI-Vilavella)</b>
+        <b style="min-width: 300px; background-color: #c6c6c6; padding-top: 4px; padding-left: 10px;">{{$punto_recogida_nav->{'No_ ruta'} }}: {{ $punto_recogida_nav->Nombre }}</b>
         <button class="button" onclick="$('#modalFinalizarRecogida').modal('show');" style="background-color: #ffc717;"><i class="fa-solid fa-check fa-xl"></i></button>
     </div>
 
@@ -205,16 +204,16 @@
         <div class="list-container" style="width: 100%;">
             <!-- Contenido existente de la lista... -->
             <!-- <div class="list-item">
-      <i class="fa-regular fa-note-sticky fa-xl"></i>
-      <span>Núm. Aviso</span>
-      <b>1067217</b>
-    </div> -->
+            <i class="fa-regular fa-note-sticky fa-xl"></i>
+            <span>Núm. Aviso</span>
+            <b>1067217</b>
+            </div> -->
 
             <div class="list-item">
                 <div style="min-width: 40px;">
                     <i class="fa-solid fa-file-pdf fa-xl"></i>
                 </div>
-                <button type="button" class="btn" data-toggle="modal" data-target="#documentosModal" style="padding: 0px; width: 100% !important;">
+                <button type="button" class="btn" onclick="modalDocumentos();" style="padding: 0px; width: 100% !important;">
                     <div class="contact-card"><b style="color: #666666;">DOCUMENTOS</b></div>
                 </button>
             </div>
@@ -223,8 +222,8 @@
                 <div style="min-width: 40px;">
                     <i class="fa-solid fa-user fa-xl"></i>
                 </div>
-                <button type="button" class="btn" data-toggle="modal" data-target="#clienteModal" style="padding: 0px; width: 100% !important;">
-                    <div class="contact-card"><b style="color: #666666;">CONSUM, S COOP. V. (BETXI-Vilavella)</b></div>
+                <button type="button" class="btn" onclick="modalCliente('{{ $punto_recogida_nav->{'No_ ruta'} }}', '{{$punto_recogida_nav->{'No_ linea'} }}');" style="padding: 0px; width: 100% !important;">
+                    <div class="contact-card"><b style="color: #666666;">{{ $punto_recogida_nav->Nombre }}</b></div>
                 </button>
             </div>
 
@@ -232,10 +231,11 @@
                 <div style="min-width: 40px;">
                     <i class="fa-solid fa-location-dot fa-xl"></i>
                 </div>
-                <a href="https://maps.app.goo.gl/Udwj1Jm5LvrXGM1D7" target="_blank" class="map-link" style="width: 100% !important;">
-                    C/ Vilavella, S/n
+                <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($punto_recogida_nav->{'Direccion 1'}) }}" target="_blank" class="map-link" style="width: 100% !important;">
+                    {{ $punto_recogida_nav->{'Direccion 1'} }}
                     <img src="{{ asset('images/google_icon.png') }}" alt="Google Maps" class="map-icon">
                 </a>
+
             </div>
 
             <div class="list-item">
@@ -243,9 +243,9 @@
                     <i class="fa-regular fa-address-card fa-xl"></i>
                 </div>
                 <div class="contact-card" style="width: 100% !important;">
-                    <span style="font-size: 13px;"><i class="fa-regular fa-user"></i>Juan García Pérez</span>
-                    <a href="tel:+123456789" class="contact-link" style="font-size: 13px;"><i class="fa-solid fa-phone"></i>+00 123 45 67 89</a>
-                    <span style="font-size: 13px;"><i class="fa-solid fa-envelope"></i>juangarpe@gmail.com</span>
+                    <span style="font-size: 13px;"><i class="fa-regular fa-user"></i></span>
+                    <a href="tel:+123456789" class="contact-link" style="font-size: 13px;"><i class="fa-solid fa-phone"></i>{{ $punto_recogida_nav->{'No_ telefono'} }}</a>
+                    <span style="font-size: 13px;"><i class="fa-solid fa-envelope"></i></span>
                 </div>
             </div>
 
@@ -253,14 +253,14 @@
                 <div style="min-width: 40px;">
                     <i class="fa-regular fa-message fa-xl"></i>
                 </div>
-                <span>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facilis, excepturi molestiae</span>
+                <span>{{$punto_recogida_nav->{'Observaciones'} }}</span>
             </div>
 
             <div class="list-item divider">
                 <div style="min-width: 40px;">
                     <i class="fa-solid fa-triangle-exclamation fa-xl"></i>
                 </div>
-                <span>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facilis, excepturi molestiae</span>
+                <span> </span>
                 <button type="button" class="btn ml-2" style="background-color: #dcdcdc;"><i class="fa-solid fa-camera fa-xl" style="color: #5cbfff; margin-right: 0px;"></i></button>
 
             </div>
@@ -278,18 +278,18 @@
             </div>
         </div>
 
-        @foreach($productos as $prod)
+        @foreach($productos_nav as $prod)
         <div onclick="editarProducto();">
             <div class="button-container mb-1">
                 <b style="width: 100% !important; background-color: #e5e5e5; padding-top: 4px; padding-left: 10px;">
                     <div>
                         <span style="color: black; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block; max-width: 100%; font-size: 13px;">
-                            <b class="mr-1">Producto:</b><span style="color: #666666;">{{$prod['desc_prod']}}</span>
+                            <b class="mr-1">Producto:</b><span style="color: #666666;">{{$prod->{'Descripcion producto'} }}</span>
                         </span>
                     </div>
                     <div>
                         <span style="color: black; font-size: 13px;">
-                            <b class="mr-1">Cantidad:</b><span style="color: #666666;">{{$prod['peso']}} kg</span>
+                            <b class="mr-1">Cantidad:</b><span style="color: #666666;"></span>
                         </span>
                     </div>
                 </b>
@@ -365,50 +365,48 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="clienteModalLabel"><b>CLIENTE INFO</b></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" style="padding-bottom: 12px;" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <div class="modal-body">
                     <div class="list-item">
                         <i class="fa-regular fa-building fa-xl"></i>
                         <span>Localidad</span>
-                        <b>BETXI</b>
+                        <b id="cli_localidad"></b>
                     </div>
                     <div class="list-item">
                         <i class="fa-regular fa-map fa-xl"></i>
                         <span>Provincia</span>
-                        <b>Castellon</b>
+                        <b id="cli_provincia"></b>
                     </div>
                     <div class="list-item">
                         <i class="fa-solid fa-earth-americas fa-xl"></i>
                         <span>Dirección</span>
-                        <b>C/ Vilavella, S/n</b>
+                        <b id="cli_direccion"></b>
                     </div>
                     <div class="list-item">
                         <i class="fa-solid fa-layer-group fa-xl"></i>
                         <span>Grupo</span>
-                        <b>G1</b>
+                        <b id="cli_grupo"></b>
                     </div>
                     <div class="list-item">
                         <i class="fa-solid fa-shop fa-xl"></i>
                         <span>Tienda</span>
-                        <b>T-0401</b>
+                        <b id="cli_tienda"></b>
                     </div>
                     <div class="list-item">
                         <i class="fa-solid fa-sack-dollar fa-xl"></i>
                         <span>Tipo pago</span>
-                        <b>Transferencia</b>
+                        <b id="cli_tipo_pago"></b>
                     </div>
                     <div class="list-item">
                         <i class="fa-solid fa-hand-holding-dollar fa-xl"></i>
                         <span>Remuneración</span>
-                        <b>100 €</b>
+                        <b id="cli_remuneracion"></b>
                     </div>
                     <div class="list-item">
                         <i class="fa-solid fa-square-plus fa-xl"></i>
                         <span>Productos Adicionales</span>
-                        <b>SI</b>
+                        <b id="cli_prod_adicionales"></b>
                     </div>
                 </div>
             </div>
@@ -889,6 +887,38 @@
 
         function editarProductoAdicional() {
             $('#editarProductoAdicionalModal').modal('show');
+        }
+
+        function modalDocumentos() {
+            $('#documentosModal').modal('show');
+        }
+
+        function modalCliente(cod_ruta, no_linea) {
+
+            $.ajax({
+                url: "/ruta/info_cliente",
+                type: "POST",
+                dataType: 'json',
+                async: false,
+                data: {
+                    "_token": $("meta[name='csrf-token']").attr("content"),
+                    cod_ruta: cod_ruta,
+                    no_linea: no_linea
+                },
+                success: function(data) {
+                    $('#cli_localidad').text(data['Poblacion']);
+                    $('#cli_provincia').text(data['Provincia']);
+                    $('#cli_direccion').text(data['Direccion 1']);
+                    $('#cli_grupo').text(data['Grupo']);
+                    $('#cli_tienda').text(data['Nº Tienda']);
+                    $('#cli_tipo_pago').text(data['Forma de pago']);
+                    $('#cli_remuneracion').text('');
+                    data['Productos adicionales'] == 0 ? $('#cli_prod_adicionales').text('NO') : $('#cli_prod_adicionales').text('SI');
+                }
+            });
+
+
+            $('#clienteModal').modal('show');
         }
     </script>
 

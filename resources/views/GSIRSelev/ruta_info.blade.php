@@ -1,5 +1,5 @@
 @section('botones_barra_superior')
-<a href="/gsir_selev/rutas" style="background-color: white;" class="inline-flex items-center justify-center p-3 rounded-md text-gray-600 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
+<a href="/rutas" style="background-color: white;" class="inline-flex items-center justify-center p-3 rounded-md text-gray-600 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
   <i class="fa-solid fa-chevron-left fa-xl ml-1 mr-1"></i>
 </a>
 
@@ -10,15 +10,16 @@
 
 
 <x-app-layout>
-
-  @section('titulo_cabecera', 'RDR22/000766')
+  @section('titulo_cabecera')
+  {{ $cod_ruta }}
+  @endsection
 
   <div style="background-color: #c6c6c6; width: 100%; text-align: center;">
-    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#vehiculoModal" style="padding: 4px; width: 100%; height: 100%; padding-top: 15px; padding-bottom: 15px;">
+    <button type="button" class="btn btn-warning" onclick="asociarVehiculo();" style="padding: 4px; width: 100%; height: 100%; padding-top: 15px; padding-bottom: 15px;">
       <i class="fa-solid fa-truck-droplet fa-xl"></i> <b>PENDIENTE ASOCIAR VEHÍCULO</b>
     </button>
   </div>
-
+  PUNTOS DE RECOGIDA
 
   <div style="display: flex; align-items: flex-start; position: relative; margin-top: 20px;">
 
@@ -28,7 +29,9 @@
         <div style="display: flex; align-items: center; margin-bottom: 15px;">
 
           <!-- Punto con ícono de estado -->
-          <div style="height: 20px; width: 20px; z-index: 4; border-radius: 50%; background-color: {{ $punto_recogida['estado'] == 'PENDIENTE' ? 'red' : ($punto_recogida['estado'] == 'EN PROCESO' ? 'orange' : '#79B329') }}; margin-right: 10px; position: relative; display: flex; align-items: center; justify-content: center;">
+          {{-- <div style="height: 20px; width: 20px; z-index: 4; border-radius: 50%; background-color: {{ $punto_recogida['estado'] == 'PENDIENTE' ? 'red' : ($punto_recogida['estado'] == 'EN PROCESO' ? 'orange' : '#79B329') }}; margin-right: 10px; position: relative; display: flex; align-items: center; justify-content: center;"> --}}
+          <div style="height: 20px; width: 20px; z-index: 4; border-radius: 50%; background-color: #79B329; margin-right: 10px; position: relative; display: flex; align-items: center; justify-content: center;">
+            {{--
             @if($punto_recogida['estado'] == 'PENDIENTE')
             <i class="fa-solid fa-xmark" style="color: white; font-size: 12px; z-index: 5;"></i>
             @elseif($punto_recogida['estado'] == 'COMPLETADO')
@@ -36,61 +39,52 @@
             @elseif($punto_recogida['estado'] == 'EN PROCESO')
             <i class="fa-solid fa-spinner fa-spin" style="color: white; font-size: 12px; z-index: 5;"></i>
             @endif
+            --}}
+            <i class="fa-solid fa-xmark" style="color: white; font-size: 12px; z-index: 5;"></i>
             <!-- Línea vertical -->
-            <div style="position: absolute; left: 50%; top: 10px; width: 2px; height: calc(100% - 10px); background-color: {{ $punto_recogida['estado'] == 'PENDIENTE' ? 'red' : ($punto_recogida['estado'] == 'EN PROCESO' ? 'orange' : '#79B329') }};"></div>
-          </div>
+            {{-- <div style="position: absolute; left: 50%; top: 10px; width: 2px; height: calc(100% - 10px); background-color: {{ $punto_recogida['estado'] == 'PENDIENTE' ? 'red' : ($punto_recogida['estado'] == 'EN PROCESO' ? 'orange' : '#79B329') }};"></div> --}}
+          <div style="position: absolute; left: 50%; top: 10px; width: 2px; height: calc(100% - 10px);"></div>
 
-          <!-- Card como enlace -->
-          <a href="/gsir_selev/ruta/pto_recogida/{{ $punto_recogida['id'] }}" style="text-decoration: none;">
-            <div class="card" style="width: 300px; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-              <!-- Encabezado con color según el estado -->
-              <div class="card-header" style="background-color: {{ $punto_recogida['estado'] == 'PENDIENTE' ? 'red' : ($punto_recogida['estado'] == 'EN PROCESO' ? 'orange' : '#79B329') }}; color: white; display: flex; align-items: center; justify-content: space-between;">
-                <div style="flex-shrink: 0; margin-right: 10px;">
-                  <i class="fa-solid fa-location-dot fa-lg"></i>
-                </div>
-                <div style="flex-grow: 1; text-align: center;">
-                  <b>{{$punto_recogida['nombre']}}</b>
-                </div>
-                <!-- Texto con fondo -->
-                <div style="color: white; border-radius: 5px; padding: 5px 10px; margin-left: 10px;">
-                  <b>{{$punto_recogida['estado']}}</b>
-                </div>
+        </div>
+
+        <!-- Card como enlace -->
+        <a href="/ruta/pto_recogida/{{ urlencode($ruta_nav->{'No_ ruta diaria'}) }}" style="text-decoration: none;">
+          <div class="card" style="width: 300px; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+            <!-- Encabezado con color según el estado -->
+            {{-- <div class="card-header" style="background-color: {{ $punto_recogida['estado'] == 'PENDIENTE' ? 'red' : ($punto_recogida['estado'] == 'EN PROCESO' ? 'orange' : '#79B329') }}; color: white; display: flex; align-items: center; justify-content: space-between;"> --}}
+            <div class="card-header" style="background-color: #79B329; color: white; display: flex; align-items: center; justify-content: space-between;">
+
+              <div style="flex-shrink: 0; margin-right: 10px;">
+                <i class="fa-solid fa-location-dot fa-lg"></i>
               </div>
-              <!-- Cuerpo blanco con la dirección -->
-              <div class="card-body" style="background-color: white; padding: 15px;">
-                <p style="margin: 0; color: #333;">
-                  {{$punto_recogida['direccion']}}
-                </p>
+              <div style="flex-grow: 1; text-align: center;">
+                <b>{{ $punto_recogida->Nombre }}</b>
+              </div>
+              <!-- Texto con fondo -->
+              <div style="color: white; border-radius: 5px; padding: 5px 10px; margin-left: 10px;">
+                {{-- <b>{{$punto_recogida['estado']}}</b> --}}
               </div>
             </div>
-          </a>
-        </div>
+            <!-- Cuerpo blanco con la dirección -->
+            <div class="card-body" style="background-color: white; padding: 15px;">
+              <p style="margin: 0; color: #333;">
+                {{ $punto_recogida->{'Direccion 1'} }}
+              </p>
+            </div>
+          </div>
+        </a>
       </div>
-      @endforeach
-      <div class="row d-flex justify-content-center">
-        <button class="btn btn-primary" onclick="finalizarRuta();"><b>FINALIZAR RUTA</b></button>
-      </div>
-
-      <!-- Línea que une todos los puntos -->
-      <!-- <div style="position: absolute; left: 38px; top: 0; width: 4px; height: calc(100% - 20px); background-color: #0093ff;"></div> -->
     </div>
+    @endforeach
+    <div class="row d-flex justify-content-center">
+      <button class="btn btn-primary" onclick="finalizarRuta();"><b>FINALIZAR RUTA</b></button>
+    </div>
+
+    <!-- Línea que une todos los puntos -->
+    <!-- <div style="position: absolute; left: 38px; top: 0; width: 4px; height: calc(100% - 20px); background-color: #0093ff;"></div> -->
+  </div>
   </div>
 
-
-  <script>
-    function finalizarRuta() {
-      var fechaActual = new Date();
-      var year = fechaActual.getFullYear();
-      var month = ('0' + (fechaActual.getMonth() + 1)).slice(-2);
-      var day = ('0' + fechaActual.getDate()).slice(-2);
-      var hours = ('0' + fechaActual.getHours()).slice(-2);
-      var minutes = ('0' + fechaActual.getMinutes()).slice(-2);
-      var fecha = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
-      document.getElementById('fecha_fin').value = fecha;
-
-      $('#finalizarDescarga').modal('show');
-    }
-  </script>
 
   <!-- Modal -->
   <div class="modal fade" id="vehiculoModal" tabindex="-1" role="dialog" aria-labelledby="vehiculoModalLabel" aria-hidden="true">
@@ -140,7 +134,7 @@
 
             <!-- Botón para enviar -->
             <div class="row d-flex justify-content-center">
-              <button type="submit" class="btn btn-primary">Asociar Vehículo</button>
+              <button type="submit" class="btn">Asociar Vehículo</button>
             </div>
 
           </form>
@@ -191,4 +185,24 @@
       </div>
     </div>
   </div>
+
+  <script>
+    function asociarVehiculo() {
+      $('#vehiculoModal').modal('show');
+    }
+
+    function finalizarRuta() {
+      var fechaActual = new Date();
+      var year = fechaActual.getFullYear();
+      var month = ('0' + (fechaActual.getMonth() + 1)).slice(-2);
+      var day = ('0' + fechaActual.getDate()).slice(-2);
+      var hours = ('0' + fechaActual.getHours()).slice(-2);
+      var minutes = ('0' + fechaActual.getMinutes()).slice(-2);
+      var fecha = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
+      document.getElementById('fecha_fin').value = fecha;
+
+      $('#finalizarDescarga').modal('show');
+    }
+  </script>
+
 </x-app-layout>

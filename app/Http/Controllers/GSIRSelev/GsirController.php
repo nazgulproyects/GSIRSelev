@@ -5,6 +5,8 @@ namespace App\Http\Controllers\GSIRSelev;
 use App\Http\Controllers\Controller;
 use App\Models\ImasD\imasd_cocina;
 use App\Models\ImasD\imasd_recetas;
+use App\Models\User;
+use App\Services\GeneralService;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,6 +21,7 @@ class GsirController extends Controller
 
   public function empresa(Request $request)
   {
+   
     return view('GSIRSelev.empresa');
   }
 
@@ -27,11 +30,15 @@ class GsirController extends Controller
     return view('selector_empresa');
   }
 
-  public function principal(Request $request)
+  public function principal(Request $request, GeneralService $service)
   {
-    
-    $datos = DB::connection('mavaser')->table('dbo.MAVASER, S_L_$Sales Comment Line')->get();
-    dd($datos);
+   
+    $codigo_cond = $service->codigoConductor();
+   
+    $usuario = User::find(auth()->user()->id);
+    $usuario->cod_conductor = $codigo_cond;
+    $usuario->save();
+
 
     $empresa = $request->empresa;
     session(['empresa' => $empresa]);
@@ -44,43 +51,7 @@ class GsirController extends Controller
     return view('GSIRSelev.principal');
   }
 
-  public function rutas()
-  {
 
-    $rutas = [
-      [
-        'id' => 1,
-        'nombre' => 'RDR22/000766',
-        'desc' => 'CONSUM, S. COOP. V. (BETXI-Vilavella)',
-        'direccion' => 'Direccion entrega 1',
-        'estado' => 'COMPLETADO',
-
-      ], [
-        'id' => 2,
-        'nombre' => 'RDR22/000767',
-        'desc' => 'CONSUM, S. COOP. V. (BETXI-Vilavella)',
-        'direccion' => 'Direccion entrega 2',
-        'estado' => 'COMPLETADO'
-
-      ], [
-        'id' => 3,
-        'nombre' => 'RDR22/000768',
-        'desc' => 'CONSUM, S. COOP. V. (BETXI-Vilavella)',
-        'direccion' => 'Direccion entrega 3',
-        'estado' => 'PENDIENTE DESCARGA'
-
-      ], [
-        'id' => 4,
-        'nombre' => 'RDR22/000769',
-        'desc' => 'CONSUM, S. COOP. V. (BETXI-Vilavella)',
-        'direccion' => 'Direccion entrega 4',
-        'estado' => 'PENDIENTE'
-
-      ]
-    ];
-
-    return view('GSIRSelev.rutas')->with(compact('rutas'));
-  }
 
   public function ruta_info($id)
   {
@@ -186,29 +157,7 @@ class GsirController extends Controller
     return view('GSIRSelev.gastos')->with(compact('gastos'));
   }
 
-  public function vehiculos()
-  {
 
-    $vehiculos = [
-      [
-        'id' => 1,
-        'matricula' => '1234AAA'
-      ], [
-        'id' => 2,
-        'matricula' => '4125HRD',
-      ],  [
-        'id' => 3,
-        'matricula' => '5324JYT',
-
-      ], [
-        'id' => 4,
-        'matricula' => '1424HJT',
-      ]
-
-    ];
-
-    return view('GSIRSelev.vehiculos')->with(compact('vehiculos'));
-  }
 
   public function pdf_albaran($id)
   {

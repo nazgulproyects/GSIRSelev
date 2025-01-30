@@ -73,7 +73,7 @@
 
 
   <!-- Tabla de Todos los Gastos -->
-  <table id="todos-gastos" class="display table table-striped table-bordered text-center" style="width:100%;">
+  <table id="todos-gastos" class="display table table-striped table-bordered text-center mt-1" style="width:100%;">
     <thead>
       <tr>
         <th>Matrícula</th>
@@ -81,12 +81,12 @@
     </thead>
     <tbody>
       @foreach($vehiculos as $vehiculo)
-      <tr onclick="showModal('{{ $vehiculo['matricula'] }}', 'infuuu')">
+      <tr onclick="showModal('{{ $vehiculo->{'Cod_ vehiculo'} }}', 'infuuu')">
         <td>
 
           <div class="d-flex justify-content-center position-relative">
-            <b style="font-size: 20px;">{{$vehiculo['matricula']}}</b>
-            @if($vehiculo['matricula'] == '4125HRD')
+            <b style="font-size: 20px;">{{$vehiculo->{'Cod_ vehiculo'} }}</b>
+            @if($vehiculo->{'Cod_ vehiculo'} == '4125HRD')
             <i class="fa-solid fa-circle-exclamation fa-beat mr-4 fa-lg" style="margin-top: 14px !important; position: absolute; right: 0; color: #ff4747;"></i>
             @endif
           </div>
@@ -116,7 +116,7 @@
           </div>
           <div class="list-item">
             <span>ITV:</span>
-            <b>24/10/2025</b>
+            <b id="fecha_itv"></b>
             <a href="#" class="btn btn-sm ml-2" style="background-color: #dcdcdc;"><i class="fa-regular fa-file-pdf fa-xl" style="color: #fc2b2b; margin-right: 0px;"></i></a>
           </div>
           <div class="list-item">
@@ -178,7 +178,26 @@
     });
 
     function showModal(matricula, info) {
-      document.getElementById('modal-matricula').innerText = matricula;
+
+      $.ajax({
+        url: "/vehiculos/info_ajax",
+        type: "POST",
+        dataType: 'json',
+        async: false,
+        data: {
+          "_token": $("meta[name='csrf-token']").attr("content"),
+          matricula: matricula
+        },
+        success: function(data) {
+          document.getElementById('modal-matricula').innerText = data.matricula;
+          document.getElementById('fecha_itv').innerText = data.itv;
+         console.log(data)
+
+        }
+      })
+
+
+     
       var modal = new bootstrap.Modal(document.getElementById('infoModal'));
       modal.show();
     }

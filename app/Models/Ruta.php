@@ -12,6 +12,20 @@ class Ruta extends Model
     //protected $connection = '';
     protected $table = 'rutas';
 
+    /**
+     * Los atributos que se pueden asignar de manera masiva.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'codigo',
+        'estado'
+    ];
+
+
+
+
+    /*
     public function vehiculo()
     {
         return $this->belongsTo('App\Models\Vehiculos', 'vehiculo_id');
@@ -39,4 +53,5 @@ class Ruta extends Model
             return 'SIN CONDUCTOR';
         }
     }
+        */
 }
