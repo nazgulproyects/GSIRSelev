@@ -73,11 +73,6 @@ class RutasController extends BaseController
      */
     public function info($cod_ruta, GeneralService $service)
     {
-        // Si la ruta no existe, la crea 
-        $ruta_web = Ruta::firstOrCreate(
-            ['codigo' => $cod_ruta], // Condiciones de búsqueda
-            ['codigo' => $cod_ruta, 'estado' => 'PENDIENTE'] // Valores para crear si no existe
-        );
 
         $codigo_cond = $service->codigoConductor();
 
@@ -109,36 +104,43 @@ class RutasController extends BaseController
         } else if (auth()->user()->empresa == 'REMITTEL') {
             $codigo_cond = 'CEXT-22226';
             $ruta_nav = DB::connection('mavaser')->select("
-            SELECT [No_ ruta diaria]
-                ,[Descripcion]
-                ,[Fecha emision ruta]
-                ,[Kms_ ruta]
-                ,[Cod_ conductor]
-                ,[Nombre conductor]
-                ,[Cod_ empresa transporte]
-                ,[Nombre empresa transporte]
-                ,[Cod_ vehiculo]
-                ,[Cod_ Remolque 1]
-                ,[Cod_ Remolque 2]
-                ,[Bloquear]
-                ,[Tolva Entrada]    
-                ,[Ruta secundaria]
-                ,[Ruta principal]
-                ,[Ruta de Gestion Externa]
-            FROM [SELEV_BC].[dbo].[SEBOS LEVANTINOS, S_L_$Ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
-            WHERE [Cod_ conductor]='$codigo_cond' and [No_ ruta diaria]='$cod_ruta'
-        ");
+                SELECT [No_ ruta diaria]
+                    ,[Descripcion]
+                    ,[Fecha emision ruta]
+                    ,[Kms_ ruta]
+                    ,[Cod_ conductor]
+                    ,[Nombre conductor]
+                    ,[Cod_ empresa transporte]
+                    ,[Nombre empresa transporte]
+                    ,[Cod_ vehiculo]
+                    ,[Cod_ Remolque 1]
+                    ,[Cod_ Remolque 2]
+                    ,[Bloquear]
+                    ,[Tolva Entrada]    
+                    ,[Ruta secundaria]
+                    ,[Ruta principal]
+                    ,[Ruta de Gestion Externa]
+                FROM [SELEV_BC].[dbo].[SEBOS LEVANTINOS, S_L_$Ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
+                WHERE [Cod_ conductor]='$codigo_cond' and [No_ ruta diaria]='$cod_ruta'
+            ");
             $ruta_nav = !empty($ruta_nav) ? $ruta_nav[0] : null;
         }
 
+        // Si la ruta no existe, la crea 
+        $ruta_web = Ruta::firstOrCreate(
+            ['codigo' => $cod_ruta], // Condiciones de búsqueda
+            [
+                'codigo' => $cod_ruta,  // Valores para crear si no existe
+                'estado' => 'PENDIENTE',
+                'cod_vehiculo' => $ruta_nav->{'Cod_ vehiculo'},
+                'cod_remolque1' => $ruta_nav->{'Cod_ Remolque 1'},
+                'cod_remolque2' => $ruta_nav->{'Cod_ Remolque 2'}
+            ]
+        );
 
-        $vehiculos = [
-            '0000AAA',
-            '1111BBB',
-            '2222CCC',
-            '3333DDD',
 
-        ];
+        // Esto viene de navision? 
+        $vehiculos_nav = $service->listaVehiculos();
 
 
         $Lin_ = '$Lin_';
@@ -176,7 +178,7 @@ class RutasController extends BaseController
             WHERE [No_ ruta]='$cod_ruta'
         ");
 
-        return view('GSIRSelev.ruta_info')->with(compact('cod_ruta', 'ruta_web', 'ruta_nav', 'puntos_recogida', 'vehiculos', 'codigo_cond'));
+        return view('GSIRSelev.ruta_info')->with(compact('cod_ruta', 'ruta_web', 'ruta_nav', 'puntos_recogida', 'vehiculos_nav', 'codigo_cond'));
     }
 
 
@@ -248,6 +250,8 @@ class RutasController extends BaseController
             FROM [SELEV_BC].[dbo].[SEBOS LEVANTINOS, S_L_$Lin_ ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
             WHERE [No_ ruta]='$cod_ruta'
         ");
+
+
         $punto_recogida_nav = !empty($punto_recogida_nav) ? $punto_recogida_nav[0] : null;
 
         $ruta_web = Ruta::where('codigo', $cod_ruta)->first();
@@ -287,7 +291,7 @@ class RutasController extends BaseController
             FROM [SELEV_BC].[dbo].[SEBOS LEVANTINOS, S_L_$Lin_ ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
             WHERE [No_ ruta]='$cod_ruta'
         ");
-
+       
         //dd($pto_recogida);
         // !REVISAR PORQUE CREO QUE ESTO ES LA LISTA DE PRODUCTOS Y AL FINAL LA INFO DEL PUNTO ESTA EN TODAS EL MISMO
         /* $productos = [

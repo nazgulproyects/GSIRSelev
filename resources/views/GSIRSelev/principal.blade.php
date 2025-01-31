@@ -63,14 +63,6 @@
           <b>GASOLINA / DIETAS</b>
         </div>
       </a>
-      <a href="/gsir_selev/admin" class="btn mt-4" style="background-color: #a771ff; width: 300px; height: 60px; border-radius: 10px; color: white; display: flex; align-items: center; justify-content: flex-start; margin: 0; padding-left: 10px;">
-        <div style="flex-shrink: 0;">
-          <i class="fa-solid fa-gear fa-xl"></i>
-        </div>
-        <div style="flex-grow: 1; text-align: center;">
-          <b>ADMIN</b>
-        </div>
-      </a>
     </div>
   </div>
 

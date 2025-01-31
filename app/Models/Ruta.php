@@ -19,7 +19,10 @@ class Ruta extends Model
      */
     protected $fillable = [
         'codigo',
-        'estado'
+        'estado',
+        'cod_vehiculo',
+        'cod_remolque1',
+        'cod_remolque2'
     ];
 
 

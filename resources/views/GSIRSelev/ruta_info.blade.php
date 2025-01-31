@@ -15,11 +15,14 @@
   @endsection
 
   <div style="background-color: #c6c6c6; width: 100%; text-align: center;">
-    <button type="button" class="btn btn-warning" onclick="asociarVehiculo();" style="padding: 4px; width: 100%; height: 100%; padding-top: 15px; padding-bottom: 15px;">
+    <button type="button" onclick="asociarVehiculo();" style="padding: 4px; width: 100%; height: 100%; padding-top: 15px; padding-bottom: 15px; background-color: #ffc025">
       <i class="fa-solid fa-truck-droplet fa-xl"></i> <b>PENDIENTE ASOCIAR VEHÍCULO</b>
     </button>
   </div>
-  PUNTOS DE RECOGIDA
+
+  <div class="row text-center" style="background-color: #79B329;">
+    <span style="color: white;">PUNTOS DE RECOGIDA</span>
+  </div>
 
   <div style="display: flex; align-items: flex-start; position: relative; margin-top: 20px;">
 
@@ -86,55 +89,54 @@
   </div>
 
 
-  <!-- Modal -->
+  <!-- Modal asociar vehiculo -->
   <div class="modal fade" id="vehiculoModal" tabindex="-1" role="dialog" aria-labelledby="vehiculoModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="vehiculoModalLabel"><b>VEHÍCULO ASOCIADO</b></h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+          <button type="button" class="btn-close" style="padding-bottom: 12px;" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+
         </div>
         <div class="modal-body">
           <form action="#" method="POST">
             @csrf
-            <div class="form-group">
+            <div class="form-group mb-3">
               <label>Vehículo</label>
-              <select name="codigo_ubicacion" class="form-control select2" style="width: 100%;">
-                <option value="" disabled selected>Seleccionar vehículo</option>
-                @foreach($vehiculos as $vehiculo)
-                <option value="{{$vehiculo}}">{{$vehiculo}}</option>
+              <select name="codigo_vehiculo" id="codigo_vehiculo" class="form-control select2" style="width: 100%;">
+                <option value="{{ $ruta_web->cod_vehiculo }}" selected>{{ $ruta_web->cod_vehiculo }}</option>
+                @foreach($vehiculos_nav as $vehiculo)
+                <option value="{{$vehiculo->{'Cod_ vehiculo'} }}">{{$vehiculo->{'Cod_ vehiculo'} }}</option>
                 @endforeach
               </select>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
               <label>Primer remolque</label>
               <select name="codigo_ubicacion" class="form-control select2" style="width: 100%;">
                 <option value="" disabled selected>Seleccionar primer remolque</option>
-                @foreach($vehiculos as $vehiculo)
-                <option value="{{$vehiculo}}">{{$vehiculo}}</option>
+                @foreach($vehiculos_nav as $vehiculo)
+                <option value="{{$vehiculo->{'Cod_ vehiculo'} }}">{{$vehiculo->{'Cod_ vehiculo'} }}</option>
                 @endforeach
               </select>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
               <label>Segundo remolque</label>
               <select name="codigo_ubicacion" class="form-control select2" style="width: 100%;">
                 <option value="" disabled selected>Seleccionar segundo remolque</option>
-                @foreach($vehiculos as $vehiculo)
-                <option value="{{$vehiculo}}">{{$vehiculo}}</option>
+                @foreach($vehiculos_nav as $vehiculo)
+                <option value="{{$vehiculo->{'Cod_ vehiculo'} }}">{{$vehiculo->{'Cod_ vehiculo'} }}</option>
                 @endforeach
               </select>
             </div>
             <!-- Input -->
-            <div class="form-group">
+            <div class="form-group mb-4">
               <label>Km iniciales</label>
               <input type="number" step="1" class="form-control" name="km_iniciales">
             </div>
 
             <!-- Botón para enviar -->
             <div class="row d-flex justify-content-center">
-              <button type="submit" class="btn">Asociar Vehículo</button>
+              <button type="submit" class="btn" style="background-color: #ffc025;"><b>ASOCIAR VEHÍCULO</b></button>
             </div>
 
           </form>
@@ -187,6 +189,17 @@
   </div>
 
   <script>
+    $(document).ready(function() {
+
+      $('select').select2({
+        dropdownParent: $("#vehiculoModal"),
+      });
+
+      $('#codigo_vehiculo').val('{{$ruta_web->cod_vehiculo}}').change();
+
+    });
+
+
     function asociarVehiculo() {
       $('#vehiculoModal').modal('show');
     }
