@@ -5,9 +5,11 @@ namespace App\Http\Controllers\GSIRSelev;
 use App\Http\Controllers\Controller;
 use App\Models\ImasD\imasd_cocina;
 use App\Models\ImasD\imasd_recetas;
+use App\Models\PendientesDescarga;
+use App\Models\PuntoRecogida;
 use App\Models\User;
 use App\Services\GeneralService;
-use Barryvdh\DomPDF\Facade as PDF;
+use PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -43,12 +45,17 @@ class GsirController extends Controller
     $empresa = $request->empresa;
     session(['empresa' => $empresa]);
 
-    return view('GSIRSelev.principal')->with(compact('empresa'));
+    $num_desc_pend = PendientesDescarga::where('estado', 'PENDIENTE')->count();
+
+
+    return view('GSIRSelev.principal')->with(compact('empresa', 'num_desc_pend'));
   }
 
   public function principal_get()
   {
-    return view('GSIRSelev.principal');
+    $num_desc_pend = PendientesDescarga::where('estado', 'PENDIENTE')->count();
+
+    return view('GSIRSelev.principal')->with(compact('num_desc_pend'));
   }
 
 
@@ -161,6 +168,12 @@ class GsirController extends Controller
 
   public function pdf_albaran($id)
   {
+
+    // Cambiamos el estado del punto de recogida a 'FINALIZADO'
+    $pto_recogida = PuntoRecogida::find($id);
+    $pto_recogida->estado = 'FINALIZADO';
+    $pto_recogida->save();
+
     $data = [
       'id' => $id
     ];
@@ -168,28 +181,5 @@ class GsirController extends Controller
     return PDF::loadView('GSIRSelev.pdf_albaran', $data)->stream('informe_bonificacion.pdf');
   }
 
-  public function planta()
-  {
 
-    $vehiculos_pend = [
-      [
-        'id' => 1,
-        'vehiculo' => '1234AAA',
-        'ruta' => 'RDR22/000774',
-        'fecha' => '24/03/2024 12:32',
-        'cond' => 'EDUARDO VERNIA MERINO',
-        'peso' => 14706
-      ], [
-        'id' => 2,
-        'vehiculo' => '4125HRD',
-        'ruta' => 'RDR22/000775',
-        'fecha' => '24/03/2024 15:45',
-        'cond' => 'JUAN GARCÍA PEREZ',
-        'peso' => 12640
-      ]
-
-    ];
-
-    return view('GSIRSelev.planta')->with(compact('vehiculos_pend'));
-  }
 }

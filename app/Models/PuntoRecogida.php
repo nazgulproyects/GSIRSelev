@@ -18,8 +18,9 @@ class PuntoRecogida extends Model
      * @var array
      */
     protected $fillable = [
-        'no_linea',
+        'no_prov_cli',
         'ruta_id',
+        'estado'
         // Otros campos que quieras habilitar para asignación masiva
     ];
 }

@@ -21,7 +21,8 @@
         <i class="fa-solid fa-route fa-xl"></i>
       </div>
       <div style="flex-grow: 1; text-align: center;">
-        <b>{{ $ruta->{'No_ ruta diaria'} }}:</b><span class="ml-2" style="color: #656565;">{{$ruta->{'Descripcion'} }}</span>
+        <b>{{ $ruta->{'No_ ruta diaria'} }}</b>
+        <br><span class="ml-2" style="color: #656565;">{{$ruta->{'Descripcion'} }}</span>
       </div>
       @if ($ruta->estado == 'COMPLETADO')
       <div style="width: 20%; background-color: #4cb8ff; display: flex; align-items: center; justify-content: center; height: 130%; border-radius: 0 10px 10px 0;">

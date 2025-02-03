@@ -77,35 +77,36 @@
     <b style="color: #79B329; font-size: 20px;">DESCARGAS PENDIENTES</b>
   </div>
 
-  @foreach($vehiculos_pend as $vehiculo_p)
+  @foreach($pendientes_desc as $pend_desc)
   <div class="row" style="margin-right: 5px; margin-left: 5px;">
     <div class="col-12">
       <div class="product-card">
         <div>
           <span>Ruta:</span>
-          <span style="color: black;">{{$vehiculo_p['ruta']}}</span>
+          <span style="color: black;">{{ $pend_desc->cod_ruta }}</span>
         </div>
         <div>
           <span>Fecha:</span>
-          <span style="color: black;">{{$vehiculo_p['fecha']}}</span>
+          <span style="color: black;">{{ $pend_desc->created_at }}</span>
         </div>
         <div>
           <span>Cond:</span>
-          <span style="color: black;">{{$vehiculo_p['cond']}}</span>
+          <span style="color: black;"></span>
         </div>
         <div>
           <span>Peso:</span>
-          <span style="color: black;">{{$vehiculo_p['peso']}} Kg</span>
+          <span style="color: black;"> Kg</span>
         </div>
         <div>
           <span>Vehículo:</span>
-          <span style="color: black;">{{$vehiculo_p['vehiculo']}}</span>
+          <span style="color: black;">{{ $pend_desc->cod_vehiculo }}</span>
         </div>
-        <button class="btn btn-secondary"><b>DESCARGAR</b></button>
+        <button class="btn btn-secondary" data-id="{{ $pend_desc->cod_ruta }}" onclick="confirmDownload(this, '{{ $pend_desc->cod_ruta }}')"><b>DESCARGAR</b></button>
       </div>
     </div>
   </div>
   @endforeach
+
 
   <script>
     $(document).ready(function() {
@@ -141,6 +142,58 @@
 
 
     });
+
+    function confirmDownload(button, cod_ruta) {
+
+      // Muestra la alerta de confirmación
+      swal({
+        title: "¿Seguro que quieres descargar esta ruta?",
+        icon: "warning",
+        buttons: {
+          cancel: {
+            text: "Cancelar",
+            value: false,
+            visible: true,
+            className: "btn btn-danger",
+            closeModal: true,
+          },
+          confirm: {
+            text: "Confirmar",
+            value: true,
+            visible: true,
+            className: "btn btn-success",
+            closeModal: true,
+          }
+        },
+        dangerMode: true
+      }).then((willSubmit) => {
+        if (willSubmit) {
+          // Si el usuario confirma, envía la solicitud AJAX para descargar
+          $.ajax({
+            url: "/pendientes_descarga/descargar",
+            type: "POST",
+            dataType: 'json',
+            async: false,
+            data: {
+              "_token": $("meta[name='csrf-token']").attr("content"),
+              cod_ruta: cod_ruta
+            },
+            success: function(response) {
+
+              swal("¡Éxito!", "La descarga se ha realizado correctamente.", "success");
+              
+              // Después de 2 segundos, recarga la página
+              setTimeout(function() {
+                location.reload(); // Recarga la página
+              }, 2000); // 2000 ms = 2 segundos
+            },
+            error: function(xhr, status, error) {
+              swal("Error", "Hubo un problema al descargar.", "error");
+            }
+          });
+        }
+      });
+    }
   </script>
 
 </x-app-layout>

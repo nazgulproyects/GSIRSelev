@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers\RUTAS;
 
+use App\Models\PendientesDescarga;
+use App\Models\ProductosPuntos;
 use App\Models\PuntoRecogida;
 use App\Models\Ruta;
+use App\Models\User;
+use App\Models\VehiculosRuta;
 use App\Services\GeneralService;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -22,42 +26,34 @@ class RutasController extends BaseController
      * 
      * @return view Vista de rutas
      */
-    public function index()
+    public function index(GeneralService $service)
     {
-
         $Conductor = '$Conductor';
         $f4e2b823 = '$f4e2b823';
         $Ruta = '$Ruta';
 
-        $cod_conductor = 'CEXT-22226'; // Esto va con consulta
+        $cod_conductor = $service->codigoConductor();
+        $fechaActual = now()->format('d.m.Y');
 
-        $rutas_nav = collect(DB::connection('mavaser')->select("
-            SELECT [No_ ruta diaria]
-                ,[Descripcion]
-                ,[Fecha emision ruta]
-                ,[Kms_ ruta]
-                ,[Cod_ conductor]
-                ,[Nombre conductor]
-                ,[Cod_ empresa transporte]
-                ,[Nombre empresa transporte]
-                ,[Cod_ vehiculo]
-                ,[Cod_ Remolque 1]
-                ,[Cod_ Remolque 2]
-                ,[Bloquear]
-                ,[Tolva Entrada]    
-                ,[Ruta secundaria]
-                ,[Ruta principal]
-                ,[Ruta de Gestion Externa]
+        if (auth()->user()->empresa == 'SELEV') {
+            $rutas_nav = collect(DB::connection('mavaser')->select("
+            SELECT *
             FROM [SELEV_BC].[dbo].[SEBOS LEVANTINOS, S_L_$Ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
-            WHERE  [Cod_ conductor]='$cod_conductor'
+            WHERE  [Cod_ conductor]='$cod_conductor' and [Fecha emision ruta] = '$fechaActual'
         "));
+        } else if (auth()->user()->empresa == 'REMITTEL') {
+            $rutas_nav = collect(DB::connection('mavaser')->select("
+            SELECT *
+            FROM [SELEV_BC].[dbo].[REMITTEL 2017, S_L_$Ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
+            WHERE  [Cod_ conductor]='$cod_conductor' and [Fecha emision ruta] = '$fechaActual'
+        "));
+        }
 
         $rutas_nav->transform(function ($ruta) {
             $ruta_web = Ruta::where('codigo', $ruta->{'No_ ruta diaria'})->first();
             $ruta->estado = $ruta_web->estado ?? 'PENDIENTE'; // Si no hay estado, asigna 'PENDIENTE'
             return $ruta;
         });
-        // CAST([Fecha emision ruta] AS DATE) = '2025-01-31' and
 
         return view('GSIRSelev.rutas')->with(compact('rutas_nav', 'cod_conductor'));
     }
@@ -73,112 +69,88 @@ class RutasController extends BaseController
      */
     public function info($cod_ruta, GeneralService $service)
     {
-
         $codigo_cond = $service->codigoConductor();
 
         $Ruta = '$Ruta';
         $f4e2b823 = '$f4e2b823';
+        $Lin_ = '$Lin_';
 
         if (auth()->user()->empresa == 'SELEV') {
             $ruta_nav = DB::connection('mavaser')->select("
-                SELECT [No_ ruta diaria]
-                    ,[Descripcion]
-                    ,[Fecha emision ruta]
-                    ,[Kms_ ruta]
-                    ,[Cod_ conductor]
-                    ,[Nombre conductor]
-                    ,[Cod_ empresa transporte]
-                    ,[Nombre empresa transporte]
-                    ,[Cod_ vehiculo]
-                    ,[Cod_ Remolque 1]
-                    ,[Cod_ Remolque 2]
-                    ,[Bloquear]
-                    ,[Tolva Entrada]    
-                    ,[Ruta secundaria]
-                    ,[Ruta principal]
-                    ,[Ruta de Gestion Externa]
+                SELECT *
                 FROM [SELEV_BC].[dbo].[SEBOS LEVANTINOS, S_L_$Ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
                 WHERE [Cod_ conductor]='$codigo_cond' and [No_ ruta diaria]='$cod_ruta'
             ");
-            $ruta_nav = !empty($ruta_nav) ? $ruta_nav[0] : null;
+
+            $puntos_recogida_agrup = collect(DB::connection('mavaser')->select("
+                SELECT [No_ Proveedor_Cliente], [Nombre], [Direccion 1], [Orden Impresion], [No_ ruta]
+                FROM [SELEV_BC].[dbo].[SEBOS LEVANTINOS 2017, S_L_$Lin_ ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
+                WHERE [No_ ruta] = 'RDR25/000509'
+                GROUP BY [No_ Proveedor_Cliente], [Nombre], [Direccion 1], [Orden Impresion], [No_ ruta]
+                ORDER BY [Orden Impresion] asc
+            "));
         } else if (auth()->user()->empresa == 'REMITTEL') {
-            $codigo_cond = 'CEXT-22226';
             $ruta_nav = DB::connection('mavaser')->select("
-                SELECT [No_ ruta diaria]
-                    ,[Descripcion]
-                    ,[Fecha emision ruta]
-                    ,[Kms_ ruta]
-                    ,[Cod_ conductor]
-                    ,[Nombre conductor]
-                    ,[Cod_ empresa transporte]
-                    ,[Nombre empresa transporte]
-                    ,[Cod_ vehiculo]
-                    ,[Cod_ Remolque 1]
-                    ,[Cod_ Remolque 2]
-                    ,[Bloquear]
-                    ,[Tolva Entrada]    
-                    ,[Ruta secundaria]
-                    ,[Ruta principal]
-                    ,[Ruta de Gestion Externa]
-                FROM [SELEV_BC].[dbo].[SEBOS LEVANTINOS, S_L_$Ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
+                SELECT *
+                FROM [SELEV_BC].[dbo].[REMITTEL 2017, S_L_$Ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
                 WHERE [Cod_ conductor]='$codigo_cond' and [No_ ruta diaria]='$cod_ruta'
             ");
-            $ruta_nav = !empty($ruta_nav) ? $ruta_nav[0] : null;
+
+            $puntos_recogida_agrup = collect(DB::connection('mavaser')->select("
+                SELECT [No_ Proveedor_Cliente], [Nombre], [Direccion 1], [Orden Impresion], [No_ ruta]
+                FROM [SELEV_BC].[dbo].[REMITTEL 2017, S_L_$Lin_ ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
+                WHERE [No_ ruta] = 'RDR25/000509'
+                GROUP BY [No_ Proveedor_Cliente], [Nombre], [Direccion 1], [Orden Impresion], [No_ ruta]
+                ORDER BY [Orden Impresion] asc
+            "));
         }
+
+        $ruta_nav = !empty($ruta_nav) ? $ruta_nav[0] : null;
+
+        // Aqui es un o por producto ??
+        $puntos_recogida_agrup->transform(function ($punto) {
+            $ruta = Ruta::where('codigo', $punto->{'No_ ruta'})->first();
+            $punto_rec_web = PuntoRecogida::where('ruta_id', $ruta->id)->first();
+            $punto->estado = $punto_rec_web->estado ?? 'PENDIENTE'; // Si no hay estado, asigna 'PENDIENTE'
+            return $punto;
+        });
 
         // Si la ruta no existe, la crea 
         $ruta_web = Ruta::firstOrCreate(
             ['codigo' => $cod_ruta], // Condiciones de búsqueda
             [
                 'codigo' => $cod_ruta,  // Valores para crear si no existe
-                'estado' => 'PENDIENTE',
-                'cod_vehiculo' => $ruta_nav->{'Cod_ vehiculo'},
-                'cod_remolque1' => $ruta_nav->{'Cod_ Remolque 1'},
-                'cod_remolque2' => $ruta_nav->{'Cod_ Remolque 2'}
+                'estado' => 'PENDIENTE'
             ]
         );
 
+        // Guardamos si hay ya en Navision un vehículo asociado a la ruta
+        $vehiculo_ruta = VehiculosRuta::where('cod_ruta', $cod_ruta)->orderBy('id', 'desc')->first();
+        if ($vehiculo_ruta == null) {
+            $vehiculo_ruta = new VehiculosRuta();
+            $vehiculo_ruta->cod_ruta = $cod_ruta;
+            $vehiculo_ruta->cod_vehiculo = $ruta_nav->{'Cod_ vehiculo'};
+            $vehiculo_ruta->remolque_1 = $ruta_nav->{'Cod_ Remolque 1'};
+            $vehiculo_ruta->remolque_2 = $ruta_nav->{'Cod_ Remolque 1'};
+            $vehiculo_ruta->save();
+        }
 
         // Esto viene de navision? 
         $vehiculos_nav = $service->listaVehiculos();
 
 
-        $Lin_ = '$Lin_';
-        $f4e2b823 = '$f4e2b823';
-
-        $puntos_recogida = DB::connection('mavaser')->select("
-            SELECT
-                [No_ ruta]
-                ,[No_ linea]     
-                ,[No_ Proveedor_Cliente]
-                ,[Nombre]
-                ,[Direccion 1]
-                ,[Direccion 2]
-                ,[Poblacion]
-                ,[No_ telefono]
-                ,[C_P_]
-                ,[Provincia]
-                ,[No_ producto]
-                ,[Descripcion producto]
-                ,[Bascula propia]
-                ,[Tolva entrada]   
-                ,[Cod_ Proveedor Asociado]   
-                ,[Tolva Origen]
-                ,[A convertir en Destino]
-                ,[Empresa origen]
-                ,[Empresa destino]
-                ,[No_ ruta original]
-                ,[No_ linea original]
-                ,[Observaciones]
-                ,[Productos adicionales]
-                ,[Forma de pago]
-                ,[Nº Tienda]
-                ,[Grupo]
-            FROM [SELEV_BC].[dbo].[SEBOS LEVANTINOS, S_L_$Lin_ ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
-            WHERE [No_ ruta]='$cod_ruta'
-        ");
-
-        return view('GSIRSelev.ruta_info')->with(compact('cod_ruta', 'ruta_web', 'ruta_nav', 'puntos_recogida', 'vehiculos_nav', 'codigo_cond'));
+        $cod_vehiculo = '';
+        $remolque_1 = '';
+        $remolque_2 = '';
+        $kms_iniciales = '';
+        $vehiculo_asociado = VehiculosRuta::where('cod_ruta', $cod_ruta)->orderBy('id', 'desc')->first();
+        if ($vehiculo_asociado != null) {
+            $cod_vehiculo = $vehiculo_asociado->cod_vehiculo;
+            $remolque_1 = $vehiculo_asociado->remolque_1;
+            $remolque_2 = $vehiculo_asociado->remolque_2;
+            $kms_iniciales = $vehiculo_asociado->km_iniciales;
+        }
+        return view('GSIRSelev.ruta_info')->with(compact('cod_ruta', 'ruta_web', 'ruta_nav', 'puntos_recogida_agrup', 'vehiculos_nav', 'codigo_cond', 'vehiculo_asociado', 'cod_vehiculo', 'remolque_1', 'remolque_2', 'kms_iniciales'));
     }
 
 
@@ -189,127 +161,67 @@ class RutasController extends BaseController
      * 
      * @return view Vista de la información del punto de recogida
      */
-    public function pto_recogida_info($cod_ruta)
+    public function pto_recogida_info($cod_ruta, $cod_prov_cli, GeneralService $service)
     {
-
         $Lin_ = '$Lin_';
         $f4e2b823 = '$f4e2b823';
         $Ruta = '$Ruta';
 
-        $codigo_cond = 'CEXT-22226';
+        $cod_conductor = $service->codigoConductor();
 
-        $ruta_nav = DB::connection('mavaser')->select("
-            SELECT [No_ ruta diaria]
-                ,[Descripcion]
-                ,[Fecha emision ruta]
-                ,[Kms_ ruta]
-                ,[Cod_ conductor]
-                ,[Nombre conductor]
-                ,[Cod_ empresa transporte]
-                ,[Nombre empresa transporte]
-                ,[Cod_ vehiculo]
-                ,[Cod_ Remolque 1]
-                ,[Cod_ Remolque 2]
-                ,[Bloquear]
-                ,[Tolva Entrada]    
-                ,[Ruta secundaria]
-                ,[Ruta principal]
-                ,[Ruta de Gestion Externa]
-            FROM [SELEV_BC].[dbo].[SEBOS LEVANTINOS, S_L_$Ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
-            WHERE  [Cod_ conductor]='$codigo_cond' AND [No_ ruta diaria]='$cod_ruta'
-        ");
+        if (auth()->user()->empresa == 'SELEV') {
+            $ruta_nav = DB::connection('mavaser')->select("
+                SELECT *
+                FROM [SELEV_BC].[dbo].[SEBOS LEVANTINOS, S_L_$Ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
+                WHERE  [Cod_ conductor]='$cod_conductor' AND [No_ ruta diaria]='$cod_ruta'
+            ");
 
-        $punto_recogida_nav = DB::connection('mavaser')->select("
-            SELECT
-                [No_ ruta]
-                ,[No_ linea]     
-                ,[No_ Proveedor_Cliente]
-                ,[Nombre]
-                ,[Direccion 1]
-                ,[Direccion 2]
-                ,[Poblacion]
-                ,[No_ telefono]
-                ,[C_P_]
-                ,[Provincia]
-                ,[No_ producto]
-                ,[Descripcion producto]
-                ,[Bascula propia]
-                ,[Tolva entrada]   
-                ,[Cod_ Proveedor Asociado]   
-                ,[Tolva Origen]
-                ,[A convertir en Destino]
-                ,[Empresa origen]
-                ,[Empresa destino]
-                ,[No_ ruta original]
-                ,[No_ linea original]
-                ,[Observaciones]
-                ,[Productos adicionales]
-                ,[Forma de pago]
-                ,[Nº Tienda]
-                ,[Grupo]
-            FROM [SELEV_BC].[dbo].[SEBOS LEVANTINOS, S_L_$Lin_ ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
-            WHERE [No_ ruta]='$cod_ruta'
-        ");
+            $punto_productos_nav = collect(DB::connection('mavaser')->select("
+                SELECT *
+                FROM [SELEV_BC].[dbo].[SEBOS LEVANTINOS, S_L_$Lin_ ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
+                WHERE [No_ ruta] = 'RDR25/000509' AND [No_ Proveedor_Cliente] = '$cod_prov_cli'
+                ORDER BY [Orden Impresion] ASC;
+            "));
+        } else if (auth()->user()->empresa == 'REMITTEL') {
+            $ruta_nav = DB::connection('mavaser')->select("
+                SELECT *
+                FROM [SELEV_BC].[dbo].[REMITTEL 2017, S_L_$Ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
+                WHERE  [Cod_ conductor]='$cod_conductor' AND [No_ ruta diaria]='$cod_ruta'
+            ");
 
-
-        $punto_recogida_nav = !empty($punto_recogida_nav) ? $punto_recogida_nav[0] : null;
+            $punto_productos_nav = collect(DB::connection('mavaser')->select("
+                SELECT *
+                FROM [SELEV_BC].[dbo].[REMITTEL 2017, S_L_$Lin_ ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
+                WHERE [No_ ruta] = 'RDR25/000509' AND [No_ Proveedor_Cliente] = '$cod_prov_cli'
+                ORDER BY [Orden Impresion] ASC;
+            "));
+        }
 
         $ruta_web = Ruta::where('codigo', $cod_ruta)->first();
         $punto_recogida = PuntoRecogida::firstOrCreate(
-            ['no_linea' => $punto_recogida_nav->{'No_ linea'}], // Condiciones de búsqueda
-            ['no_linea' => $punto_recogida_nav->{'No_ linea'}, 'ruta_id' => $ruta_web->id] // Valores para crear si no existe
+            ['no_prov_cli' => $cod_prov_cli],
+            [
+                'no_prov_cli' => $cod_prov_cli,
+                'ruta_id' => $ruta_web->id,
+                'estado' => 'PENDIENTE'
+            ]
         );
 
-        $productos_nav = DB::connection('mavaser')->select("
-            SELECT
-                [No_ ruta]
-                ,[No_ linea]     
-                ,[No_ Proveedor_Cliente]
-                ,[Nombre]
-                ,[Direccion 1]
-                ,[Direccion 2]
-                ,[Poblacion]
-                ,[No_ telefono]
-                ,[C_P_]
-                ,[Provincia]
-                ,[No_ producto]
-                ,[Descripcion producto]
-                ,[Bascula propia]
-                ,[Tolva entrada]   
-                ,[Cod_ Proveedor Asociado]   
-                ,[Tolva Origen]
-                ,[A convertir en Destino]
-                ,[Empresa origen]
-                ,[Empresa destino]
-                ,[No_ ruta original]
-                ,[No_ linea original]
-                ,[Observaciones]
-                ,[Productos adicionales]
-                ,[Forma de pago]
-                ,[Nº Tienda]
-                ,[Grupo]
-            FROM [SELEV_BC].[dbo].[SEBOS LEVANTINOS, S_L_$Lin_ ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
-            WHERE [No_ ruta]='$cod_ruta'
-        ");
-       
-        //dd($pto_recogida);
-        // !REVISAR PORQUE CREO QUE ESTO ES LA LISTA DE PRODUCTOS Y AL FINAL LA INFO DEL PUNTO ESTA EN TODAS EL MISMO
-        /* $productos = [
-            [
-                'id' => 1,
-                'peso' => '1000',
-                'num_linea' => '10000',
-                'desc_prod' => 'GRASA/HUESO GRAN SUPERFICIE'
-            ], [
-                'id' => 2,
-                'peso' => '1250',
-                'num_linea' => '20000',
-                'desc_prod' => 'PESCADO GRANDES SUPERFICIES'
-            ],
+        $punto_productos_nav->transform(function ($punto_nav) {
+            $ruta_web = Ruta::where('codigo', $punto_nav->{'No_ ruta'})->first();
+            $punto_recogida = PuntoRecogida::where('ruta_id', $ruta_web->id)->where('no_prov_cli', $punto_nav->{'No_ Proveedor_Cliente'})->first();
+            $punto_nav->estado = $punto_recogida->estado ?? 'PENDIENTE'; // Si no hay estado, asigna 'PENDIENTE'
 
-        ];*/
+            // Luego asignamos también la cantidad del producto (si hay)
+            $prod_punto = ProductosPuntos::where('punto_recogida_id', $punto_recogida->id)->where('no_linea', $punto_nav->{'No_ linea'})->first();
+            $punto_nav->cantidad = $prod_punto->cantidad ?? 0; 
+            return $punto_nav;
+        });
 
-        return view('GSIRSelev.ruta_pto_recogida')->with(compact('ruta_nav', 'punto_recogida_nav', 'productos_nav'));
+        $punto_recogida_web = PuntoRecogida::where('ruta_id', $ruta_web->id)->first();
+        $total_cantidad = ProductosPuntos::where('punto_recogida_id', $punto_recogida_web->id)->sum('cantidad');
+
+        return view('GSIRSelev.ruta_pto_recogida')->with(compact('ruta_nav', 'punto_productos_nav', 'punto_recogida_web', 'total_cantidad'));
     }
 
 
@@ -323,43 +235,131 @@ class RutasController extends BaseController
     public function info_cliente(Request $request)
     {
 
+        //! AQUI DEBERIA COGERSE LA INFO DEL PROV_CLI DE NAVISION
         $Lin_ = '$Lin_';
         $f4e2b823 = '$f4e2b823';
-        $punto_recogida = DB::connection('mavaser')->select("
-            SELECT
-                [No_ ruta]
-                ,[No_ linea]     
-                ,[No_ Proveedor_Cliente]
-                ,[Nombre]
-                ,[Direccion 1]
-                ,[Direccion 2]
-                ,[Poblacion]
-                ,[No_ telefono]
-                ,[C_P_]
-                ,[Provincia]
-                ,[No_ producto]
-                ,[Descripcion producto]
-                ,[Bascula propia]
-                ,[Tolva entrada]   
-                ,[Cod_ Proveedor Asociado]   
-                ,[Tolva Origen]
-                ,[A convertir en Destino]
-                ,[Empresa origen]
-                ,[Empresa destino]
-                ,[No_ ruta original]
-                ,[No_ linea original]
-                ,[Observaciones]
-                ,[Productos adicionales]
-                ,[Forma de pago]
-                ,[Nº Tienda]
-                ,[Grupo]
-            FROM [SELEV_BC].[dbo].[SEBOS LEVANTINOS, S_L_$Lin_ ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
-            WHERE [No_ ruta]='$request->cod_ruta'
+
+        if (auth()->user()->empresa == 'SELEV') {
+            $punto_recogida = DB::connection('mavaser')->select("
+                SELECT *
+                FROM [SELEV_BC].[dbo].[SEBOS LEVANTINOS, S_L_$Lin_ ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
+                WHERE [No_ ruta]='$request->cod_ruta' and [No_ Proveedor_Cliente]='$request->no_prov_cli'
+            ");
+        } else if (auth()->user()->empresa == 'REMITTEL') {
+
+            $punto_recogida = DB::connection('mavaser')->select("
+                SELECT *
+                FROM [SELEV_BC].[dbo].[REMITTEL 2017, S_L_$Lin_ ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
+                WHERE [No_ ruta]='$request->cod_ruta' and [No_ Proveedor_Cliente]='$request->no_prov_cli'
+            ");
+        }
+
+        $datos = [
+            'localidad' => $punto_recogida[0]->Poblacion,
+            'provincia' => $punto_recogida[0]->Provincia,
+            'direccion' => $punto_recogida[0]->{'Direccion 1'},
+            'grupo' => $punto_recogida[0]->Grupo,
+            'tienda' => $punto_recogida[0]->{'Nº Tienda'},
+            'tipo_pago' => $punto_recogida[0]->{'Forma de pago'},
+            'remuneracion' => '',
+            'prod_adicionales' => $punto_recogida[0]->{'Productos adicionales'} == 0 ? 'NO' : 'SI'
+        ];
+
+        return response()->json($datos);
+    }
+
+
+    /**
+     * Cambia el vehículo de la ruta
+     * 
+     * @param Request $request Petición
+     * @param string $ruta_id ID de la ruta
+     * 
+     * @return back
+     */
+    public function cambiar_vehiculo(Request $request, $ruta_id)
+    {
+
+        // Creamos el nuevo registro
+        $ruta = Ruta::find($ruta_id);
+        $vehiculo_ruta = new VehiculosRuta();
+        $vehiculo_ruta->cod_ruta = $ruta->codigo;
+        $vehiculo_ruta->cod_vehiculo = $request->matricula_nuevo_vehiculo;
+        $vehiculo_ruta->remolque_1 = null;
+        $vehiculo_ruta->remolque_2 = null;
+        $vehiculo_ruta->km_iniciales = $request->km_iniciales_input;
+        $vehiculo_ruta->save();
+
+
+        // Al antiguo registro le ponemos los km finales
+        $vehiculo_ruta_antiguo = VehiculosRuta::where('cod_ruta', $ruta->codigo)->where('cod_vehiculo', $request->matricula_anterior_val)->orderBy('id', 'desc')->first();
+        $vehiculo_ruta_antiguo->km_finales = $request->km_finales_input;
+        $vehiculo_ruta_antiguo->save();
+        return back();
+    }
+
+    public function comprobar_matricula(Request $request)
+    {
+        $Vehiculo = '$Vehiculo';
+        $f4e2b823 = '$f4e2b823';
+        if (auth()->user()->empresa == 'SELEV') {
+            $vehiculo = DB::connection('mavaser')->select("
+                SELECT [Cod_ vehiculo]
+                FROM [SELEV_BC].[dbo].[SEBOS LEVANTINOS, S_L_$Vehiculo$f4e2b823-5811-49c6-a41c-7c9707074208]
+                WHERE [Baja]=0 AND App=1 AND [Cod_ vehiculo]='$request->matricula'
+            ");
+        } else if (auth()->user()->empresa == 'REMITTEL') {
+            $vehiculo = DB::connection('mavaser')->select("
+            SELECT [Cod_ vehiculo]
+            FROM [SELEV_BC].[dbo].[SEBOS LEVANTINOS, S_L_$Vehiculo$f4e2b823-5811-49c6-a41c-7c9707074208]
+            WHERE [Baja]=0 AND App=1 AND [Cod_ vehiculo]='$request->matricula'
         ");
-        $punto_recogida = !empty($punto_recogida) ? $punto_recogida[0] : null;
+        }
+        $existe = !empty($vehiculo) ? true : false;
 
+        return response()->json($existe);
+    }
 
+    public function finalizar(Request $request, $cod_ruta)
+    {
+        $ruta_web = Ruta::where('codigo', $cod_ruta)->first();
+        $ruta_web->estado = 'COMPLETADO';
+        $ruta_web->fecha_finalizacion = $request->fecha_fin;
+        $ruta_web->save();
 
-        return response()->json($punto_recogida);
+        $vehiculo_ruta = VehiculosRuta::where('cod_ruta', $cod_ruta)->orderBy('id', 'desc')->first();
+        $vehiculo_ruta->km_finales = $request->km_finales;
+        $vehiculo_ruta->save();
+
+        if ($request->dejar_pendiente_descarga == 'on') {
+            $pendiente_desc = new PendientesDescarga();
+            $pendiente_desc->cod_ruta = $cod_ruta;
+            $pendiente_desc->cod_vehiculo = $vehiculo_ruta->cod_vehiculo;
+            $pendiente_desc->estado = 'PENDIENTE';
+            $pendiente_desc->save();
+        }
+        return back();
+    }
+
+    public function asignar_cantidad_producto(Request $request)
+    {
+        $punto_recogida_web = PuntoRecogida::find($request->punto_recogida_web_id);
+
+        $prod_punto = ProductosPuntos::where('punto_recogida_id', $punto_recogida_web->id)->where('no_linea', $request->no_linea)->first();
+        if($prod_punto == null){
+            $prod_punto = new ProductosPuntos();
+            $prod_punto->punto_recogida_id = $punto_recogida_web->id;
+            $prod_punto->no_linea = $request->no_linea;
+            $prod_punto->cantidad = $request->cantidad;
+            $prod_punto->save();
+        } else {
+            $prod_punto->cantidad = $request->cantidad;
+            $prod_punto->save();
+        }
+
+        // Finalmente calculamos el total cantidad actual
+        $total_cantidad = ProductosPuntos::where('punto_recogida_id', $punto_recogida_web->id)->sum('cantidad');
+
+        return response()->json($total_cantidad);
     }
 }

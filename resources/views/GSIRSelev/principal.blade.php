@@ -47,14 +47,21 @@
           <b>VEHÍCULOS</b>
         </div>
       </a>
-      <a href="/gsir_selev/planta" class="btn mt-4" style="background-color: #ff6969; width: 300px; height: 60px; border-radius: 10px; color: white; display: flex; align-items: center; justify-content: flex-start; margin: 0; padding-left: 10px;">
+      <a href="/pendientes_descarga" class="btn mt-4" style="background-color: #ff6969; width: 300px; height: 60px; border-radius: 10px; color: white; display: flex; align-items: center; justify-content: flex-start; margin: 0; padding-left: 10px; position: relative;">
         <div style="flex-shrink: 0;">
           <i class="fa-solid fa-industry fa-xl"></i>
         </div>
         <div style="flex-grow: 1; text-align: center;">
-          <b>PLANTA</b>
+          <b>DESCARGAS PENDIENTES</b>
         </div>
+        <!-- Contador de descargas pendientes -->
+        @if($num_desc_pend > 0)
+        <div id="pendientes-count" style="position: absolute; top: -10px; right: -10px; width: 30px; height: 30px; background-color: #ffffff; color: #ff6969; font-size: 14px; font-weight: bold; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+          <b>{{ $num_desc_pend }}</b>
+        </div>
+        @endif
       </a>
+
       <a href="/gsir_selev/gastos" class="btn mt-4" style="background-color: #4cb8ff; width: 300px; height: 60px; border-radius: 10px; color: white; display: flex; align-items: center; justify-content: flex-start; margin: 0; padding-left: 10px;">
         <div style="flex-shrink: 0;">
           <i class="fa-solid fa-gas-pump fa-xl"></i>

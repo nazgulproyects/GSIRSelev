@@ -29,17 +29,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/gsir_selev', [App\Http\Controllers\GSIRSelev\GsirController::class, 'gsir_selev'])->name('gsir_selev.home');
     Route::post('/gsir_selev/empresa', [App\Http\Controllers\GSIRSelev\GsirController::class, 'empresa'])->name('gsir_selev.empresa');
     Route::get('/gsir_selev/empresa_back', [App\Http\Controllers\GSIRSelev\GsirController::class, 'empresa_back'])->name('gsir_selev.empresa_back');
-
     Route::post('/gsir_selev/principal', [App\Http\Controllers\GSIRSelev\GsirController::class, 'principal'])->name('gsir_selev.principal');
     Route::get('/gsir_selev/principal_get', [App\Http\Controllers\GSIRSelev\GsirController::class, 'principal_get'])->name('gsir_selev.principal_get');
-
-
     Route::get('/gsir_selev/pdf_albaran/{recogida_id}', [App\Http\Controllers\GSIRSelev\GsirController::class, 'pdf_albaran'])->name('gsir_selev.pdf_albaran');
-
-
-
-    // PLANTA
-    Route::get('/gsir_selev/planta', [App\Http\Controllers\GSIRSelev\GsirController::class, 'planta'])->name('gsir_selev.planta');
 
     // GASTOS
     Route::get('/gsir_selev/gastos', [App\Http\Controllers\GSIRSelev\GsirController::class, 'gastos'])->name('gsir_selev.gastos');
@@ -52,11 +44,13 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
   // RUTAS
   //==============================
   Route::get('/rutas', [App\Http\Controllers\RUTAS\RutasController::class, 'index'])->name('rutas.index');
-
-  Route::get('/ruta/pto_recogida/{ruta}', [App\Http\Controllers\RUTAS\RutasController::class, 'pto_recogida_info'])->where('ruta', '.*')->name('rutas.pto_recogida_info');
+  Route::get('/ruta/pto_recogida/{ruta}/{cod_prov_cli}', [App\Http\Controllers\RUTAS\RutasController::class, 'pto_recogida_info'])->where('ruta', '.*')->name('rutas.pto_recogida_info');
   Route::get('/ruta/{ruta}', [App\Http\Controllers\RUTAS\RutasController::class, 'info'])->where('ruta', '.*')->name('rutas.info');
-  Route::post('/ruta/info_cliente', [App\Http\Controllers\RUTAS\RutasController::class, 'info_cliente'])->where('ruta', '.*')->name('rutas.info_cliente');
-
+  Route::post('/ruta/info_cliente', [App\Http\Controllers\RUTAS\RutasController::class, 'info_cliente'])->name('rutas.info_cliente');
+  Route::post('/ruta/cambiar_vehiculo/{ruta_id}', [App\Http\Controllers\RUTAS\RutasController::class, 'cambiar_vehiculo'])->name('rutas.cambiar_vehiculo');
+  Route::post('/ruta/cambio_vehiculo_comprobar_matricula', [App\Http\Controllers\RUTAS\RutasController::class, 'comprobar_matricula'])->name('rutas.comprobar_matricula');
+  Route::post('/ruta/finalizar/{cod_ruta}', [App\Http\Controllers\RUTAS\RutasController::class, 'finalizar'])->where('cod_ruta', '.*')->name('rutas.finalizar');
+  Route::post('/ruta/asignar_cantidad_producto', [App\Http\Controllers\RUTAS\RutasController::class, 'asignar_cantidad_producto'])->name('rutas.asignar_cantidad_producto');
 
 
   //==============================
@@ -64,6 +58,17 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
   //==============================
   Route::get('/vehiculos', [App\Http\Controllers\VEHICULOS\VehiculosController::class, 'index'])->name('vehiculos.index');
   Route::post('/vehiculos/info_ajax', [App\Http\Controllers\VEHICULOS\VehiculosController::class, 'info_ajax'])->name('vehiculos.info_ajax');
+
+
+  //==============================
+  // PENDIENTES DESCARGA
+  //==============================
+  Route::get('/pendientes_descarga', [App\Http\Controllers\PEND_DESCARGA\PendDescargaController::class, 'index'])->name('pend_descarga.index');
+  Route::post('/pendientes_descarga/descargar', [App\Http\Controllers\PEND_DESCARGA\PendDescargaController::class, 'descargar'])->name('pend_descarga.descargar');
+
+
+
+
 
 
   // CONTRATOS

@@ -1,5 +1,5 @@
 @section('botones_barra_superior')
-<a href="/ruta/{{ urlencode($punto_recogida_nav->{'No_ ruta'}) }}" style="background-color: white;" class="inline-flex items-center justify-center p-3 rounded-md text-gray-600 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
+<a href="/ruta/{{ urlencode($punto_productos_nav[0]->{'No_ ruta'}) }}" style="background-color: white;" class="inline-flex items-center justify-center p-3 rounded-md text-gray-600 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
     <i class="fa-solid fa-chevron-left fa-xl ml-1 mr-1"></i>
 </a>
 
@@ -194,10 +194,21 @@
 
 
     <div class="button-container">
-        <b style="min-width: 300px; background-color: #c6c6c6; padding-top: 4px; padding-left: 10px;">{{$punto_recogida_nav->{'No_ ruta'} }}: {{ $punto_recogida_nav->Nombre }}</b>
-        <button class="button" onclick="$('#modalFinalizarRecogida').modal('show');" style="background-color: #ffc717;"><i class="fa-solid fa-check fa-xl"></i></button>
+        @if($punto_productos_nav[0]->estado != 'FINALIZADO')
+        <b style="width: 300px; background-color: #c6c6c6; padding-top: 4px; padding-left: 10px; padding-right: 5px;">{{$punto_productos_nav[0]->{'No_ ruta'} }}: {{ $punto_productos_nav[0]->Nombre }}</b>
+        <button class="button" onclick="$('#modalFinalizarRecogida').modal('show');" style="background-color: #ffc717;">
+            <i class="fa-solid fa-check fa-xl"></i>
+        </button>
+        @else
+        <b style="width: 100%; background-color: #c6c6c6; padding-top: 4px; padding-left: 10px;">{{$punto_productos_nav[0]->{'No_ ruta'} }}: {{ $punto_productos_nav[0]->Nombre }}</b>
+        @endif
     </div>
 
+    @if($punto_productos_nav[0]->estado == 'FINALIZADO')
+    <div class="button-container" style="text-align: center;">
+        <b style="width: 100%; background-color: #40c744; padding-top: 4px; padding-left: 10px; display: inline-block; color: white;">FINALIZADO</b>
+    </div>
+    @endif
 
     <!-- Sección de contenido para 'PUNTO RECOGIDA' -->
     <div id="recogida" class="content-section active">
@@ -222,8 +233,8 @@
                 <div style="min-width: 40px;">
                     <i class="fa-solid fa-user fa-xl"></i>
                 </div>
-                <button type="button" class="btn" onclick="modalCliente('{{ $punto_recogida_nav->{'No_ ruta'} }}', '{{$punto_recogida_nav->{'No_ linea'} }}');" style="padding: 0px; width: 100% !important;">
-                    <div class="contact-card"><b style="color: #666666;">{{ $punto_recogida_nav->Nombre }}</b></div>
+                <button type="button" class="btn" onclick="modalCliente('{{ $punto_productos_nav[0]->{'No_ ruta'} }}', '{{$punto_productos_nav[0]->{'No_ Proveedor_Cliente'} }}');" style="padding: 0px; width: 100% !important;">
+                    <div class="contact-card"><b style="color: #666666;">{{ $punto_productos_nav[0]->Nombre }}</b></div>
                 </button>
             </div>
 
@@ -231,8 +242,8 @@
                 <div style="min-width: 40px;">
                     <i class="fa-solid fa-location-dot fa-xl"></i>
                 </div>
-                <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($punto_recogida_nav->{'Direccion 1'}) }}" target="_blank" class="map-link" style="width: 100% !important;">
-                    {{ $punto_recogida_nav->{'Direccion 1'} }}
+                <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($punto_productos_nav[0]->{'Direccion 1'}) }}" target="_blank" class="map-link" style="width: 100% !important;">
+                    {{ $punto_productos_nav[0]->{'Direccion 1'} }}
                     <img src="{{ asset('images/google_icon.png') }}" alt="Google Maps" class="map-icon">
                 </a>
 
@@ -244,7 +255,7 @@
                 </div>
                 <div class="contact-card" style="width: 100% !important;">
                     <span style="font-size: 13px;"><i class="fa-regular fa-user"></i></span>
-                    <a href="tel:+123456789" class="contact-link" style="font-size: 13px;"><i class="fa-solid fa-phone"></i>{{ $punto_recogida_nav->{'No_ telefono'} }}</a>
+                    <a href="tel:+123456789" class="contact-link" style="font-size: 13px;"><i class="fa-solid fa-phone"></i>{{ $punto_productos_nav[0]->{'No_ telefono'} }}</a>
                     <span style="font-size: 13px;"><i class="fa-solid fa-envelope"></i></span>
                 </div>
             </div>
@@ -253,7 +264,7 @@
                 <div style="min-width: 40px;">
                     <i class="fa-regular fa-message fa-xl"></i>
                 </div>
-                <span>{{$punto_recogida_nav->{'Observaciones'} }}</span>
+                <span>{{$punto_productos_nav[0]->{'Observaciones'} }}</span>
             </div>
 
             <div class="list-item divider">
@@ -274,12 +285,12 @@
             <div class="list-item">
                 <i class="fa-solid fa-weight-hanging fa-xl"></i>
                 <span>Total peso:</span>
-                <b>2.250 Kg</b>
+                <b id="total_cantidad_productos">{{ $total_cantidad }} KG</b>
             </div>
         </div>
 
-        @foreach($productos_nav as $prod)
-        <div onclick="editarProducto();">
+        @foreach($punto_productos_nav as $prod)
+        <div onclick="editarProducto('{{$prod->{'Descripcion producto'} }}', '{{$prod->{'No_ linea'} }}');">
             <div class="button-container mb-1">
                 <b style="width: 100% !important; background-color: #e5e5e5; padding-top: 4px; padding-left: 10px;">
                     <div>
@@ -289,7 +300,7 @@
                     </div>
                     <div>
                         <span style="color: black; font-size: 13px;">
-                            <b class="mr-1">Cantidad:</b><span style="color: #666666;"></span>
+                            <b class="mr-1">Cantidad:</b><span style="color: #666666;" id="cantidad_linea_{{$prod->{'No_ linea'} }}">{{ $prod->cantidad }} KG</span>
                         </span>
                     </div>
                 </b>
@@ -455,14 +466,11 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalFinalizarRecogidaLabel">Firma del cliente</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" style="padding-bottom: 12px;" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <div class="modal-body">
                     <canvas id="signatureCanvas" style="border: 1px solid black; width: 100%; height: 300px;" width="600" height="300"></canvas>
-
-                    <div class="row align-items-center" style="margin-bottom: 15px;">
+                    <div class="row align-items-center mt-4" style="margin-bottom: 15px;">
                         <div class="col-auto">
                             <input type="checkbox" id="sinFirmaCheckbox" onclick="toggleTextarea()" />
                             <label for="sinFirmaCheckbox">Sin firma</label>
@@ -476,7 +484,7 @@
                     <div class="icon-button">
                         <i class="fa-solid fa-camera fa-xl" style="color: #666666;"></i>
                     </div>
-                    <button type="button" class="btn btn-danger" id="clearCanvas">Limpiar</button>
+                    <button type="button" class="btn" style="background-color: red; color: white" id="clearCanvas">Limpiar</button>
                     <button type="button" class="btn btn-primary" style="background-color: #17b5ff;" onclick="modalFirmaConductor();">Confirmar</button>
                 </div>
             </div>
@@ -489,9 +497,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalFirmaConductorLabel">Firma del conductor</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" style="padding-bottom: 12px;" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <div class="modal-body">
                     <canvas id="signatureCanvas2" style="border: 1px solid black; width: 100%; height: 300px;" width="600" height="300"></canvas>
@@ -500,7 +506,7 @@
                     <div class="icon-button">
                         <i class="fa-solid fa-camera fa-xl" style="color: #666666;"></i>
                     </div>
-                    <button type="button" class="btn btn-danger" id="clearCanvas2">Limpiar</button>
+                    <button type="button" class="btn" style="background-color: red; color: white" id="clearCanvas2">Limpiar</button>
                     <button type="button" class="btn btn-primary" style="background-color: #17b5ff;" id="clearCanvas" onclick="modalConfirmarCorreo();">Confirmar</button>
                 </div>
             </div>
@@ -536,25 +542,21 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editarProductoModalLabel"><b>PRODUCTO INFO</b></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <input type="hidden" name="num_linea_prod" id="num_linea_prod" value="">
                     <div class="list-item">
                         <span>Producto:</span>
-                        <b style="font-size: 12px;">GRASA/HUESO GRAN SUPERFICIE</b>
+                        <b style="font-size: 12px;" id="desc_prod_cantidad"></b>
                     </div>
                     <div class="list-item">
                         <span>Cantidad:</span>
-                        <input type="text" style="text-align: right;" class="form-control" name="" value="1000">
+                        <input type="text" style="text-align: right;" class="form-control" name="cantidad_producto_input" id="cantidad_producto_input" value="" autofocus>
                         <span class="ml-2">KG</span>
                     </div>
                     <div class="row d-flex justify-content-around mt-3">
-                        <div class="icon-button">
-                            <i class="fa-solid fa-camera fa-xl" style="color: #666666;"></i>
-                        </div>
-                        <button type="button" class="btn btn-success btn-sm"><b>GUARDAR</b></button>
+                        <button type="button" onclick="asignarCantidadProducto();" class="btn btn-sm" style="background-color: #79B329; color: white;"><b>GUARDAR</b></button>
                     </div>
                 </div>
             </div>
@@ -861,10 +863,17 @@
             $('#modalConfirmarCorreo').modal('hide');
 
             // Abre el PDF generado por el controlador
-            window.open("/gsir_selev/pdf_albaran/2", '_blank');
+            window.open("/gsir_selev/pdf_albaran/{{ $punto_recogida_web->id }}", '_blank');
+            setTimeout(function() {
+                window.location.href = "/ruta/{{ $punto_productos_nav[0]->{'No_ ruta'} }}";
+            }, 2000);
         }
 
-        function editarProducto() {
+        function editarProducto(descripcion, no_linea) {
+            $('#desc_prod_cantidad').text(descripcion);
+            $('#num_linea_prod').val(no_linea);
+            cantidad_prod = $('#cantidad_linea_' + no_linea).text().split(' ')[0];
+            $('#cantidad_producto_input').val(cantidad_prod);
             $('#editarProductoModal').modal('show');
         }
 
@@ -893,8 +902,7 @@
             $('#documentosModal').modal('show');
         }
 
-        function modalCliente(cod_ruta, no_linea) {
-
+        function modalCliente(cod_ruta, no_prov_cli) {
             $.ajax({
                 url: "/ruta/info_cliente",
                 type: "POST",
@@ -902,23 +910,58 @@
                 async: false,
                 data: {
                     "_token": $("meta[name='csrf-token']").attr("content"),
-                    cod_ruta: cod_ruta,
-                    no_linea: no_linea
+                    cod_ruta: 'RDR25/000509',
+                    no_prov_cli: no_prov_cli
                 },
                 success: function(data) {
-                    $('#cli_localidad').text(data['Poblacion']);
-                    $('#cli_provincia').text(data['Provincia']);
-                    $('#cli_direccion').text(data['Direccion 1']);
-                    $('#cli_grupo').text(data['Grupo']);
-                    $('#cli_tienda').text(data['Nº Tienda']);
-                    $('#cli_tipo_pago').text(data['Forma de pago']);
-                    $('#cli_remuneracion').text('');
-                    data['Productos adicionales'] == 0 ? $('#cli_prod_adicionales').text('NO') : $('#cli_prod_adicionales').text('SI');
+                    $('#cli_localidad').text(data['localidad']);
+                    $('#cli_provincia').text(data['provincia']);
+                    $('#cli_direccion').text(data['direccion']);
+                    $('#cli_grupo').text(data['grupo']);
+                    $('#cli_tienda').text(data['tienda']);
+                    $('#cli_tipo_pago').text(data['tipo_pago']);
+                    $('#cli_remuneracion').text(data['remuneracion']);
+                    $('#cli_prod_adicionales').text(data['prod_adicionales']);
                 }
             });
 
-
             $('#clienteModal').modal('show');
+        }
+
+        function asignarCantidadProducto() {
+
+            no_linea = $('#num_linea_prod').val();
+            punto_recogida_web_id = '{{$punto_recogida_web->id}}';
+            cantidad = $('#cantidad_producto_input').val();
+            $.ajax({
+                url: "/ruta/asignar_cantidad_producto",
+                type: "POST",
+                dataType: 'json',
+                async: false,
+                data: {
+                    "_token": $("meta[name='csrf-token']").attr("content"),
+                    no_linea: no_linea,
+                    punto_recogida_web_id: punto_recogida_web_id,
+                    cantidad: cantidad
+                },
+                success: function(data) {
+                    $('#total_cantidad_productos').text(data + ' KG');
+                    swal({
+                        title: "¡Éxito!",
+                        text: "La cantidad se ha registrado correctamente.",
+                        icon: "success",
+                        buttons: false, // Oculta los botones
+                        timer: 2000 // Muestra el cuadro durante 2 segundos
+                    }).then(() => {
+                        // Después de que SweetAlert desaparezca
+                        $('#editarProductoModal').modal('hide');
+                        $('#cantidad_linea_' + no_linea).text(cantidad + ' KG');
+                    });
+
+
+                }
+            });
+
         }
     </script>
 
