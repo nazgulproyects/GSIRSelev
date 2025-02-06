@@ -87,7 +87,7 @@
         </div>
         <div>
           <span>Fecha:</span>
-          <span style="color: black;">{{ $pend_desc->created_at }}</span>
+          <span style="color: black;">{{ $pend_desc->created_at->format('d/m/Y H:i') }}</span>
         </div>
         <div>
           <span>Cond:</span>
@@ -181,7 +181,7 @@
             success: function(response) {
 
               swal("¡Éxito!", "La descarga se ha realizado correctamente.", "success");
-              
+
               // Después de 2 segundos, recarga la página
               setTimeout(function() {
                 location.reload(); // Recarga la página

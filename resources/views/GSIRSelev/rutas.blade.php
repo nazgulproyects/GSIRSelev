@@ -26,6 +26,10 @@
       </div>
       @if ($ruta->estado == 'COMPLETADO')
       <div style="width: 20%; background-color: #4cb8ff; display: flex; align-items: center; justify-content: center; height: 130%; border-radius: 0 10px 10px 0;">
+        <i class="fa-solid fa-check-double fa-xl" style="color: white;"></i>
+      </div>
+      @elseif ($ruta->estado == 'COMPLETADO PEND')
+      <div style="width: 20%; background-color: #79B329; display: flex; align-items: center; justify-content: center; height: 130%; border-radius: 0 10px 10px 0;">
         <i class="fa-solid fa-check fa-xl" style="color: white;"></i>
       </div>
       @elseif ($ruta->estado == 'PENDIENTE')

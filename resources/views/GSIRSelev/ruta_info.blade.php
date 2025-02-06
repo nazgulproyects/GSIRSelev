@@ -84,6 +84,15 @@
     /* Espacio entre el label y el input */
   }
 
+  .text-label_prod {
+    font-size: 14px !important;
+    color: #333 !important;
+    width: 110px !important;
+    /* Ancho fijo para todos los labels */
+    margin-right: 16px !important;
+    /* Espacio entre el label y el input */
+  }
+
   .styled-input {
     border: none !important;
     outline: none !important;
@@ -109,8 +118,16 @@
   }
 
   .input-units {
-    color: #333 !important;
-    font-size: 14px !important;
+    position: absolute;
+    right: 0.5rem;
+    /* Espaciado desde el borde derecho del input */
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    /* Color del texto (gris elegante) */
+    font-size: 0.9rem;
+    pointer-events: none;
+    /* Evita que el span sea interactivo */
   }
 
   .btn {
@@ -146,7 +163,11 @@
 
   @if($ruta_web->estado == 'COMPLETADO')
   <div class="button-container" style="text-align: center; margin-bottom: 1px;">
-    <b style="width: 100%; background-color: #40c744; padding-top: 4px; padding-left: 10px; display: inline-block; color: white;">RUTA FINALIZADA</b>
+    <b style="width: 100%; background-color: #4cb8ff; padding-top: 4px; padding-left: 10px; display: inline-block; color: white;">RUTA FINALIZADA</b>
+  </div>
+  @elseif($ruta_web->estado == 'COMPLETADO PEND')
+  <div class="button-container" style="text-align: center; margin-bottom: 1px;">
+    <b style="width: 100%; background-color: #40c744; padding-top: 4px; padding-left: 10px; display: inline-block; color: white;">RUTA FINALIZADA PENDIENTE DESCARGA</b>
   </div>
   @endif
 
@@ -174,7 +195,7 @@
       <div class="punto-container" style="display: flex; justify-content: center; position: relative;">
         <div style="display: flex; align-items: center; margin-bottom: 15px;">
           <!-- Punto con ícono de estado -->
-          <div class="punto" style="height: 20px; width: 20px; z-index: 4; border-radius: 50%; background-color: {{ $punto_recogida->estado == 'PENDIENTE' ? '#dc1f1f' : ($punto_recogida->estado == 'EN PROCESO' ? 'orange' : '#79B329') }}; margin-right: 10px; position: relative; display: flex; align-items: center; justify-content: center;">
+          <div class="punto" style="height: 30px; width: 30px; z-index: 4; border-radius: 50%; background-color: {{ $punto_recogida->estado == 'PENDIENTE' ? '#dc1f1f' : ($punto_recogida->estado == 'EN PROCESO' ? 'orange' : '#79B329') }}; margin-right: 10px; position: relative; display: flex; align-items: center; justify-content: center;">
             @if($punto_recogida->estado == 'PENDIENTE')
             <i class="fa-solid fa-xmark" style="color: white; font-size: 12px; z-index: 5;"></i>
             @elseif($punto_recogida->estado == 'FINALIZADO')
@@ -200,14 +221,14 @@
       </div>
       @endforeach
 
-      @if($ruta_web->estado != 'COMPLETADO')
+      @if($ruta_web->estado == 'PENDIENTE')
       <div class="row d-flex justify-content-center pb-4" style="margin-left: 40px; margin-right: 40px;">
         <button class="btn btn-primary" onclick="finalizarRuta();"><b>FINALIZAR RUTA</b></button>
       </div>
       @endif
 
       <!-- Línea que une todos los puntos -->
-      <div id="linea-azul" style="position: absolute; left: 39px; width: 2px; border-left: 2px dashed #0093ff;"></div>
+      <div id="linea-azul" style="position: absolute; left: 38px; width: 2px; border-left: 4px dashed #b5b5b5;"></div>
 
 
     </div>
@@ -231,7 +252,13 @@
               <div class="col-12">
                 <div class="input-wrapper d-flex align-items-center">
                   <label for="vehiculo_ruta" class="form-label text-label me-2 mt-2">Vehículo</label>
+                  @if($ruta_web->estado == 'PENDIENTE')
                   <input type="text" id="vehiculoInput" class="styled-input flex-grow-1" name="vehiculo_ruta" value="{{ $cod_vehiculo }}" readonly autocomplete="off">
+                  @elseif(auth()->user()->rol != 0)
+                  <input type="text" id="vehiculoInput" class="styled-input flex-grow-1" name="vehiculo_ruta" value="{{ $cod_vehiculo }}" readonly autocomplete="off">
+                  @else
+                  <input type="text" class="styled-input flex-grow-1" name="vehiculo_ruta" value="{{ $cod_vehiculo }}" readonly>
+                  @endif
                 </div>
               </div>
             </div>
@@ -239,7 +266,7 @@
               <div class="col-12">
                 <div class="input-wrapper d-flex align-items-center">
                   <label for="remolque1_ruta" class="form-label text-label me-2 mt-2">Remolque 1</label>
-                  <input type="text" id="remolque1_ruta" class="styled-input flex-grow-1" name="remolque1_ruta" value="{{ $remolque_1 }}" autocomplete="off">
+                  <input type="text" id="remolque1_ruta" class="styled-input flex-grow-1" name="remolque1_ruta" value="{{ $remolque_1 }}" autocomplete="off" @if(auth()->user()->rol == 0 && $ruta_web->estado != 'PENDIENTE') readonly @endif>
                 </div>
               </div>
             </div>
@@ -247,7 +274,7 @@
               <div class="col-12">
                 <div class="input-wrapper d-flex align-items-center">
                   <label for="remolque2_ruta" class="form-label text-label me-2 mt-2">Remolque 2</label>
-                  <input type="text" id="remolque2_ruta" class="styled-input flex-grow-1" name="remolque2_ruta" value="{{ $remolque_2 }}" autocomplete="off">
+                  <input type="text" id="remolque2_ruta" class="styled-input flex-grow-1" name="remolque2_ruta" value="{{ $remolque_2 }}" autocomplete="off" @if(auth()->user()->rol == 0 && $ruta_web->estado != 'PENDIENTE') readonly @endif>
                 </div>
               </div>
             </div>
@@ -255,16 +282,23 @@
               <div class="col-12">
                 <div class="input-wrapper d-flex align-items-center">
                   <label for="km_iniciales" class="form-label text-label me-2 mt-2">Km iniciales</label>
-                  <input type="text" id="km_iniciales" class="styled-input flex-grow-1" name="km_iniciales" value="{{ $kms_iniciales }}" autocomplete="off">
+                  <input type="text" id="km_iniciales" class="styled-input flex-grow-1" name="km_iniciales" value="{{ $kms_iniciales }}" autocomplete="off" @if(auth()->user()->rol == 0 && $ruta_web->estado != 'PENDIENTE') readonly @endif>
                 </div>
               </div>
             </div>
+            @if($ruta_web->estado == 'PENDIENTE')
             <div class="row">
               <div class="col-12">
                 <button type="submit" class="btn mt-4 w-100" style="background-color: #79B329; color: white;"><b>GUARDAR</b></button>
               </div>
             </div>
-
+            @elseif(auth()->user()->rol != 0)
+            <div class="row">
+              <div class="col-12">
+                <button type="submit" class="btn mt-4 w-100" style="background-color: #79B329; color: white;"><b>GUARDAR</b></button>
+              </div>
+            </div>
+            @endif
           </form>
         </div>
 
@@ -286,24 +320,37 @@
           <form action="/ruta/finalizar/{{ rawurlencode($ruta_nav->{'No_ ruta diaria'}) }}" id="form_finalizar_ruta" method="POST">
             @csrf
             @method('POST')
-            <div class="form-group">
-              <label>Fecha de Fin</label>
-              <input type="datetime-local" class="form-control" id="fecha_fin" name="fecha_fin">
+            <div class="row mb-1">
+              <div class="col-12">
+                <div class="input-wrapper d-flex align-items-center">
+                  <label class="form-label text-label me-2 mt-2">Fecha de Fin</label>
+                  <input type="datetime-local" id="fecha_fin" class="styled-input flex-grow-1" name="fecha_fin" value="" readonly autocomplete="off">
+                </div>
+              </div>
             </div>
-            <br>
-            <div class="form-group">
-              <label>Kms. Finales</label>
-              <input type="number" step="1" class="form-control" name="km_finales">
+            <div class="row mb-1 mt-1">
+              <div class="col-12">
+                <div class="input-wrapper d-flex align-items-center position-relative">
+                  <label class="form-label text-label_prod me-2 mt-2">Km Finales {{ $cod_vehiculo }}:</label>
+                  <div class="position-relative flex-grow-1">
+                    <input type="text" class="styled-input w-100" name="km_finales" value="" autocomplete="off">
+                    <span class="input-units">kms</span>
+                  </div>
+                </div>
+              </div>
             </div>
+
             <br>
             <!-- Checkbox para dejar pendiente de descarga -->
-            <div class="form-group form-check">
+
+            <div class="form-group form-check ml-4">
               <input type="checkbox" class="form-check-input custom-checkbox" id="dejar_pendiente_descarga" name="dejar_pendiente_descarga">
               <label class="form-check-label" for="dejar_pendiente_descarga" style="color: red;">Dejar pendiente de descarga</label>
             </div>
+
             <br>
             <!-- Botón para enviar -->
-            <div class="row d-flex justify-content-center">
+            <div class="row d-flex justify-content-center ml-4 mr-4">
               <button type="button" class="btn" onclick="finalizarRutaForm();" style="background-color: #28a745; color: white;"><b>FINALIZAR</b></button>
             </div>
           </form>
@@ -390,7 +437,7 @@
 
         // Calcula la posición y altura de la línea
         const topPosition = firstOffset.top - containerOffset.top + firstOffset.height / 2;
-        const height = lastOffset.top - firstOffset.top;
+        const height = lastOffset.top - firstOffset.top - 10;
 
         // Aplica los estilos dinámicos
         lineaAzul.style.top = `${topPosition}px`;

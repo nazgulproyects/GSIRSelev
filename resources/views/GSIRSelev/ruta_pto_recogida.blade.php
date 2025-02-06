@@ -535,7 +535,7 @@
                             <textarea id="sinFirmaTextarea" class="form-control" rows="3" placeholder="Motivo" disabled></textarea>
                         </div>
                     </div>
-                    <button type="button" class="btn mb-1" style="background-color: red; color: white; height: 50px;" id="clearCanvas">Limpiar</button>
+                    <button type="button" class="btn mb-1" style="background-color: red; color: white; height: 50px;" id="clearCanvas">Borrar</button>
                     <button type="button" class="btn btn-primary" style="background-color: #17b5ff; height: 50px;" onclick="modalFirmaConductor();">Confirmar</button>
                 </div>
             </div>
@@ -552,7 +552,7 @@
                 </div>
                 <div class="modal-body">
                     <canvas id="signatureCanvas2" style="border: 1px solid black; width: 100%; height: 300px;" width="600" height="300"></canvas>
-                    <button type="button" class="btn mb-1 mt-3" style="background-color: red; color: white; height: 50px;" id="clearCanvas2">Limpiar</button>
+                    <button type="button" class="btn mb-1 mt-3" style="background-color: red; color: white; height: 50px;" id="clearCanvas2">Borrar</button>
                     <button type="button" class="btn btn-primary" style="background-color: #17b5ff; height: 50px;" id="clearCanvas" onclick="modalConfirmarCorreo();">Confirmar</button>
                 </div>
             </div>

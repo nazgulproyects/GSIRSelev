@@ -365,22 +365,28 @@ class RutasController extends BaseController
 
     public function finalizar(Request $request, $cod_ruta)
     {
-        $ruta_web = Ruta::where('codigo', $cod_ruta)->first();
-        $ruta_web->estado = 'COMPLETADO';
-        $ruta_web->fecha_finalizacion = $request->fecha_fin;
-        $ruta_web->save();
+        
 
         $vehiculo_ruta = VehiculosRuta::where('cod_ruta', $cod_ruta)->orderBy('id', 'desc')->first();
         $vehiculo_ruta->km_finales = $request->km_finales;
         $vehiculo_ruta->save();
 
+        $ruta_web = Ruta::where('codigo', $cod_ruta)->first();
+        $ruta_web->fecha_finalizacion = $request->fecha_fin;
+       
         if ($request->dejar_pendiente_descarga == 'on') {
             $pendiente_desc = new PendientesDescarga();
             $pendiente_desc->cod_ruta = $cod_ruta;
             $pendiente_desc->cod_vehiculo = $vehiculo_ruta->cod_vehiculo;
             $pendiente_desc->estado = 'PENDIENTE';
             $pendiente_desc->save();
+
+            $ruta_web->estado = 'COMPLETADO PEND';
+        } else {
+            $ruta_web->estado = 'COMPLETADO';
         }
+        $ruta_web->save();
+
         return back();
     }
 
