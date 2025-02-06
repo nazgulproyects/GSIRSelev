@@ -18,9 +18,9 @@
 
   .success-tick {
     position: absolute;
-    top: 15px;
+    top: 38px;
     /* Ajusta este valor para subir el tick */
-    right: 20px;
+    right: 30px;
     transform: translateY(-50%);
     font-size: 1.5rem;
     color: #28a745;
@@ -58,6 +58,87 @@
   }
 </style>
 
+<style>
+  .input-wrapper {
+    display: flex !important;
+    align-items: center !important;
+    border: 1px solid #ddd !important;
+    border-radius: 10px !important;
+    /* Bordes más redondeados */
+    padding: 2px 6px !important;
+    background-color: #f5f5f5 !important;
+    transition: border-color 0.3s ease-in-out !important;
+    width: 100% !important;
+  }
+
+  .input-wrapper:hover {
+    border-color: #79B329 !important;
+  }
+
+  .text-label {
+    font-size: 14px !important;
+    color: #333 !important;
+    width: 150px !important;
+    /* Ancho fijo para todos los labels */
+    margin-right: 16px !important;
+    /* Espacio entre el label y el input */
+  }
+
+  .styled-input {
+    border: none !important;
+    outline: none !important;
+    font-size: 16px !important;
+    color: #333 !important;
+    padding: 2px 10px !important;
+    /* Más espacio interior */
+    border-radius: 10px !important;
+    /* Bordes redondeados */
+    background-color: #fff !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+    /* Sombra suave */
+    transition: background-color 0.3s, box-shadow 0.3s ease !important;
+    flex-grow: 1 !important;
+    text-align: center;
+    /* El input ocupa el espacio restante */
+  }
+
+  .styled-input:focus {
+    background-color: #f9f9f9 !important;
+    box-shadow: 0 0 8px rgba(121, 179, 41, 0.5) !important;
+    /* Sombra en foco */
+  }
+
+  .input-units {
+    color: #333 !important;
+    font-size: 14px !important;
+  }
+
+  .btn {
+    background-color: #79B329 !important;
+    color: white !important;
+    padding: 2px 10px !important;
+    border: none !important;
+    border-radius: 10px !important;
+    /* Bordes redondeados */
+    font-weight: bold !important;
+    font-size: 16px !important;
+    text-transform: uppercase !important;
+    cursor: pointer !important;
+    transition: background-color 0.3s ease !important;
+    width: 100% !important;
+  }
+
+  .btn:hover {
+    background-color: #68a12d !important;
+  }
+
+  .btn:active {
+    background-color: #5e8a27 !important;
+  }
+</style>
+
+<!-- ESTILOS INPUTS  -->
+
 <x-app-layout>
   @section('titulo_cabecera')
   {{ $cod_ruta }}
@@ -70,57 +151,48 @@
   @endif
 
   <div style="background-color: #c6c6c6; width: 100%; text-align: center; margin-bottom: 1px;">
-  <button type="button" onclick="asociarVehiculo();" style="padding: 4px; width: 100%; height: 50px; background-color: #46ccff; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center;">
-  <div style="text-align: left; font-size: 1rem; line-height: 0.8; width: max-content;">
-    <span style="display: block; margin-bottom: 2px;"><b>VEHÍCULO ASIGNADO: </b>{{ $cod_vehiculo }}</span>
-  </div>
-</button>
-
-
-
+    <button type="button" onclick="asociarVehiculo();" style="padding: 4px; width: 100%; height: 50px; background-color: #46ccff; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center;">
+      <div style="text-align: left; font-size: 1rem; line-height: 0.8; width: max-content;">
+        <span style="display: block; margin-bottom: 0px;"><b>VEHÍCULO ASIGNADO: </b>{{ $cod_vehiculo }}</span>
+      </div>
+    </button>
   </div>
 
+  @if($kms_iniciales == null)
+  <div class="flex items-center p-4 mb-4 text-sm text-red-800 bg-red-50 rounded-lg border border-red-300" role="alert">
+    <i class="fa-solid fa-triangle-exclamation fa-shake fa-xl mr-4"></i>
+    <span>Se deben rellenar los kilómetros iniciales para continuar.</span>
+  </div>
+  @else
   <div class="row text-center" style="background-color: #79B329;">
     <span style="color: white;">PUNTOS DE RECOGIDA</span>
   </div>
 
   <div style="display: flex; align-items: flex-start; position: relative; margin-top: 20px;">
-
-    <div style="position: relative; width: 100%;">
-      @foreach($puntos_recogida_agrup as $punto_recogida)
-      <div style="display: flex; justify-content: center;">
+    <div style="position: relative; width: 100%;" id="ruta-container">
+      @foreach($puntos_recogida_agrup as $index => $punto_recogida)
+      <div class="punto-container" style="display: flex; justify-content: center; position: relative;">
         <div style="display: flex; align-items: center; margin-bottom: 15px;">
-
           <!-- Punto con ícono de estado -->
-          <div style="height: 20px; width: 20px; z-index: 4; border-radius: 50%; background-color: {{ $punto_recogida->estado == 'PENDIENTE' ? '#ffaa37' : ($punto_recogida->estado == 'EN PROCESO' ? 'orange' : '#79B329') }}; margin-right: 10px; position: relative; display: flex; align-items: center; justify-content: center;">
-
+          <div class="punto" style="height: 20px; width: 20px; z-index: 4; border-radius: 50%; background-color: {{ $punto_recogida->estado == 'PENDIENTE' ? '#dc1f1f' : ($punto_recogida->estado == 'EN PROCESO' ? 'orange' : '#79B329') }}; margin-right: 10px; position: relative; display: flex; align-items: center; justify-content: center;">
             @if($punto_recogida->estado == 'PENDIENTE')
             <i class="fa-solid fa-xmark" style="color: white; font-size: 12px; z-index: 5;"></i>
             @elseif($punto_recogida->estado == 'FINALIZADO')
             <i class="fa-solid fa-check" style="color: white; font-size: 12px; z-index: 5;"></i>
             @endif
-            <!-- Línea vertical -->
-            <div style="position: absolute; left: 50%; top: 10px; width: 2px; height: calc(100% - 10px); background-color: {{ $punto_recogida->estado == 'PENDIENTE' ? '#ffaa37' : ($punto_recogida->estado == 'EN PROCESO' ? 'orange' : '#79B329') }};"></div>
-
           </div>
 
           <!-- Card como enlace -->
           <a href="/ruta/pto_recogida/{{ urlencode($ruta_nav->{'No_ ruta diaria'}) }}/{{ $punto_recogida->{'No_ Proveedor_Cliente'} }}" style="text-decoration: none;">
-            <div class="card" style="width: 300px; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-              <!-- Encabezado con color según el estado -->
-              <div class="card-header" style="background-color: {{ $punto_recogida->estado == 'PENDIENTE' ? '#ffaa37' : ($punto_recogida->estado == 'EN PROCESO' ? 'orange' : '#79B329') }}; color: white; display: flex; align-items: center; justify-content: space-between;">
+            <div class="card" style="width: 300px; border-radius: 10px; overflow: hidden;">
+              <div class="card-body" style="background-color: #dadada; color: #323232;">
 
-                <div style="flex-shrink: 0; margin-right: 10px;">
-                  <i class="fa-solid fa-location-dot fa-lg"></i>
-                </div>
                 <div style="flex-grow: 1; text-align: center;">
                   <b>{{ $punto_recogida->Nombre }}</b>
                 </div>
-
-              </div>
-              <!-- Cuerpo blanco con la dirección -->
-              <div class="card-body" style="background-color: white; padding: 15px;">
-                <p style="margin: 0; color: #333;">{{ $punto_recogida->{'Direccion 1'} }}</p>
+                <!-- <div style="flex-shrink: 0; margin-right: 10px;">
+                  <i class="fa-solid fa-location-dot fa-lg"></i>
+                </div> -->
               </div>
             </div>
           </a>
@@ -135,10 +207,12 @@
       @endif
 
       <!-- Línea que une todos los puntos -->
-      <div style="position: absolute; left: 39px; top: 60px; width: 2px; height: calc(100% - 200px); background-color: #0093ff;"></div>
+      <div id="linea-azul" style="position: absolute; left: 39px; width: 2px; border-left: 2px dashed #0093ff;"></div>
+
+
     </div>
   </div>
-
+  @endif
 
   <!-- Modal asociar vehiculo -->
   <div class="modal fade" id="vehiculoModal" tabindex="-1" role="dialog" aria-labelledby="vehiculoModalLabel" aria-hidden="true">
@@ -150,42 +224,50 @@
         </div>
         <div class="modal-body">
 
-          <div class="row">
-            <div class="col-4">
-              <label>Vehículo</label>
+          <form action="/ruta/guardar_datos_ruta/{{ urlencode($cod_ruta) }}" method="POST">
+            @csrf
+
+            <div class="row mb-1">
+              <div class="col-12">
+                <div class="input-wrapper d-flex align-items-center">
+                  <label for="vehiculo_ruta" class="form-label text-label me-2 mt-2">Vehículo</label>
+                  <input type="text" id="vehiculoInput" class="styled-input flex-grow-1" name="vehiculo_ruta" value="{{ $cod_vehiculo }}" readonly autocomplete="off">
+                </div>
+              </div>
             </div>
-            <div class="col-8">
-              <input type="text" class="form-control" name="vehiculo_ruta" value="{{ $cod_vehiculo }}" readonly id="vehiculoInput" style="cursor: pointer; background-color: #9be4ff !important;">
+            <div class="row mb-1">
+              <div class="col-12">
+                <div class="input-wrapper d-flex align-items-center">
+                  <label for="remolque1_ruta" class="form-label text-label me-2 mt-2">Remolque 1</label>
+                  <input type="text" id="remolque1_ruta" class="styled-input flex-grow-1" name="remolque1_ruta" value="{{ $remolque_1 }}" autocomplete="off">
+                </div>
+              </div>
             </div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-4">
-              <label>Remolque 1</label>
+            <div class="row mb-1">
+              <div class="col-12">
+                <div class="input-wrapper d-flex align-items-center">
+                  <label for="remolque2_ruta" class="form-label text-label me-2 mt-2">Remolque 2</label>
+                  <input type="text" id="remolque2_ruta" class="styled-input flex-grow-1" name="remolque2_ruta" value="{{ $remolque_2 }}" autocomplete="off">
+                </div>
+              </div>
             </div>
-            <div class="col-8">
-              <input type="text" class="form-control" name="remolque1_ruta" value="{{ $remolque_1 }}" readonly>
+            <div class="row mb-1">
+              <div class="col-12">
+                <div class="input-wrapper d-flex align-items-center">
+                  <label for="km_iniciales" class="form-label text-label me-2 mt-2">Km iniciales</label>
+                  <input type="text" id="km_iniciales" class="styled-input flex-grow-1" name="km_iniciales" value="{{ $kms_iniciales }}" autocomplete="off">
+                </div>
+              </div>
             </div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-4">
-              <label>Remolque 2</label>
+            <div class="row">
+              <div class="col-12">
+                <button type="submit" class="btn mt-4 w-100" style="background-color: #79B329; color: white;"><b>GUARDAR</b></button>
+              </div>
             </div>
-            <div class="col-8">
-              <input type="text" class="form-control" name="remolque2_ruta" value="{{ $remolque_2 }}" readonly>
-            </div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-4">
-              <label>Km iniciales</label>
-            </div>
-            <div class="col-8">
-              <input type="text" class="form-control" name="km_iniciales" value="{{ $kms_iniciales }}" readonly>
-            </div>
-          </div>
+
+          </form>
         </div>
+
       </div>
     </div>
   </div>
@@ -230,7 +312,6 @@
     </div>
   </div>
 
-
   <!-- Modal cambiar vehiculo -->
   <div class="modal fade" id="cambioVehiculo" tabindex="-1" aria-labelledby="vehiculoModalLabel" aria-hidden="true" style="z-index: 1055;">
     <div class="modal-dialog">
@@ -243,44 +324,49 @@
           @csrf
           <div class="modal-body">
             <input type="hidden" name="matricula_anterior_val" id="matricula_anterior_val" value="{{ $cod_vehiculo }}">
-            <div class="row">
-              <div class="col-5">
-                <label>Nuevo vehículo</label>
-              </div>
-              <div class="col-7 position-relative">
-                <input type="text" class="form-control" id="matriculaInput" name="matricula_nuevo_vehiculo" value="" placeholder="Ingrese matrícula" autocomplete="off">
+
+
+            <div class="row mb-1">
+              <div class="col-12">
+                <div class="input-wrapper d-flex align-items-center">
+                  <label for="vehiculo_ruta" class="form-label text-label me-2 mt-2">Nuevo vehículo</label>
+                  <input type="text" id="matriculaInput" class="styled-input flex-grow-1" name="matricula_nuevo_vehiculo" value="" autocomplete="off">
+
+
+                  <!-- Tick de éxito -->
+                  <div id="successTick" class="success-tick" style="display: none;">
+                    <i class="fa-solid fa-check"></i>
+                  </div>
+                </div>
                 <small id="matriculaFeedback" class="text-muted"></small>
-                <!-- Tick de éxito -->
-                <div id="successTick" class="success-tick" style="display: none;">
-                  <i class="fa-solid fa-check"></i>
+              </div>
+            </div>
+
+            <div class="row mb-1 mt-1">
+              <div class="col-12">
+                <div class="input-wrapper d-flex align-items-center">
+                  <label for="vehiculo_ruta" class="form-label text-label me-2 mt-2">Km finales <span id="km_finales_anterior"></span>:</label>
+                  <input type="text" id="km_finales_input" class="styled-input flex-grow-1" name="km_finales_input" value="" readonly autocomplete="off">
                 </div>
               </div>
             </div>
-            <br>
-            <hr>
-            <br>
-            <div class="row">
-              <div class="col-7">
-                <label>Km finales <span id="km_finales_anterior"></span>:</label>
-              </div>
-              <div class="col-5">
-                <input type="text" class="form-control" name="km_finales_input" id="km_finales_input" value="" readonly>
+
+            <div class="row mb-1">
+              <div class="col-12">
+                <div class="input-wrapper d-flex align-items-center">
+                  <label for="vehiculo_ruta" class="form-label text-label me-2 mt-2">Km iniciales <span id="km_iniciales_nuevo"></span>:</label>
+                  <input type="text" id="km_iniciales_input" class="styled-input flex-grow-1" name="km_iniciales_input" value="" readonly autocomplete="off">
+                </div>
               </div>
             </div>
-            <br>
-            <div class="row">
-              <div class="col-7">
-                <label>Km iniciales <span id="km_iniciales_nuevo"></span>:</label>
-              </div>
-              <div class="col-5">
-                <input type="text" class="form-control" name="km_iniciales_input" id="km_iniciales_input" value="" readonly>
-              </div>
+
+
+            <div class="row align-items-center">
+              <button type="submit" class="btn mt-4" style="background-color: #79B329; color: white;" id="guardarVehiculo" disabled><b>GUARDAR</b></button>
             </div>
+
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn" style="background-color: #c1c1c1;" data-bs-dismiss="modal"><b>Cerrar</b></button>
-            <button type="submit" class="btn" style="background-color: #1de167;" id="guardarVehiculo"><b>Guardar cambios</b></button>
-          </div>
+
         </form>
       </div>
     </div>
@@ -288,11 +374,52 @@
 
   <script>
     $(document).ready(function() {
+
+      // Para pintar la longitud de la linea azul correctamente
+      const rutaContainer = document.getElementById("ruta-container");
+      const puntos = document.querySelectorAll(".punto-container");
+      const lineaAzul = document.getElementById("linea-azul");
+      if (puntos.length > 0) {
+        const firstPunto = puntos[0];
+        const lastPunto = puntos[puntos.length - 1];
+
+        const firstOffset = firstPunto.getBoundingClientRect();
+        const lastOffset = lastPunto.getBoundingClientRect();
+
+        const containerOffset = rutaContainer.getBoundingClientRect();
+
+        // Calcula la posición y altura de la línea
+        const topPosition = firstOffset.top - containerOffset.top + firstOffset.height / 2;
+        const height = lastOffset.top - firstOffset.top;
+
+        // Aplica los estilos dinámicos
+        lineaAzul.style.top = `${topPosition}px`;
+        lineaAzul.style.height = `${height}px`;
+      }
+
+
+
       $('select').select2({
         dropdownParent: $("#vehiculoModal"),
       });
 
       $('#codigo_vehiculo').val('{{$cod_vehiculo}}').change();
+
+
+      // DESBLOQUEAR BOTÓN GUARDAR CUANDO SE CAMBIA LA MATRICULA DEL VEHICULO
+      const kmInicialesInput = document.getElementById('km_iniciales_input');
+      const kmFinalesInput = document.getElementById('km_finales_input');
+      const guardarButton = document.getElementById('guardarVehiculo');
+
+      function checkInputs() {
+        if (kmInicialesInput.value.trim() !== '' && kmFinalesInput.value.trim() !== '') {
+          guardarButton.removeAttribute('disabled');
+        } else {
+          guardarButton.setAttribute('disabled', 'true');
+        }
+      }
+      kmInicialesInput.addEventListener('input', checkInputs);
+      kmFinalesInput.addEventListener('input', checkInputs);
 
     });
 
@@ -304,6 +431,7 @@
       var vehiculoModal = new bootstrap.Modal(document.getElementById('cambioVehiculo'));
       vehiculoModal.show();
     });
+
 
 
     function asociarVehiculo() {
@@ -369,7 +497,6 @@
         return;
       }
 
-
       $.ajax({
         url: "/ruta/cambio_vehiculo_comprobar_matricula",
         type: "POST",
@@ -381,7 +508,6 @@
         },
         success: function(data) {
 
-          console.log(data)
           const feedback = document.getElementById('matriculaFeedback');
           if (data) {
             // Estilo de éxito
@@ -406,15 +532,8 @@
             input.classList.add('error');
             tick.style.display = 'none'; // Ocultar el tick
           }
-
-
-
-
         }
       });
-
-
-
     });
   </script>
 

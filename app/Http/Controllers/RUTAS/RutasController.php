@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\RUTAS;
 
 use App\Models\PendientesDescarga;
+use App\Models\ProductosAdicionales;
 use App\Models\ProductosPuntos;
 use App\Models\PuntoRecogida;
 use App\Models\Ruta;
@@ -85,7 +86,7 @@ class RutasController extends BaseController
             $puntos_recogida_agrup = collect(DB::connection('mavaser')->select("
                 SELECT [No_ Proveedor_Cliente], [Nombre], [Direccion 1], [Orden Impresion], [No_ ruta]
                 FROM [SELEV_BC].[dbo].[SEBOS LEVANTINOS 2017, S_L_$Lin_ ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
-                WHERE [No_ ruta] = 'RDR25/000509'
+                WHERE [No_ ruta] = '$cod_ruta'
                 GROUP BY [No_ Proveedor_Cliente], [Nombre], [Direccion 1], [Orden Impresion], [No_ ruta]
                 ORDER BY [Orden Impresion] asc
             "));
@@ -99,21 +100,13 @@ class RutasController extends BaseController
             $puntos_recogida_agrup = collect(DB::connection('mavaser')->select("
                 SELECT [No_ Proveedor_Cliente], [Nombre], [Direccion 1], [Orden Impresion], [No_ ruta]
                 FROM [SELEV_BC].[dbo].[REMITTEL 2017, S_L_$Lin_ ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
-                WHERE [No_ ruta] = 'RDR25/000509'
+                WHERE [No_ ruta] = '$cod_ruta'
                 GROUP BY [No_ Proveedor_Cliente], [Nombre], [Direccion 1], [Orden Impresion], [No_ ruta]
                 ORDER BY [Orden Impresion] asc
             "));
         }
 
         $ruta_nav = !empty($ruta_nav) ? $ruta_nav[0] : null;
-
-        // Aqui es un o por producto ??
-        $puntos_recogida_agrup->transform(function ($punto) {
-            $ruta = Ruta::where('codigo', $punto->{'No_ ruta'})->first();
-            $punto_rec_web = PuntoRecogida::where('ruta_id', $ruta->id)->first();
-            $punto->estado = $punto_rec_web->estado ?? 'PENDIENTE'; // Si no hay estado, asigna 'PENDIENTE'
-            return $punto;
-        });
 
         // Si la ruta no existe, la crea 
         $ruta_web = Ruta::firstOrCreate(
@@ -123,6 +116,16 @@ class RutasController extends BaseController
                 'estado' => 'PENDIENTE'
             ]
         );
+
+        // Aqui es un o por producto ??
+        $puntos_recogida_agrup->transform(function ($punto) {
+            $ruta = Ruta::where('codigo', $punto->{'No_ ruta'})->first();
+            $punto_rec_web = PuntoRecogida::where('ruta_id', $ruta->id)->where('no_prov_cli', $punto->{'No_ Proveedor_Cliente'})->first();
+            $punto->estado = $punto_rec_web->estado ?? 'PENDIENTE'; // Si no hay estado, asigna 'PENDIENTE'
+            return $punto;
+        });
+
+
 
         // Guardamos si hay ya en Navision un vehículo asociado a la ruta
         $vehiculo_ruta = VehiculosRuta::where('cod_ruta', $cod_ruta)->orderBy('id', 'desc')->first();
@@ -179,7 +182,7 @@ class RutasController extends BaseController
             $punto_productos_nav = collect(DB::connection('mavaser')->select("
                 SELECT *
                 FROM [SELEV_BC].[dbo].[SEBOS LEVANTINOS, S_L_$Lin_ ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
-                WHERE [No_ ruta] = 'RDR25/000509' AND [No_ Proveedor_Cliente] = '$cod_prov_cli'
+                WHERE [No_ ruta] = '$cod_ruta' AND [No_ Proveedor_Cliente] = '$cod_prov_cli'
                 ORDER BY [Orden Impresion] ASC;
             "));
         } else if (auth()->user()->empresa == 'REMITTEL') {
@@ -192,21 +195,37 @@ class RutasController extends BaseController
             $punto_productos_nav = collect(DB::connection('mavaser')->select("
                 SELECT *
                 FROM [SELEV_BC].[dbo].[REMITTEL 2017, S_L_$Lin_ ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
-                WHERE [No_ ruta] = 'RDR25/000509' AND [No_ Proveedor_Cliente] = '$cod_prov_cli'
+                WHERE [No_ ruta] = '$cod_ruta' AND [No_ Proveedor_Cliente] = '$cod_prov_cli'
                 ORDER BY [Orden Impresion] ASC;
             "));
         }
+        if (sizeof($punto_productos_nav) == 0) dd('LA RUTA NO TIENE NINGÚN PRODUCTO ASIGNADO PARA RECOGER');
 
         $ruta_web = Ruta::where('codigo', $cod_ruta)->first();
-        $punto_recogida = PuntoRecogida::firstOrCreate(
-            ['no_prov_cli' => $cod_prov_cli],
-            [
-                'no_prov_cli' => $cod_prov_cli,
-                'ruta_id' => $ruta_web->id,
-                'estado' => 'PENDIENTE'
-            ]
-        );
 
+        // Obtener/crear los puntos de recogida si no existen
+        $punto_recogida_web = PuntoRecogida::where('no_prov_cli', $cod_prov_cli)->where('ruta_id', $ruta_web->id)->first();
+        if ($punto_recogida_web == null) {
+            $punto_recogida_web = new PuntoRecogida();
+            $punto_recogida_web->no_prov_cli = $cod_prov_cli;
+            $punto_recogida_web->ruta_id = $ruta_web->id;
+            $punto_recogida_web->estado = 'PENDIENTE';
+            $punto_recogida_web->save();
+        }
+
+        // Creamos los productos de los puntos de recogida si no existen
+        foreach ($punto_productos_nav as $punto_nav) {
+            $prod_punto = ProductosPuntos::where('punto_recogida_id', $punto_recogida_web->id)->where('no_linea', $punto_nav->{'No_ linea'})->first();
+            if ($prod_punto == null) {
+                $prod_punto = new ProductosPuntos();
+                $prod_punto->punto_recogida_id = $punto_recogida_web->id;
+                $prod_punto->no_linea = $punto_nav->{'No_ linea'};
+                $prod_punto->cantidad = 0;
+                $prod_punto->save();
+            }
+        }
+
+        // Ponermos el estado y la cantidad de los productos en el punto de recogida de la web
         $punto_productos_nav->transform(function ($punto_nav) {
             $ruta_web = Ruta::where('codigo', $punto_nav->{'No_ ruta'})->first();
             $punto_recogida = PuntoRecogida::where('ruta_id', $ruta_web->id)->where('no_prov_cli', $punto_nav->{'No_ Proveedor_Cliente'})->first();
@@ -214,14 +233,38 @@ class RutasController extends BaseController
 
             // Luego asignamos también la cantidad del producto (si hay)
             $prod_punto = ProductosPuntos::where('punto_recogida_id', $punto_recogida->id)->where('no_linea', $punto_nav->{'No_ linea'})->first();
-            $punto_nav->cantidad = $prod_punto->cantidad ?? 0; 
+            $punto_nav->cantidad = $prod_punto->cantidad ?? 0;
             return $punto_nav;
         });
 
-        $punto_recogida_web = PuntoRecogida::where('ruta_id', $ruta_web->id)->first();
         $total_cantidad = ProductosPuntos::where('punto_recogida_id', $punto_recogida_web->id)->sum('cantidad');
+        $productos_adicionales = ProductosAdicionales::where('ruta_id', $ruta_web->id)->where('punto_recogida_id', $punto_recogida_web->id)->get();
 
-        return view('GSIRSelev.ruta_pto_recogida')->with(compact('ruta_nav', 'punto_productos_nav', 'punto_recogida_web', 'total_cantidad'));
+        $lista_prods = [
+            'MALMP18' => 'ABRILLANTADOR MÁQUINA 5L',
+            'MALMP17' => 'DETERGENTE MÁQUINA 5L',
+            'MALMP16' => 'BAYETA MICROFIBRA',
+            'MALMP15' => 'ESTROPAJO VERDE PACK 12UN',
+            'MALMP14' => 'BOLSAS BASURA DIELITE',
+            'MALMP13' => 'MANTELITO ECOLOGICO',
+            'MALMP12' => 'ABRILLANTADOR MAQUINA (5 L)',
+            'MALMP11' => 'DETERGENTE MAQUINA ( 6KG )',
+            'MALMP10' => '1 LITRO DESENGRASANTE',
+            'MALMP09' => '5 LITROS LEJIA',
+            'MALMP08' => 'TRAMPA DE GRASA',
+            'MALMP07' => '5 LITROS FAIRY',
+            'MALMP06' => '5 LITROS LAVAVAJILLAS',
+            'MALMP05' => '5 LITROS FREGASUELO',
+            'MALMP04' => '5 LITROS DESENGRASANTE',
+            'MALMP03' => '6 ROLLOS PAPEL CHEMINE',
+            'MALMP02' => 'LIMPIEZA LOTE 2',
+            'MALMP01' => 'LIMPIEZA LOTE 1',
+            'FLTSERV6' => 'FILTRO INOX',
+            'FLTSERV7' => 'FILTRO CARBONO',
+            'FLTSERV8' => 'RESTO FILTROS',
+            'CMPSERV' => 'SERVICIO LIMPIEZA CAMPANA'
+        ];
+        return view('GSIRSelev.ruta_pto_recogida')->with(compact('ruta_nav', 'punto_productos_nav', 'punto_recogida_web', 'total_cantidad', 'productos_adicionales', 'lista_prods'));
     }
 
 
@@ -311,7 +354,7 @@ class RutasController extends BaseController
         } else if (auth()->user()->empresa == 'REMITTEL') {
             $vehiculo = DB::connection('mavaser')->select("
             SELECT [Cod_ vehiculo]
-            FROM [SELEV_BC].[dbo].[SEBOS LEVANTINOS, S_L_$Vehiculo$f4e2b823-5811-49c6-a41c-7c9707074208]
+            FROM [SELEV_BC].[dbo].[REMITTEL 2017, S_L_$Vehiculo$f4e2b823-5811-49c6-a41c-7c9707074208]
             WHERE [Baja]=0 AND App=1 AND [Cod_ vehiculo]='$request->matricula'
         ");
         }
@@ -346,7 +389,7 @@ class RutasController extends BaseController
         $punto_recogida_web = PuntoRecogida::find($request->punto_recogida_web_id);
 
         $prod_punto = ProductosPuntos::where('punto_recogida_id', $punto_recogida_web->id)->where('no_linea', $request->no_linea)->first();
-        if($prod_punto == null){
+        if ($prod_punto == null) {
             $prod_punto = new ProductosPuntos();
             $prod_punto->punto_recogida_id = $punto_recogida_web->id;
             $prod_punto->no_linea = $request->no_linea;
@@ -361,5 +404,44 @@ class RutasController extends BaseController
         $total_cantidad = ProductosPuntos::where('punto_recogida_id', $punto_recogida_web->id)->sum('cantidad');
 
         return response()->json($total_cantidad);
+    }
+
+    public function nuevo_producto_adicional(Request $request)
+    {
+        $ruta = Ruta::where('codigo', $request->ruta_actual)->first();
+        $punto_recogida_web = PuntoRecogida::find($request->punto_rec_actual);
+
+        $nuevo_prod = new ProductosAdicionales();
+        $nuevo_prod->nombre = $request->nombre_prod_adicional;
+        $nuevo_prod->cantidad = $request->cant_prod_adicional;
+        $nuevo_prod->ruta_id = $ruta->id;
+        $nuevo_prod->punto_recogida_id = $punto_recogida_web->id;
+        $nuevo_prod->tipo = $request->flexRadioDefault;
+        $nuevo_prod->save();
+
+        return back();
+    }
+
+    public function prod_adicional_guardar(Request $request)
+    {
+        $prod_adicional = ProductosAdicionales::find($request->prod_adicional_id);
+        $prod_adicional->nombre = $request->nombre;
+        $prod_adicional->cantidad = $request->cantidad;
+        $prod_adicional->tipo = $request->tipo;
+        $prod_adicional->save();
+
+        return response()->json('OK');
+    }
+
+
+    public function guardar_datos_ruta($cod_ruta, Request $request)
+    {
+        $vehiculo_ruta = VehiculosRuta::where('cod_ruta', $cod_ruta)->orderBy('id', 'desc')->first();
+        $vehiculo_ruta->remolque_1 = $request->remolque1_ruta;
+        $vehiculo_ruta->remolque_2 = $request->remolque2_ruta;
+        $vehiculo_ruta->km_iniciales = $request->km_iniciales;
+        $vehiculo_ruta->save();
+
+        return back();
     }
 }

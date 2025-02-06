@@ -183,6 +183,87 @@
         }
     </style>
 
+    <style>
+        .input-wrapper {
+            display: flex !important;
+            align-items: center !important;
+            border: 1px solid #ddd !important;
+            border-radius: 10px !important;
+            /* Bordes más redondeados */
+            padding: 2px 6px !important;
+            background-color: #f5f5f5 !important;
+            transition: border-color 0.3s ease-in-out !important;
+            width: 100% !important;
+        }
+
+        .input-wrapper:hover {
+            border-color: #79B329 !important;
+        }
+
+        .text-label {
+            font-size: 14px !important;
+            color: #333 !important;
+            width: 150px !important;
+            /* Ancho fijo para todos los labels */
+            margin-right: 16px !important;
+            /* Espacio entre el label y el input */
+        }
+
+        .text-label_prod {
+            font-size: 14px !important;
+            color: #333 !important;
+            width: 100px !important;
+            /* Ancho fijo para todos los labels */
+            margin-right: 16px !important;
+            /* Espacio entre el label y el input */
+        }
+
+        .styled-input {
+            border: none !important;
+            outline: none !important;
+            font-size: 16px !important;
+            color: #333 !important;
+            padding: 2px 10px !important;
+            border-radius: 10px !important;
+            background-color: #fff !important;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+            transition: background-color 0.3s, box-shadow 0.3s ease !important;
+            flex-grow: 1 !important;
+            text-align: center;
+        }
+
+        .styled-input:focus {
+            background-color: #f9f9f9 !important;
+            box-shadow: 0 0 8px rgba(121, 179, 41, 0.5) !important;
+        }
+
+        .input-units {
+            position: absolute;
+            right: 0.5rem;
+            /* Espaciado desde el borde derecho del input */
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            /* Color del texto (gris elegante) */
+            font-size: 0.9rem;
+            pointer-events: none;
+            /* Evita que el span sea interactivo */
+        }
+
+        .btn {
+            color: white !important;
+            padding: 2px 10px !important;
+            border: none !important;
+            border-radius: 10px !important;
+            font-weight: bold !important;
+            font-size: 16px !important;
+            text-transform: uppercase !important;
+            cursor: pointer !important;
+            transition: background-color 0.3s ease !important;
+            width: 100% !important;
+        }
+
+    </style>
     @section('titulo_cabecera', 'Recogida')
 
 
@@ -272,7 +353,7 @@
                     <i class="fa-solid fa-triangle-exclamation fa-xl"></i>
                 </div>
                 <span> </span>
-                <button type="button" class="btn ml-2" style="background-color: #dcdcdc;"><i class="fa-solid fa-camera fa-xl" style="color: #5cbfff; margin-right: 0px;"></i></button>
+                <!-- <button type="button" class="btn ml-2" style="background-color: #dcdcdc;"><i class="fa-solid fa-camera fa-xl" style="color: #5cbfff; margin-right: 0px;"></i></button> -->
 
             </div>
         </div>
@@ -290,7 +371,7 @@
         </div>
 
         @foreach($punto_productos_nav as $prod)
-        <div onclick="editarProducto('{{$prod->{'Descripcion producto'} }}', '{{$prod->{'No_ linea'} }}');">
+        <div @if(auth()->user()->rol == 0 && $punto_productos_nav[0]->estado == 'FINALIZADO') onclick="return false;" style="cursor: not-allowed; pointer-events: none;" @else onclick="editarProducto('{{$prod->{'Descripcion producto'} }}', '{{$prod->{'No_ linea'} }}');" @endif>
             <div class="button-container mb-1">
                 <b style="width: 100% !important; background-color: #e5e5e5; padding-top: 4px; padding-left: 10px;">
                     <div>
@@ -312,59 +393,34 @@
 
         <div class="button-container mb-1">
             <b style="min-width: 300px; background-color: #c6c6c6; padding-top: 15px; padding-left: 10px;">PRODUCTOS ADICIONALES</b>
-            <button class="button" onclick="anyadirProductoAdicional();" style="background-color: #5fc7ff;"><i class="fa-solid fa-plus fa-xl"></i></button>
+            <button class="button" @if(auth()->user()->rol == 0 && $punto_productos_nav[0]->estado == 'FINALIZADO') disabled @else onclick="anyadirProductoAdicional();" @endif style="background-color: #5fc7ff;"><i class="fa-solid fa-plus fa-xl"></i></button>
         </div>
-        <div onclick="editarProductoAdicional();">
+
+        @foreach($productos_adicionales as $prod_adicional)
+        <div @if(auth()->user()->rol == 0 && $punto_productos_nav[0]->estado == 'FINALIZADO') onclick="return false;" style="cursor: not-allowed; pointer-events: none;" @else onclick="editarProductoAdicional('{{ $prod_adicional->id }}', '{{ $prod_adicional->nombre }}', '{{ $prod_adicional->cantidad }}', '{{ $prod_adicional->tipo }}');" @endif>
             <div class="button-container mb-1">
                 <b style="min-width: 300px; background-color: #e5e5e5; padding-top: 4px; padding-left: 10px;">
                     <div>
                         <span style="color: black; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block; max-width: 100%; font-size: 13px;">
-                            <b class="mr-1">Producto:</b><span style="color: #666666;">FILTRO CARBONO</span>
+                            <b class="mr-1">Producto:</b><span style="color: #666666;" id="prod_adic_nombre_id_{{ $prod_adicional->id }}">{{ $prod_adicional->nombre }}</span>
                         </span>
                     </div>
                     <div>
                         <span style="color: black; font-size: 13px;">
-                            <b class="mr-1">Cantidad:</b><span style="color: #666666;">2 UND</span>
+                            <b class="mr-1">Cantidad:</b><span style="color: #666666;" id="prod_adic_cantidad_id_{{ $prod_adicional->id }}">{{ $prod_adicional->cantidad }}</span> <span style="color: #666666;">UND</span>
                         </span>
                     </div>
                 </b>
-                <button class="button" style="background-color: #79B329;"><i class="fa-solid fa-upload fa-xl"></i></button>
-            </div>
-        </div>
-        <div onclick="editarProductoAdicional();">
-            <div class="button-container mb-1">
-                <b style="min-width: 300px; background-color: #e5e5e5; padding-top: 4px; padding-left: 10px;">
-                    <div>
-                        <span style="color: black; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block; max-width: 100%; font-size: 13px;">
-                            <b class="mr-1">Producto:</b><span style="color: #666666;">FILTRO CARBONO</span>
-                        </span>
-                    </div>
-                    <div>
-                        <span style="color: black; font-size: 13px;">
-                            <b class="mr-1">Cantidad:</b><span style="color: #666666;">1 UND</span>
-                        </span>
-                    </div>
-                </b>
-                <button class="button" style="background-color: #ff5f5f;"><i class="fa-solid fa-download fa-xl"></i></button>
-            </div>
-        </div>
-        <div onclick="editarProductoAdicional();">
-            <div class="button-container mb-1">
-                <b style="min-width: 300px; background-color: #e5e5e5; padding-top: 4px; padding-left: 10px;">
-                    <div>
-                        <span style="color: black; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block; max-width: 100%; font-size: 13px;">
-                            <b class="mr-1">Producto:</b><span style="color: #666666;">FILTRO CARBONO</span>
-                        </span>
-                    </div>
-                    <div>
-                        <span style="color: black; font-size: 13px;">
-                            <b class="mr-1">Cantidad:</b><span style="color: #666666;">3 UND</span>
-                        </span>
-                    </div>
-                </b>
+                @if($prod_adicional->tipo == 'RECOGER')
+                <button class="button" style="background-color: #79B329;"><i class="fa-solid fa-arrow-up fa-xl"></i></button>
+                @elseif($prod_adicional->tipo == 'DEJAR')
+                <button class="button" style="background-color: #ff5f5f;"><i class="fa-solid fa-arrow-down fa-xl"></i></button>
+                @elseif($prod_adicional->tipo == 'ROTURA')
                 <button class="button" style="background-color: #8e8e8e;"><i class="fa-solid fa-xmark fa-xl"></i></button>
+                @endif
             </div>
         </div>
+        @endforeach
 
     </div>
 
@@ -470,7 +526,7 @@
                 </div>
                 <div class="modal-body">
                     <canvas id="signatureCanvas" style="border: 1px solid black; width: 100%; height: 300px;" width="600" height="300"></canvas>
-                    <div class="row align-items-center mt-4" style="margin-bottom: 15px;">
+                    <div class="row align-items-center mt-4 mb-3">
                         <div class="col-auto">
                             <input type="checkbox" id="sinFirmaCheckbox" onclick="toggleTextarea()" />
                             <label for="sinFirmaCheckbox">Sin firma</label>
@@ -479,13 +535,8 @@
                             <textarea id="sinFirmaTextarea" class="form-control" rows="3" placeholder="Motivo" disabled></textarea>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <div class="icon-button">
-                        <i class="fa-solid fa-camera fa-xl" style="color: #666666;"></i>
-                    </div>
-                    <button type="button" class="btn" style="background-color: red; color: white" id="clearCanvas">Limpiar</button>
-                    <button type="button" class="btn btn-primary" style="background-color: #17b5ff;" onclick="modalFirmaConductor();">Confirmar</button>
+                    <button type="button" class="btn mb-1" style="background-color: red; color: white; height: 50px;" id="clearCanvas">Limpiar</button>
+                    <button type="button" class="btn btn-primary" style="background-color: #17b5ff; height: 50px;" onclick="modalFirmaConductor();">Confirmar</button>
                 </div>
             </div>
         </div>
@@ -501,13 +552,8 @@
                 </div>
                 <div class="modal-body">
                     <canvas id="signatureCanvas2" style="border: 1px solid black; width: 100%; height: 300px;" width="600" height="300"></canvas>
-                </div>
-                <div class="modal-footer">
-                    <div class="icon-button">
-                        <i class="fa-solid fa-camera fa-xl" style="color: #666666;"></i>
-                    </div>
-                    <button type="button" class="btn" style="background-color: red; color: white" id="clearCanvas2">Limpiar</button>
-                    <button type="button" class="btn btn-primary" style="background-color: #17b5ff;" id="clearCanvas" onclick="modalConfirmarCorreo();">Confirmar</button>
+                    <button type="button" class="btn mb-1 mt-3" style="background-color: red; color: white; height: 50px;" id="clearCanvas2">Limpiar</button>
+                    <button type="button" class="btn btn-primary" style="background-color: #17b5ff; height: 50px;" id="clearCanvas" onclick="modalConfirmarCorreo();">Confirmar</button>
                 </div>
             </div>
         </div>
@@ -519,18 +565,14 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalConfirmarCorreoLabel">Confirmación del correo</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" style="padding-bottom: 12px;" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Correo</label>
                         <input type="text" class="form-control" name="">
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" style="background-color: #17b5ff;" onclick="modalAbrirPDF();">Confirmar</button>
+                    <button type="button" class="btn btn-primary mt-3" style="background-color: #17b5ff; height: 50px;" onclick="modalAbrirPDF();">FINALIZAR</button>
                 </div>
             </div>
         </div>
@@ -541,20 +583,33 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editarProductoModalLabel"><b>PRODUCTO INFO</b></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title" id="editarProductoModalLabel"><b>CANTIDAD DEL PRODUCTO</b></h5>
+                    <button type="button" class="btn-close" style="padding-bottom: 12px;" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="num_linea_prod" id="num_linea_prod" value="">
-                    <div class="list-item">
-                        <span>Producto:</span>
-                        <b style="font-size: 12px;" id="desc_prod_cantidad"></b>
+
+                    <div class="row mb-1">
+                        <div class="col-12">
+                            <div class="input-wrapper d-flex align-items-center">
+                                <label class="form-label text-label_prod me-2 mt-2">Producto</label>
+                                <b style="font-size: 12px;" id="desc_prod_cantidad"></b>
+                            </div>
+                        </div>
                     </div>
-                    <div class="list-item">
-                        <span>Cantidad:</span>
-                        <input type="text" style="text-align: right;" class="form-control" name="cantidad_producto_input" id="cantidad_producto_input" value="" autofocus>
-                        <span class="ml-2">KG</span>
+
+                    <div class="row mb-1 mt-1">
+                        <div class="col-12">
+                            <div class="input-wrapper d-flex align-items-center position-relative">
+                                <label class="form-label text-label_prod me-2 mt-2">Cantidad</label>
+                                <div class="position-relative flex-grow-1">
+                                    <input type="text" id="cantidad_producto_input" class="styled-input w-100" name="cantidad_producto_input" value="" autocomplete="off">
+                                    <span class="input-units">KG</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
                     <div class="row d-flex justify-content-around mt-3">
                         <button type="button" onclick="asignarCantidadProducto();" class="btn btn-sm" style="background-color: #79B329; color: white;"><b>GUARDAR</b></button>
                     </div>
@@ -569,42 +624,63 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="anyadirProdAdicionalModalLabel"><b>NUEVO PRODUCTO ADICIONAL</b></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" style="padding-bottom: 12px;" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
                 </div>
-                <div class="modal-body">
-                    <div class="list-item">
-                        <span>Producto:</span>
-                        <input type="text" class="form-control" name="" value="">
-                    </div>
-                    <div class="list-item">
-                        <span>Cantidad:</span>
-                        <input type="text" style="text-align: right;" class="form-control" name="" value="">
-                        <span class="ml-2">UND</span>
-                    </div>
-                    <div class="row ml-3 mt-3">
-                        <div class="form-check">
-                            <input class="form-check-input" style="transform: scale(1.5);" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                            <label class="form-check-label" for="flexRadioDefault1"><i class="fa-solid fa-upload ml-2 mr-2" style="color: #79B329;"></i><b style="color: #79B329;">RECOGER</b></label>
+                <form action="/ruta/nuevo_producto_adicional" method="POST" enctype="multipart/form-data" class="form-horizontal">
+                    {{ csrf_field() }}
+                    <input type="hidden" name="ruta_actual" value="{{$punto_productos_nav[0]->{'No_ ruta'} }}">
+                    <input type="hidden" name="punto_rec_actual" value="{{$punto_recogida_web->id}}">
+
+                    <div class="modal-body">
+                        <div class="row mb-1">
+                            <div class="col-12">
+                                <div class="input-wrapper d-flex align-items-center position-relative">
+                                    <label class="form-label text-label_prod me-2 mt-2">Producto</label>
+                                    <div class="position-relative flex-grow-1">
+                                        <select name="nombre_prod_adicional" id="nombre_prod_adicional" class="form-control select2 styled-input w-100" style="width: 250px;">
+                                            <option disabled selected>Seleccionar producto</option>
+                                            @foreach($lista_prods as $index => $value)
+                                            <option value="{{ $index }}">{{ $index }} - {{ $value }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-1 mt-1">
+                            <div class="col-12">
+                                <div class="input-wrapper d-flex align-items-center position-relative">
+                                    <label class="form-label text-label_prod me-2 mt-2">Cantidad</label>
+                                    <div class="position-relative flex-grow-1">
+                                        <input type="number" step="1" class="styled-input w-100" name="cant_prod_adicional" value="" autocomplete="off">
+                                        <span class="input-units">UND</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row ml-3 mt-3">
+                            <div class="form-check">
+                                <input class="form-check-input" style="transform: scale(1.5);" type="radio" name="flexRadioDefault" value="RECOGER" id="flexRadioDefault1">
+                                <label class="form-check-label" for="flexRadioDefault1"><i class="fa-solid fa-arrow-up ml-2 mr-2" style="color: #79B329;"></i><b style="color: #79B329;">RECOGER</b></label>
+                            </div>
+                        </div>
+                        <div class="row ml-3 mt-2">
+                            <div class="form-check">
+                                <input class="form-check-input" style="transform: scale(1.5);" type="radio" name="flexRadioDefault" value="DEJAR" id="flexRadioDefault2">
+                                <label class="form-check-label" for="flexRadioDefault2"><i class="fa-solid fa-arrow-down ml-2 mr-2" style="color: #ff5f5f;"></i><b style="color: #ff5f5f;">DEJAR</b></label>
+                            </div>
+                        </div>
+                        <div class="row ml-3 mt-2">
+                            <div class="form-check">
+                                <input class="form-check-input" style="transform: scale(1.5);" type="radio" name="flexRadioDefault" value="ROTURA" id="flexRadioDefault3">
+                                <label class="form-check-label" for="flexRadioDefault3"><i class="fa-solid fa-xmark ml-2 mr-2" style="color: #8e8e8e;"></i><b style="color: #8e8e8e;">ROTURA</b></label>
+                            </div>
+                        </div>
+                        <div class="row d-flex justify-content-around mt-3">
+                            <button type="submit" class="btn btn-sm" style="background-color: #79B329; color: white;"><b>AÑADIR PRODUCTO ADICIONAL</b></button>
                         </div>
                     </div>
-                    <div class="row ml-3 mt-2">
-                        <div class="form-check">
-                            <input class="form-check-input" style="transform: scale(1.5);" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
-                            <label class="form-check-label" for="flexRadioDefault2"><i class="fa-solid fa-download ml-2 mr-2" style="color: #ff5f5f;"></i><b style="color: #ff5f5f;">DEJAR</b></label>
-                        </div>
-                    </div>
-                    <div class="row ml-3 mt-2">
-                        <div class="form-check">
-                            <input class="form-check-input" style="transform: scale(1.5);" type="radio" name="flexRadioDefault" id="flexRadioDefault3">
-                            <label class="form-check-label" for="flexRadioDefault3"><i class="fa-solid fa-xmark ml-2 mr-2" style="color: #8e8e8e;"></i><b style="color: #8e8e8e;">ELIMINAR</b></label>
-                        </div>
-                    </div>
-                    <div class="row d-flex justify-content-around mt-3">
-                        <button type="button" class="btn btn-success btn-sm"><b>GUARDAR</b></button>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
@@ -615,44 +691,64 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editarProductoAdicionalModalLabel"><b>PRODUCTO ADICIONAL INFO</b></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" style="padding-bottom: 12px;" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
                 </div>
+                <input type="hidden" name="prod_adicional_id_edit" id="prod_adicional_id_edit" value="">
                 <div class="modal-body">
-                    <div class="list-item">
-                        <span>Producto:</span>
-                        <b style="font-size: 12px;">GRASA/HUESO GRAN SUPERFICIE</b>
+
+
+                    <div class="row mb-1">
+                        <div class="col-12">
+                            <div class="input-wrapper d-flex align-items-center position-relative">
+                                <label class="form-label text-label_prod me-2 mt-2">Producto</label>
+                                <div class="position-relative flex-grow-1">
+                                    <select id="nombre_prod_adicional_edit" class="form-control select2 styled-input w-100" style="width: 250px;">
+                                        <option disabled selected>Seleccionar producto</option>
+                                        @foreach($lista_prods as $index => $value)
+                                        <option value="{{ $index }}">{{ $index }} - {{ $value }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="list-item">
-                        <span>Cantidad:</span>
-                        <input type="text" class="form-control" style="text-align: right;" name="" value="1">
-                        <span class="ml-2">UND</span>
+
+                    <div class="row mb-1 mt-1">
+                        <div class="col-12">
+                            <div class="input-wrapper d-flex align-items-center position-relative">
+                                <label class="form-label text-label_prod me-2 mt-2">Cantidad</label>
+                                <div class="position-relative flex-grow-1">
+                                    <input type="text" id="cantidad_prod_adicional_edit" class="styled-input w-100" value="" autocomplete="off">
+                                    <span class="input-units">UND</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
+
                     <div class="row ml-3 mt-3">
                         <div class="form-check">
-                            <input class="form-check-input" style="transform: scale(1.5);" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                            <label class="form-check-label" for="flexRadioDefault1"><i class="fa-solid fa-upload ml-2 mr-2" style="color: #79B329;"></i><b style="color: #79B329;">RECOGER</b></label>
+                            <input class="form-check-input" style="transform: scale(1.5);" type="radio" name="flexRadioDefaultEdit" id="flexRadioDefaultEdit1">
+                            <label class="form-check-label" for="flexRadioDefaultEdit1"><i class="fa-solid fa-arrow-up ml-2 mr-2" style="color: #79B329;"></i><b style="color: #79B329;">RECOGER</b></label>
                         </div>
                     </div>
                     <div class="row ml-3 mt-2">
                         <div class="form-check">
-                            <input class="form-check-input" style="transform: scale(1.5);" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
-                            <label class="form-check-label" for="flexRadioDefault2"><i class="fa-solid fa-download ml-2 mr-2" style="color: #ff5f5f;"></i><b style="color: #ff5f5f;">DEJAR</b></label>
+                            <input class="form-check-input" style="transform: scale(1.5);" type="radio" name="flexRadioDefaultEdit" id="flexRadioDefaultEdit2">
+                            <label class="form-check-label" for="flexRadioDefaultEdit2"><i class="fa-solid fa-arrow-down ml-2 mr-2" style="color: #ff5f5f;"></i><b style="color: #ff5f5f;">DEJAR</b></label>
                         </div>
                     </div>
                     <div class="row ml-3 mt-2">
                         <div class="form-check">
-                            <input class="form-check-input" style="transform: scale(1.5);" type="radio" name="flexRadioDefault" id="flexRadioDefault3">
-                            <label class="form-check-label" for="flexRadioDefault3"><i class="fa-solid fa-xmark ml-2 mr-2" style="color: #8e8e8e;"></i><b style="color: #8e8e8e;">ELIMINAR</b></label>
+                            <input class="form-check-input" style="transform: scale(1.5);" type="radio" name="flexRadioDefaultEdit" id="flexRadioDefaultEdit3">
+                            <label class="form-check-label" for="flexRadioDefaultEdit3"><i class="fa-solid fa-xmark ml-2 mr-2" style="color: #8e8e8e;"></i><b style="color: #8e8e8e;">ROTURA</b></label>
                         </div>
                     </div>
-                    <hr>
                     <div class="row d-flex justify-content-around mt-3">
-                        <div class="icon-button">
+                        <!-- <div class="icon-button">
                             <i class="fa-solid fa-camera fa-xl" style="color: #666666;"></i>
-                        </div>
-                        <button type="button" class="btn btn-success btn-sm"><b>GUARDAR</b></button>
+                        </div> -->
+                        <button type="button" class="btn btn-sm" onclick="guardarProdAdicionalEdit();" style="background-color: #79B329; color: white;"><b>GUARDAR</b></button>
                     </div>
                 </div>
             </div>
@@ -891,10 +987,36 @@
         }
 
         function anyadirProductoAdicional() {
+
+            $('select').select2({
+                dropdownParent: $("#anyadirProdAdicionalModal"),
+            });
+
             $('#anyadirProdAdicionalModal').modal('show');
         }
 
-        function editarProductoAdicional() {
+        function editarProductoAdicional(prod_adic_id, nombre, cantidad, tipo) {
+
+            $('select').select2({
+                dropdownParent: $("#editarProductoAdicionalModal"),
+            });
+
+            nombre_act = $('#prod_adic_nombre_id_' + prod_adic_id).text();
+            cantidad_act = $('#prod_adic_cantidad_id_' + prod_adic_id).text();
+
+            $('#prod_adicional_id_edit').val(prod_adic_id);
+            $('#nombre_prod_adicional_edit').val(nombre_act).change();
+            $('#cantidad_prod_adicional_edit').val(cantidad_act);
+
+            if (tipo === 'RECOGER') {
+                document.getElementById('flexRadioDefaultEdit1').checked = true;
+            } else if (tipo === 'DEJAR') {
+                document.getElementById('flexRadioDefaultEdit2').checked = true;
+            } else if (tipo === 'ROTURA') {
+                document.getElementById('flexRadioDefaultEdit3').checked = true;
+            }
+
+
             $('#editarProductoAdicionalModal').modal('show');
         }
 
@@ -903,6 +1025,7 @@
         }
 
         function modalCliente(cod_ruta, no_prov_cli) {
+
             $.ajax({
                 url: "/ruta/info_cliente",
                 type: "POST",
@@ -910,10 +1033,11 @@
                 async: false,
                 data: {
                     "_token": $("meta[name='csrf-token']").attr("content"),
-                    cod_ruta: 'RDR25/000509',
+                    cod_ruta: cod_ruta,
                     no_prov_cli: no_prov_cli
                 },
                 success: function(data) {
+                    console.log(data)
                     $('#cli_localidad').text(data['localidad']);
                     $('#cli_provincia').text(data['provincia']);
                     $('#cli_direccion').text(data['direccion']);
@@ -959,6 +1083,54 @@
                     });
 
 
+                }
+            });
+
+        }
+
+        function guardarProdAdicionalEdit() {
+
+            prod_adicional_id = $('#prod_adicional_id_edit').val();
+            nombre = $('#nombre_prod_adicional_edit').val();
+            cantidad = $('#cantidad_prod_adicional_edit').val();
+
+            // Obtener el radio button seleccionado
+            const selectedRadio = document.querySelector('input[name="flexRadioDefaultEdit"]:checked');
+            if (selectedRadio.id == 'flexRadioDefaultEdit1') {
+                tipo = 'RECOGER';
+            } else if (selectedRadio.id == 'flexRadioDefaultEdit2') {
+                tipo = 'DEJAR';
+            } else if (selectedRadio.id == 'flexRadioDefaultEdit3') {
+                tipo = 'ROTURA';
+            }
+
+            $.ajax({
+                url: "/ruta/prod_adicional_guardar",
+                type: "POST",
+                dataType: 'json',
+                async: false,
+                data: {
+                    "_token": $("meta[name='csrf-token']").attr("content"),
+                    prod_adicional_id: prod_adicional_id,
+                    nombre: nombre,
+                    cantidad: cantidad,
+                    tipo: tipo
+                },
+                success: function(data) {
+                    swal({
+                        title: "¡Éxito!",
+                        text: "Se ha guardado correctamente.",
+                        icon: "success",
+                        buttons: false, // Oculta los botones
+                        timer: 2000 // Muestra el cuadro durante 2 segundos
+                    }).then(() => {
+                        $('#editarProductoAdicionalModal').modal('hide');
+                        $('#prod_adic_nombre_id_' + prod_adicional_id).text(nombre);
+                        $('#prod_adic_cantidad_id_' + prod_adicional_id).text(cantidad);
+
+                        // De momento reload para que se vean los cambios del color del checkbox
+                        location.reload();
+                    });
                 }
             });
 

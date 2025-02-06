@@ -51,6 +51,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
   Route::post('/ruta/cambio_vehiculo_comprobar_matricula', [App\Http\Controllers\RUTAS\RutasController::class, 'comprobar_matricula'])->name('rutas.comprobar_matricula');
   Route::post('/ruta/finalizar/{cod_ruta}', [App\Http\Controllers\RUTAS\RutasController::class, 'finalizar'])->where('cod_ruta', '.*')->name('rutas.finalizar');
   Route::post('/ruta/asignar_cantidad_producto', [App\Http\Controllers\RUTAS\RutasController::class, 'asignar_cantidad_producto'])->name('rutas.asignar_cantidad_producto');
+  Route::post('/ruta/nuevo_producto_adicional', [App\Http\Controllers\RUTAS\RutasController::class, 'nuevo_producto_adicional'])->name('rutas.nuevo_producto_adicional');
+  Route::post('/ruta/prod_adicional_guardar', [App\Http\Controllers\RUTAS\RutasController::class, 'prod_adicional_guardar'])->name('rutas.prod_adicional_guardar');
+  Route::post('/ruta/guardar_datos_ruta/{cod_ruta}', [App\Http\Controllers\RUTAS\RutasController::class, 'guardar_datos_ruta'])->where('cod_ruta', '.*')->name('rutas.guardar_datos_ruta');
 
 
   //==============================
