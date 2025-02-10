@@ -39,14 +39,14 @@
           <b>RUTAS</b>
         </div>
       </a>
-      <a href="/vehiculos" class="btn mt-4" style="background-color: #ffaa37; width: 300px; height: 60px; border-radius: 10px; color: white; display: flex; align-items: center; justify-content: flex-start; margin: 0; padding-left: 10px;">
+      <!-- <a href="/vehiculos" class="btn mt-4" style="background-color: #ffaa37; width: 300px; height: 60px; border-radius: 10px; color: white; display: flex; align-items: center; justify-content: flex-start; margin: 0; padding-left: 10px;">
         <div style="flex-shrink: 0;">
           <i class="fa-solid fa-truck fa-xl"></i>
         </div>
         <div style="flex-grow: 1; text-align: center;">
           <b>VEHÍCULOS</b>
         </div>
-      </a>
+      </a> -->
       <a href="/pendientes_descarga" class="btn mt-4" style="background-color: #ff6969; width: 300px; height: 60px; border-radius: 10px; color: white; display: flex; align-items: center; justify-content: flex-start; margin: 0; padding-left: 10px; position: relative;">
         <div style="flex-shrink: 0;">
           <i class="fa-solid fa-industry fa-xl"></i>
@@ -62,14 +62,14 @@
         @endif
       </a>
 
-      <a href="/gsir_selev/gastos" class="btn mt-4" style="background-color: #4cb8ff; width: 300px; height: 60px; border-radius: 10px; color: white; display: flex; align-items: center; justify-content: flex-start; margin: 0; padding-left: 10px;">
+      <!-- <a href="/gsir_selev/gastos" class="btn mt-4" style="background-color: #4cb8ff; width: 300px; height: 60px; border-radius: 10px; color: white; display: flex; align-items: center; justify-content: flex-start; margin: 0; padding-left: 10px;">
         <div style="flex-shrink: 0;">
           <i class="fa-solid fa-gas-pump fa-xl"></i>
         </div>
         <div style="flex-grow: 1; text-align: center;">
           <b>GASOLINA / DIETAS</b>
         </div>
-      </a>
+      </a> -->
     </div>
   </div>
 

@@ -113,6 +113,9 @@
       </div>
     </div>
 
+    <img src="{{ $filePath }}" alt="Firma" style="width: 200px; height: auto;">
+
+
     <table class="table table-bordered">
       <thead>
         <tr>

@@ -262,7 +262,6 @@
             transition: background-color 0.3s ease !important;
             width: 100% !important;
         }
-
     </style>
     @section('titulo_cabecera', 'Recogida')
 
@@ -277,8 +276,8 @@
     <div class="button-container">
         @if($punto_productos_nav[0]->estado != 'FINALIZADO')
         <b style="width: 300px; background-color: #c6c6c6; padding-top: 4px; padding-left: 10px; padding-right: 5px;">{{$punto_productos_nav[0]->{'No_ ruta'} }}: {{ $punto_productos_nav[0]->Nombre }}</b>
-        <button class="button" onclick="$('#modalFinalizarRecogida').modal('show');" style="background-color: #ffc717;">
-            <i class="fa-solid fa-check fa-xl"></i>
+        <button class="button" onclick="$('#modalFinalizarRecogida').modal('show');" style="background-color: #001868;">
+            <i class="fa-solid fa-file-signature fa-xl ml-1 mt-1"></i>
         </button>
         @else
         <b style="width: 100%; background-color: #c6c6c6; padding-top: 4px; padding-left: 10px;">{{$punto_productos_nav[0]->{'No_ ruta'} }}: {{ $punto_productos_nav[0]->Nombre }}</b>
@@ -323,7 +322,7 @@
                 <div style="min-width: 40px;">
                     <i class="fa-solid fa-location-dot fa-xl"></i>
                 </div>
-                <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($punto_productos_nav[0]->{'Direccion 1'}) }}" target="_blank" class="map-link" style="width: 100% !important;">
+                <a href="https://www.google.com/maps/search/?api=1&query={{$punto_productos_nav[0]->C_P_}} {{ urlencode($punto_productos_nav[0]->{'Direccion 1'}) }}" target="_blank" class="map-link" style="width: 100% !important;">
                     {{ $punto_productos_nav[0]->{'Direccion 1'} }}
                     <img src="{{ asset('images/google_icon.png') }}" alt="Google Maps" class="map-icon">
                 </a>
@@ -494,12 +493,12 @@
                     <div class="list-item">
                         <i class="fa-solid fa-file-pdf fa-xl"></i>
                         <span>DI</span>
-                        <b style="color: #007bff;">di.pdf</b>
+                        <b style="color: #007bff;"><a href="/documento_pdf/di" target="_blank">di.pdf</a></b>
                     </div>
                     <div class="list-item">
                         <i class="fa-solid fa-file-pdf fa-xl"></i>
                         <span>AD</span>
-                        <b style="color: #007bff;">ad.pdf</b>
+                        <b style="color: #007bff;"><a href="/documento_pdf/ad" target="_blank">ad.pdf</a></b>
                     </div>
                     <div class="list-item">
                         <i class="fa-solid fa-file-pdf fa-xl"></i>
@@ -536,7 +535,7 @@
                         </div>
                     </div>
                     <button type="button" class="btn mb-1" style="background-color: red; color: white; height: 50px;" id="clearCanvas">Borrar</button>
-                    <button type="button" class="btn btn-primary" style="background-color: #17b5ff; height: 50px;" onclick="modalFirmaConductor();">Confirmar</button>
+                    <button type="button" class="btn btn-primary" style="background-color: #17b5ff; height: 50px;" id="confirmarFirmaCliente" onclick="modalFirmaConductor();">Confirmar</button>
                 </div>
             </div>
         </div>
@@ -553,7 +552,7 @@
                 <div class="modal-body">
                     <canvas id="signatureCanvas2" style="border: 1px solid black; width: 100%; height: 300px;" width="600" height="300"></canvas>
                     <button type="button" class="btn mb-1 mt-3" style="background-color: red; color: white; height: 50px;" id="clearCanvas2">Borrar</button>
-                    <button type="button" class="btn btn-primary" style="background-color: #17b5ff; height: 50px;" id="clearCanvas" onclick="modalConfirmarCorreo();">Confirmar</button>
+                    <button type="button" class="btn btn-primary" style="background-color: #17b5ff; height: 50px;" id="confirmarFirmaConductor" onclick="modalConfirmarCorreo();">Confirmar</button>
                 </div>
             </div>
         </div>
@@ -842,6 +841,28 @@
                 }
                 return e.clientY - canvas.getBoundingClientRect().top;
             }
+
+
+            // Guardar firma como imagen
+            document.getElementById('confirmarFirmaCliente').addEventListener('click', function() {
+                const imageData = canvas.toDataURL('image/png'); // Genera la imagen en base64
+                saveSignature(imageData); // Llama a una función para enviarla al servidor
+            });
+
+            function saveSignature(imageData) {
+                // Realiza una petición Ajax para enviar la imagen al servidor
+                $.ajax({
+                    url: '/ruta/guardar_firma_cliente/{{ $punto_recogida_web->ruta_id }}', // Ruta del controlador en Laravel
+                    type: 'POST',
+                    data: {
+                        image: imageData,
+                        _token: $('meta[name="csrf-token"]').attr('content') // CSRF token
+                    },
+                    success: function(response) {
+                        console.log('OK');
+                    },
+                });
+            }
         }
 
         function canvasFirmaConductor() {
@@ -922,6 +943,28 @@
                 }
                 return e.clientY - canvas.getBoundingClientRect().top;
             }
+
+            // Guardar firma como imagen
+            document.getElementById('confirmarFirmaConductor').addEventListener('click', function() {
+                const imageData = canvas.toDataURL('image/png'); // Genera la imagen en base64
+                saveSignature(imageData); // Llama a una función para enviarla al servidor
+            });
+
+            function saveSignature(imageData) {
+                // Realiza una petición Ajax para enviar la imagen al servidor
+                $.ajax({
+                    url: '/ruta/guardar_firma_conductor/{{ $punto_recogida_web->ruta_id }}', // Ruta del controlador en Laravel
+                    type: 'POST',
+                    data: {
+                        image: imageData,
+                        _token: $('meta[name="csrf-token"]').attr('content') // CSRF token
+                    },
+                    success: function(response) {
+                        console.log('OK');
+                    }
+                });
+            }
+
         }
 
         function showSection(sectionId) {

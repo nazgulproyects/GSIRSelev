@@ -23,7 +23,7 @@ class GsirController extends Controller
 
   public function empresa(Request $request)
   {
-   
+
     return view('GSIRSelev.empresa');
   }
 
@@ -34,9 +34,9 @@ class GsirController extends Controller
 
   public function principal(Request $request, GeneralService $service)
   {
-   
+
     $codigo_cond = $service->codigoConductor();
-   
+
     $usuario = User::find(auth()->user()->id);
     $usuario->cod_conductor = $codigo_cond;
     $usuario->save();
@@ -164,8 +164,6 @@ class GsirController extends Controller
     return view('GSIRSelev.gastos')->with(compact('gastos'));
   }
 
-
-
   public function pdf_albaran($id)
   {
 
@@ -174,12 +172,35 @@ class GsirController extends Controller
     $pto_recogida->estado = 'FINALIZADO';
     $pto_recogida->save();
 
+    $filePath = storage_path('app/public/firmas/ruta_' . $pto_recogida->ruta_id . '/firma_cliente');
+ 
     $data = [
-      'id' => $id
+      'id' => $id,
+      'filePath' => $filePath
     ];
 
     return PDF::loadView('GSIRSelev.pdf_albaran', $data)->stream('informe_bonificacion.pdf');
   }
 
+  public function di_pdf()
+  {
+   
+    $data = [
+      'id' => '2'
+    ];
 
+    return PDF::loadView('GSIRSelev.documentos.prueba', $data)->stream('prueba.pdf');
+   
+  }
+
+  public function ad_pdf()
+  {
+   
+    $data = [
+      'id' => '2'
+    ];
+
+    return PDF::loadView('GSIRSelev.documentos.prueba2', $data)->stream('prueba2.pdf');
+   
+  }
 }

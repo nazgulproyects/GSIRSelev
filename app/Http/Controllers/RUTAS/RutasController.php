@@ -16,6 +16,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class RutasController extends BaseController
 {
@@ -264,6 +265,9 @@ class RutasController extends BaseController
             'FLTSERV8' => 'RESTO FILTROS',
             'CMPSERV' => 'SERVICIO LIMPIEZA CAMPANA'
         ];
+
+        //dd($punto_productos_nav[0]);
+
         return view('GSIRSelev.ruta_pto_recogida')->with(compact('ruta_nav', 'punto_productos_nav', 'punto_recogida_web', 'total_cantidad', 'productos_adicionales', 'lista_prods'));
     }
 
@@ -365,7 +369,7 @@ class RutasController extends BaseController
 
     public function finalizar(Request $request, $cod_ruta)
     {
-        
+
 
         $vehiculo_ruta = VehiculosRuta::where('cod_ruta', $cod_ruta)->orderBy('id', 'desc')->first();
         $vehiculo_ruta->km_finales = $request->km_finales;
@@ -373,7 +377,7 @@ class RutasController extends BaseController
 
         $ruta_web = Ruta::where('codigo', $cod_ruta)->first();
         $ruta_web->fecha_finalizacion = $request->fecha_fin;
-       
+
         if ($request->dejar_pendiente_descarga == 'on') {
             $pendiente_desc = new PendientesDescarga();
             $pendiente_desc->cod_ruta = $cod_ruta;
@@ -449,5 +453,43 @@ class RutasController extends BaseController
         $vehiculo_ruta->save();
 
         return back();
+    }
+
+    public function guardar_firma_cliente(Request $request, $ruta_id)
+    {
+        if ($request->has('image')) {
+            // Decodificar la imagen en base64
+            $imageData = $request->input('image');
+            $imageData = str_replace('data:image/png;base64,', '', $imageData);
+            $imageData = str_replace(' ', '+', $imageData);
+            $image = base64_decode($imageData);
+
+            // Guardar la imagen en el almacenamiento
+            $fileName = 'firma_cliente.png';
+            Storage::put('public/firmas/ruta_' . $ruta_id . '/' . $fileName, $image);
+
+            return response()->json(['success' => true, 'file' => $fileName]);
+        }
+
+        return response()->json(['success' => false, 'message' => 'No se recibió la imagen']);
+    }
+
+    public function guardar_firma_conductor(Request $request, $ruta_id)
+    {
+        if ($request->has('image')) {
+            // Decodificar la imagen en base64
+            $imageData = $request->input('image');
+            $imageData = str_replace('data:image/png;base64,', '', $imageData);
+            $imageData = str_replace(' ', '+', $imageData);
+            $image = base64_decode($imageData);
+
+            // Guardar la imagen en el almacenamiento
+            $fileName = 'firma_conductor.png';
+            Storage::put('public/firmas/ruta_' . $ruta_id . '/' . $fileName, $image);
+
+            return response()->json(['success' => true, 'file' => $fileName]);
+        }
+
+        return response()->json(['success' => false, 'message' => 'No se recibió la imagen']);
     }
 }

@@ -54,6 +54,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
   Route::post('/ruta/nuevo_producto_adicional', [App\Http\Controllers\RUTAS\RutasController::class, 'nuevo_producto_adicional'])->name('rutas.nuevo_producto_adicional');
   Route::post('/ruta/prod_adicional_guardar', [App\Http\Controllers\RUTAS\RutasController::class, 'prod_adicional_guardar'])->name('rutas.prod_adicional_guardar');
   Route::post('/ruta/guardar_datos_ruta/{cod_ruta}', [App\Http\Controllers\RUTAS\RutasController::class, 'guardar_datos_ruta'])->where('cod_ruta', '.*')->name('rutas.guardar_datos_ruta');
+  Route::post('/ruta/guardar_firma_cliente/{ruta_id}', [App\Http\Controllers\RUTAS\RutasController::class, 'guardar_firma_cliente'])->name('rutas.guardar_firma_cliente');
+  Route::post('/ruta/guardar_firma_conductor/{ruta_id}', [App\Http\Controllers\RUTAS\RutasController::class, 'guardar_firma_conductor'])->name('rutas.guardar_firma_conductor');
 
 
   //==============================
@@ -69,7 +71,11 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
   Route::get('/pendientes_descarga', [App\Http\Controllers\PEND_DESCARGA\PendDescargaController::class, 'index'])->name('pend_descarga.index');
   Route::post('/pendientes_descarga/descargar', [App\Http\Controllers\PEND_DESCARGA\PendDescargaController::class, 'descargar'])->name('pend_descarga.descargar');
 
-
+ //==============================
+  // DOCUMENTOS
+  //==============================
+  Route::get('/documento_pdf/di', [App\Http\Controllers\GSIRSelev\GsirController::class, 'di_pdf'])->name('documento_pdf.di');
+  Route::get('/documento_pdf/ad', [App\Http\Controllers\GSIRSelev\GsirController::class, 'ad_pdf'])->name('documento_pdf.ad');
 
 
 
