@@ -113,7 +113,8 @@
       </div>
     </div>
 
-    <img src="{{ $filePath }}" alt="Firma" style="width: 200px; height: auto;">
+    <img src="C:\xampp\htdocs\GSIRSelev\public\storage\firmas/ruta_{{$ruta_id}}/firma_cliente.png" alt="Firma" style="width: 200px; height: auto;">
+    <img src="C:\xampp\htdocs\GSIRSelev\public\storage\firmas/ruta_{{$ruta_id}}/firma_conductor.png" alt="Firma" style="width: 200px; height: auto;">
 
 
     <table class="table table-bordered">

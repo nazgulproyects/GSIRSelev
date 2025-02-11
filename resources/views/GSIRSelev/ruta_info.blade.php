@@ -185,8 +185,16 @@
     <span>Se deben rellenar los kilómetros iniciales para continuar.</span>
   </div>
   @else
-  <div class="row text-center" style="background-color: #79B329;">
-    <span style="color: white;">PUNTOS DE RECOGIDA</span>
+
+  <div class="row align-items-center" style="display: flex; height: 50px;">
+    <div class="col-9 p-0" style="height: 100%; display: flex; align-items: center; justify-content: center; background-color: #79B329;">
+      <h4 class="text-white m-0">PUNTOS DE RECOGIDA</h4>
+    </div>
+    <div class="col-3 p-0" style="height: 100%;">
+      <a href="{{ $url_maps_general }}" target="_blank" class="btn p-0" style="background-color: white !important; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+        <img src="{{ asset('images/google_icon.png') }}" alt="Google Maps" width="25" class="mr-4">
+      </a>
+    </div>
   </div>
 
   <div style="display: flex; align-items: flex-start; position: relative; margin-top: 20px;">

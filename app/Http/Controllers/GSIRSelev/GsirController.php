@@ -12,6 +12,7 @@ use App\Services\GeneralService;
 use PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class GsirController extends Controller
 {
@@ -172,11 +173,9 @@ class GsirController extends Controller
     $pto_recogida->estado = 'FINALIZADO';
     $pto_recogida->save();
 
-    $filePath = storage_path('app/public/firmas/ruta_' . $pto_recogida->ruta_id . '/firma_cliente');
- 
     $data = [
       'id' => $id,
-      'filePath' => $filePath
+      'ruta_id' => $pto_recogida->ruta_id
     ];
 
     return PDF::loadView('GSIRSelev.pdf_albaran', $data)->stream('informe_bonificacion.pdf');
@@ -184,23 +183,21 @@ class GsirController extends Controller
 
   public function di_pdf()
   {
-   
+
     $data = [
       'id' => '2'
     ];
 
     return PDF::loadView('GSIRSelev.documentos.prueba', $data)->stream('prueba.pdf');
-   
   }
 
   public function ad_pdf()
   {
-   
+
     $data = [
       'id' => '2'
     ];
 
     return PDF::loadView('GSIRSelev.documentos.prueba2', $data)->stream('prueba2.pdf');
-   
   }
 }

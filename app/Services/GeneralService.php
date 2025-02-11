@@ -32,11 +32,8 @@ class GeneralService
 
     public static function listaVehiculos()
     {
-     
         $Vehiculo = '$Vehiculo';
         $f4e2b823 = '$f4e2b823';
-
-
 
         if (auth()->user()->empresa == 'SELEV') {
             $vehiculos = DB::connection('mavaser')->select("

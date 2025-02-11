@@ -39,18 +39,17 @@ class RutasController extends BaseController
 
         if (auth()->user()->empresa == 'SELEV') {
             $rutas_nav = collect(DB::connection('mavaser')->select("
-            SELECT *
-            FROM [SELEV_BC].[dbo].[SEBOS LEVANTINOS, S_L_$Ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
-            WHERE  [Cod_ conductor]='$cod_conductor' and [Fecha emision ruta] = '$fechaActual'
-        "));
+                SELECT *
+                FROM [SELEV_BC].[dbo].[SEBOS LEVANTINOS, S_L_$Ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
+                WHERE  [Cod_ conductor]='$cod_conductor' and [Fecha emision ruta] = '$fechaActual'
+            "));
         } else if (auth()->user()->empresa == 'REMITTEL') {
             $rutas_nav = collect(DB::connection('mavaser')->select("
-            SELECT *
-            FROM [SELEV_BC].[dbo].[REMITTEL 2017, S_L_$Ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
-            WHERE  [Cod_ conductor]='$cod_conductor' and [Fecha emision ruta] = '$fechaActual'
-        "));
+                SELECT *
+                FROM [SELEV_BC].[dbo].[REMITTEL 2017, S_L_$Ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
+                WHERE  [Cod_ conductor]='$cod_conductor' and [Fecha emision ruta] = '$fechaActual'
+            "));
         }
-
         $rutas_nav->transform(function ($ruta) {
             $ruta_web = Ruta::where('codigo', $ruta->{'No_ ruta diaria'})->first();
             $ruta->estado = $ruta_web->estado ?? 'PENDIENTE'; // Si no hay estado, asigna 'PENDIENTE'
@@ -86,7 +85,7 @@ class RutasController extends BaseController
 
             $puntos_recogida_agrup = collect(DB::connection('mavaser')->select("
                 SELECT [No_ Proveedor_Cliente], [Nombre], [Direccion 1], [Orden Impresion], [No_ ruta]
-                FROM [SELEV_BC].[dbo].[SEBOS LEVANTINOS 2017, S_L_$Lin_ ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
+                FROM [SELEV_BC].[dbo].[SEBOS LEVANTINOS, S_L_$Lin_ ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
                 WHERE [No_ ruta] = '$cod_ruta'
                 GROUP BY [No_ Proveedor_Cliente], [Nombre], [Direccion 1], [Orden Impresion], [No_ ruta]
                 ORDER BY [Orden Impresion] asc
@@ -109,12 +108,14 @@ class RutasController extends BaseController
 
         $ruta_nav = !empty($ruta_nav) ? $ruta_nav[0] : null;
 
+
         // Si la ruta no existe, la crea 
         $ruta_web = Ruta::firstOrCreate(
             ['codigo' => $cod_ruta], // Condiciones de búsqueda
             [
                 'codigo' => $cod_ruta,  // Valores para crear si no existe
-                'estado' => 'PENDIENTE'
+                'estado' => 'PENDIENTE',
+                'empresa' => auth()->user()->empresa
             ]
         );
 
@@ -154,7 +155,54 @@ class RutasController extends BaseController
             $remolque_2 = $vehiculo_asociado->remolque_2;
             $kms_iniciales = $vehiculo_asociado->km_iniciales;
         }
-        return view('GSIRSelev.ruta_info')->with(compact('cod_ruta', 'ruta_web', 'ruta_nav', 'puntos_recogida_agrup', 'vehiculos_nav', 'codigo_cond', 'vehiculo_asociado', 'cod_vehiculo', 'remolque_1', 'remolque_2', 'kms_iniciales'));
+
+        // Lista con las direcciones para ruta general
+        $lista_direcciones = [];
+        foreach ($puntos_recogida_agrup as $punto) {
+            if (auth()->user()->empresa == 'SELEV') {
+                $prov_cli = $punto->{'No_ Proveedor_Cliente'};
+                $punto_nav = collect(DB::connection('mavaser')->select("
+                    SELECT *
+                    FROM [SELEV_BC].[dbo].[SEBOS LEVANTINOS, S_L_$Lin_ ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
+                    WHERE [No_ ruta] = '$cod_ruta' AND [No_ Proveedor_Cliente] = '$prov_cli'
+                    ORDER BY [Orden Impresion] ASC;
+                "));
+                if ($punto_nav != null) {
+                    array_push($lista_direcciones, $punto_nav[0]->C_P_ . ' ' . $punto_nav[0]->{'Direccion 1'});
+                }
+            } else if (auth()->user()->empresa == 'REMITTEL') {
+                $prov_cli = $punto->{'No_ Proveedor_Cliente'};
+                $punto_nav = collect(DB::connection('mavaser')->select("
+                    SELECT *
+                    FROM [SELEV_BC].[dbo].[REMITTEL 2017, S_L_$Lin_ ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208]
+                    WHERE [No_ ruta] = '$cod_ruta' AND [No_ Proveedor_Cliente] = '$prov_cli'
+                    ORDER BY [Orden Impresion] ASC;
+                "));
+                if ($punto_nav != null) {
+                    array_push($lista_direcciones, $punto_nav[0]->Poblacion . ' ' . $punto_nav[0]->C_P_ . ' ' . $punto_nav[0]->{'Direccion 1'});
+                }
+            }
+        }
+        if (count($lista_direcciones) === 1) {
+            // Si solo hay una dirección, se muestra el marcador de búsqueda en Google Maps
+            $direccion = urlencode($lista_direcciones[0]);
+            $url_maps_general = "https://www.google.com/maps/search/?api=1&query={$direccion}";
+        } elseif (count($lista_direcciones) === 2) {
+            // Si hay dos direcciones, se muestra la ruta entre ellas (sin waypoints)
+            $origen = urlencode($lista_direcciones[0]);
+            $destino = urlencode($lista_direcciones[1]);
+            $url_maps_general = "https://www.google.com/maps/dir/?api=1&origin={$origen}&destination={$destino}";
+        } else {
+            // Si hay más de dos direcciones, se utiliza la primera como origen, la última como destino y el resto como waypoints
+            $origen = urlencode($lista_direcciones[0]);
+            $destino = urlencode(end($lista_direcciones));
+            $waypointsArray = array_slice($lista_direcciones, 1, -1);
+            $waypointsCodificados = array_map('urlencode', $waypointsArray);
+            $waypoints = implode('|', $waypointsCodificados);
+            $url_maps_general = "https://www.google.com/maps/dir/?api=1&origin={$origen}&destination={$destino}&waypoints={$waypoints}";
+        }
+
+        return view('GSIRSelev.ruta_info')->with(compact('cod_ruta', 'ruta_web', 'ruta_nav', 'puntos_recogida_agrup', 'vehiculos_nav', 'codigo_cond', 'vehiculo_asociado', 'cod_vehiculo', 'remolque_1', 'remolque_2', 'kms_iniciales', 'url_maps_general'));
     }
 
 
