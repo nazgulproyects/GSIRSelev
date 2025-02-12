@@ -320,7 +320,7 @@
                 <div style="min-width: 40px;">
                     <i class="fa-solid fa-location-dot fa-xl"></i>
                 </div>
-                <a href="https://www.google.com/maps/search/?api=1&query={{$punto_productos_nav[0]->C_P_}} {{ urlencode($punto_productos_nav[0]->{'Direccion 1'}) }}" target="_blank" class="map-link" style="width: 100% !important;">
+                <a href="https://www.google.com/maps/search/?api=1&query={{$punto_productos_nav[0]->C_P_}} {{ urlencode($punto_productos_nav[0]->{'Direccion 1'} )}} {{$punto_productos_nav[0]->Nombre }}" target="_blank" class="map-link" style="width: 100% !important;">
                     {{ $punto_productos_nav[0]->{'Direccion 1'} }}
                     <img src="{{ asset('images/google_icon.png') }}" alt="Google Maps" class="map-icon">
                 </a>
@@ -503,7 +503,7 @@
                     </div>
                     <div class="list-item d-flex align-items-center mb-3">
                         <i class="fa-solid fa-file-pdf fa-xl text-danger me-2"></i>
-                        <a href="/documento_pdf/doc_comercial" target="_blank" class="btn btn-primary btn-sm">
+                        <a href="/documento_pdf/doc_comercial/{{ urlencode($punto_productos_nav[0]->{'No_ ruta'}) }}/{{$punto_recogida_web->id}}" target="_blank" class="btn btn-primary btn-sm">
                             Documento Comercial
                         </a>
                     </div>

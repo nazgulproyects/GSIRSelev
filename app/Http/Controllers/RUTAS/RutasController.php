@@ -269,6 +269,8 @@ class RutasController extends BaseController
                 $prod_punto = new ProductosPuntos();
                 $prod_punto->punto_recogida_id = $punto_recogida_web->id;
                 $prod_punto->no_linea = $punto_nav->{'No_ linea'};
+                $prod_punto->codigo = $punto_nav->{'No_ producto'};
+                $prod_punto->nombre = $punto_nav->{'Descripcion producto'};
                 $prod_punto->cantidad = 0;
                 $prod_punto->save();
             }
@@ -285,7 +287,7 @@ class RutasController extends BaseController
             $punto_nav->cantidad = $prod_punto->cantidad ?? 0;
             return $punto_nav;
         });
-
+        
         $total_cantidad = ProductosPuntos::where('punto_recogida_id', $punto_recogida_web->id)->sum('cantidad');
         $productos_adicionales = ProductosAdicionales::where('ruta_id', $ruta_web->id)->where('punto_recogida_id', $punto_recogida_web->id)->get();
 

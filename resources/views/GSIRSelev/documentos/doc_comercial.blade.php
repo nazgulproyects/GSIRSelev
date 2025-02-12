@@ -58,7 +58,7 @@
                 </td>
                 <td style="width: 35%; text-align: right; border: none;"><b style="color: red;">DOCUMENTO COMERCIAL</b></td>
                 <td style="width: 20%; text-align: right; border: none;"><b>Nº DOCUMENTO</b></td>
-                <td style="width: 20%; text-align: right; border: none;"><b>RD25/001132/CL0210</b></td>
+                <td style="width: 20%; text-align: right; border: none;"><b>{{$datos_ruta->{'No_ ruta'} }}/{{$datos_ruta->{'No_ Proveedor_Cliente'} }}</b></td>
             </tr>
         </tbody>
     </table>
@@ -79,30 +79,30 @@
             <tbody>
                 <tr>
                     <td style="width: 30%;">Nombre/Razón social</td>
-                    <td style="width: 30%;">DOLZ ESPAÑA,S.L.</td>
+                    <td style="width: 30%;">{{$datos_ruta->{'Nombre'} }}</td>
                     <td style="width: 10%;">CIF/NIF</td>
-                    <td colspan="3">B46739579</td>
+                    <td colspan="3">{{$cif_nif}}</td>
                 </tr>
                 <tr>
                     <td>Nº de autorización/registro</td>
-                    <td colspan="5">(SANDACH,RGSEA) ES460290000017</td>
+                    <td colspan="5" style="color: red;">(SANDACH,RGSEA) ES460290000017</td>
                 </tr>
                 <tr>
                     <td>Dirección</td>
-                    <td>Pol. Ind. Cotes B C/Corretgers, I</td>
+                    <td>{{$datos_ruta->{'Direccion 1'} }}</td>
                     <td>Municipio</td>
-                    <td style="width: 10%;">Algemesi</td>
+                    <td style="width: 10%;">{{$datos_ruta->{'Poblacion'} }}</td>
                     <td style="width: 10%;">C.P.</td>
-                    <td style="width: 10%;">ES-46680</td>
+                    <td style="width: 10%;">{{$datos_ruta->{'C_P_'} }}</td>
                 </tr>
                 <tr>
                     <td colspan="4">Lugar de recogida (Si no coincide con la dirección)</td>
                     <td>Nº Tienda</td>
-                    <td></td>
+                    <td>{{$datos_ruta->{'Nº Tienda'} }}</td>
                 </tr>
                 <tr>
                     <td>Fecha de Recogida/Expedición</td>
-                    <td colspan="5">4 de febrero de 2025</td>
+                    <td colspan="5" style="color: red;">{{$fechaActual}}</td>
                 </tr>
             </tbody>
         </table>
@@ -118,48 +118,14 @@
                     <td style="width: 20%;">Especie</td>
                     <td style="width: 30%;">Destino</td>
                 </tr>
+                @foreach($productos_punto as $prod)
                 <tr>
-                    <td>SANGRE LÍQUIDA DE AVE</td>
-                    <td>1000 KG</td>
-                    <td>Avícola</td>
+                    <td>{{$prod->nombre}}</td>
+                    <td>{{$prod->cantidad}} KG</td>
+                    <td>{{$datos_ruta->Especie}}</td>
                     <td>Planta Transformadora</td>
                 </tr>
-                <tr>
-                    <td>PLUMA</td>
-                    <td>1000 KG</td>
-                    <td>Avícola</td>
-                    <td>Planta Transformadora</td>
-                </tr>
-                <tr>
-                    <td>TRIPA DE AVE</td>
-                    <td>1000 KG</td>
-                    <td>Avícola</td>
-                    <td>Planta Transformadora</td>
-                </tr>
-                <tr>
-                    <td>HUESO DE AVE</td>
-                    <td>1000 KG</td>
-                    <td>Avícola</td>
-                    <td>Planta Transformadora</td>
-                </tr>
-                <tr>
-                    <td>PATAS DE AVE</td>
-                    <td>1000 KG</td>
-                    <td>Avícola</td>
-                    <td>Planta Transformadora</td>
-                </tr>
-                <tr>
-                    <td>CARCASAS DE AVE</td>
-                    <td>1000 KG</td>
-                    <td>Avícola</td>
-                    <td>Planta Transformadora</td>
-                </tr>
-                <tr>
-                    <td>SUBP. DESPIECE AVE</td>
-                    <td>1000 KG</td>
-                    <td>Avícola</td>
-                    <td>Planta Transformadora</td>
-                </tr>
+                @endforeach
             </tbody>
         </table>
     </div>
@@ -169,18 +135,18 @@
             <tbody>
                 <tr>
                     <td style="width: 30%;">ENTREGADOS: Nº</td>
-                    <td style="width: 70%;"></td>
+                    <td style="width: 70%;">{{$cant_entregados}}</td>
                 </tr>
                 <tr>
                     <td>RECOGIDOS: Nº</td>
-                    <td></td>
+                    <td>{{$cant_recogidos}}</td>
                 </tr>
             </tbody>
         </table>
     </div>
     <span>El abajo firmante declara que la información descrita en este apartado es correcta y que se han adoptado todas las precauciones necesarias
         para evitar riesgos para la salud pública o animal.</span>
-    <p>4 de febrero de 2025</p>
+    <p style="color: red;">{{$fechaActual}}</p>
     <p>Nombre y apellidos en mayusculas:</p>
 
     <div style="border: 1px solid black; padding: 2px; width: fit-content; margin-bottom: 15px;">
@@ -190,29 +156,29 @@
             <tbody>
                 <tr>
                     <td style="width: 25%;">Empresa</td>
-                    <td colspan="5">SELEV Pet Industry, S.L.U.</td>
+                    <td colspan="5">{{$datos_empresa_transporte->Name}}</td>
                 </tr>
                 <tr>
                     <td>Matricula</td>
-                    <td colspan="5">9234KNH CO-5644</td>
+                    <td colspan="5">{{$vehiculo_ruta->cod_vehiculo}} {{$vehiculo_ruta->remolque_1}}</td>
                 </tr>
                 <tr>
                     <td>Nº de autorización/registro</td>
-                    <td colspan="5">SANDACH S46230001</td>
+                    <td colspan="5" style="color: red;">SANDACH S46230001</td>
                 </tr>
                 <tr>
                     <td>Nombre conductor</td>
-                    <td colspan="2">JUAN CARLOS LUCENA MAJON</td>
+                    <td colspan="2">{{$datos_conductor->Nombre}}</td>
                     <td style="width: 15%;">CIF/NIF</td>
-                    <td colspan="2">48437212-V</td>
+                    <td colspan="2">{{$datos_conductor->DNI}}</td>
                 </tr>
                 <tr>
                     <td>Dirección</td>
-                    <td style="width: 30%;">Autovía A-7 Km. 356</td>
+                    <td style="width: 30%;">{{$datos_empresa_transporte->Address}}</td>
                     <td style="width: 10%;">Municipio</td>
-                    <td>Silla</td>
+                    <td>{{$datos_empresa_transporte->City}}</td>
                     <td style="width: 7%;">C.P.</td>
-                    <td style="width: 13%;">ES-46460</td>
+                    <td style="width: 13%;">{{$datos_empresa_transporte->{'Post Code'} }}</td>
                 </tr>
             </tbody>
         </table>
@@ -220,7 +186,7 @@
 
     <span>El abajo firmante declara que la información descrita en este apartado es correcta y que se han adoptado todas las precauciones necesarias
         para evitar riesgos para la salud pública o animal.</span>
-    <p>4 de febrero de 2025</p>
+    <p style="color: red;">{{$fechaActual}}</p>
     <p>Nombre y apellidos en mayusculas:</p>
 
     <div style="border: 1px solid black; padding: 2px; width: fit-content; margin-bottom: 15px;">
@@ -240,7 +206,7 @@
                 </tr>
                 <tr>
                     <td>Nº de autorización/registro</td>
-                    <td colspan="2">SANDACH S46230001</td>
+                    <td colspan="2" style="color: red;">SANDACH S46230001</td>
                     <td>Actividad</td>
                     <td colspan="2">Planta Transformadora</td>
                 </tr>
