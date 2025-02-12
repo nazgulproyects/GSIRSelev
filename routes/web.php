@@ -76,6 +76,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
   //==============================
   Route::get('/documento_pdf/di', [App\Http\Controllers\GSIRSelev\GsirController::class, 'di_pdf'])->name('documento_pdf.di');
   Route::get('/documento_pdf/ad', [App\Http\Controllers\GSIRSelev\GsirController::class, 'ad_pdf'])->name('documento_pdf.ad');
+  Route::get('/documento_pdf/doc_comercial', [App\Http\Controllers\GSIRSelev\GsirController::class, 'doc_comercial_pdf'])->name('documento_pdf.doc_comercial');
 
 
 

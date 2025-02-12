@@ -275,10 +275,8 @@
 
     <div class="button-container">
         @if($punto_productos_nav[0]->estado != 'FINALIZADO')
-        <b style="width: 300px; background-color: #c6c6c6; padding-top: 4px; padding-left: 10px; padding-right: 5px;">{{$punto_productos_nav[0]->{'No_ ruta'} }}: {{ $punto_productos_nav[0]->Nombre }}</b>
-        <button class="button" onclick="$('#modalFinalizarRecogida').modal('show');" style="background-color: #001868;">
-            <i class="fa-solid fa-file-signature fa-xl ml-1 mt-1"></i>
-        </button>
+        <b style="width: 300px; background-color: #c6c6c6; padding-left: 10px; display: flex; align-items: center; height: 50px;">{{$punto_productos_nav[0]->{'No_ ruta'} }}: {{ $punto_productos_nav[0]->Nombre }}</b>
+        <button class="button" onclick="$('#modalFinalizarRecogida').modal('show');" style="background-color: #001868; height: 50px;"><i class="fa-solid fa-file-signature fa-xl ml-1 mt-1"></i></button>
         @else
         <b style="width: 100%; background-color: #c6c6c6; padding-top: 4px; padding-left: 10px;">{{$punto_productos_nav[0]->{'No_ ruta'} }}: {{ $punto_productos_nav[0]->Nombre }}</b>
         @endif
@@ -479,7 +477,7 @@
         </div>
     </div>
 
-    <!-- Modal para mostrar los datos del cliente -->
+    <!-- Modal para mostrar los documentos -->
     <div class="modal fade" id="documentosModal" tabindex="-1" role="dialog" aria-labelledby="documentosModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -490,27 +488,33 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="list-item">
-                        <i class="fa-solid fa-file-pdf fa-xl"></i>
-                        <span>DI</span>
-                        <b style="color: #007bff;"><a href="/documento_pdf/di" target="_blank">di.pdf</a></b>
+                    <div class="list-item d-flex align-items-center mb-3">
+                        <i class="fa-solid fa-file-pdf fa-xl text-danger me-2"></i>
+
+                        <a href="/documento_pdf/di" target="_blank" class="btn btn-primary btn-sm">
+                            Traslado de Residuos (DI)
+                        </a>
                     </div>
-                    <div class="list-item">
-                        <i class="fa-solid fa-file-pdf fa-xl"></i>
-                        <span>AD</span>
-                        <b style="color: #007bff;"><a href="/documento_pdf/ad" target="_blank">ad.pdf</a></b>
+                    <div class="list-item d-flex align-items-center mb-3">
+                        <i class="fa-solid fa-file-pdf fa-xl text-danger me-2"></i>
+                        <a href="/documento_pdf/ad" target="_blank" class="btn btn-primary btn-sm">
+                            Autodeclaración
+                        </a>
                     </div>
-                    <div class="list-item">
-                        <i class="fa-solid fa-file-pdf fa-xl"></i>
-                        <span>DR</span>
-                        <b style="color: #007bff;">dr.pdf</b>
+                    <div class="list-item d-flex align-items-center mb-3">
+                        <i class="fa-solid fa-file-pdf fa-xl text-danger me-2"></i>
+                        <a href="/documento_pdf/doc_comercial" target="_blank" class="btn btn-primary btn-sm">
+                            Documento Comercial
+                        </a>
                     </div>
-                    <div class="list-item">
-                        <i class="fa-solid fa-file-pdf fa-xl"></i>
-                        <span>ALB</span>
-                        <b style="color: #007bff;">alb.pdf</b>
+                    <div class="list-item d-flex align-items-center mb-3">
+                        <i class="fa-solid fa-file-pdf fa-xl text-danger me-2"></i>
+                        <button class="btn btn-secondary btn-sm" class="btn btn-primary btn-sm">
+                            Carta de Porte Nacional
+                        </button>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>

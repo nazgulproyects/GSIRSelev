@@ -200,4 +200,16 @@ class GsirController extends Controller
 
     return PDF::loadView('GSIRSelev.documentos.prueba2', $data)->stream('prueba2.pdf');
   }
+
+  /**
+   * Generar el pdf del documento comercial
+   */
+  public function doc_comercial_pdf()
+  {
+    $data = [
+      'id' => '2'
+    ];
+
+    return PDF::loadView('GSIRSelev.documentos.doc_comercial', $data)->stream('doc_comercial.pdf');
+  }
 }
