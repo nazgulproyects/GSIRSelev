@@ -1,6 +1,6 @@
 <?php
 
-define("USERPWD", "nuovasesac\itgrac:H0l4.Mund0");
+define("USERPWD", "selev\administrador:#ñññiii...24!");
 
 
 //The Stream wrapper now looks like:

@@ -63,7 +63,7 @@ return [
             ]) : [],
         ],
 
-        'mavaser' => [
+        'selev_bc' => [
             'driver' => 'sqlsrv',
             'host' => '10.6.0.254',
             'port' => '1433',

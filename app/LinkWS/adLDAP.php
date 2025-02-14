@@ -65,22 +65,25 @@ class adLDAP {
     * 
     * @var string
     */   
-	protected $_account_suffix = "@nuovasesac.local";
-    
+	//protected $_account_suffix = "@nuovasesac.local";
+    protected $_account_suffix = "@selev.local";
+
     /*
     * The base dn for your domain
     * 
     * @var string
     */
-	protected $_base_dn = "DC=nuovasesac,DC=local"; 
-	
+	//protected $_base_dn = "DC=nuovasesac,DC=local"; 
+	protected $_base_dn = "DC=selev,DC=local";
+
     /*
     * Array of domain controllers. Specifiy multiple controllers if you
     * would like the class to balance the LDAP queries amongst multiple servers
     * 
     * @var array
     */
-    protected $_domain_controllers = array ("10.1.0.101");
+    //protected $_domain_controllers = array ("10.1.0.101");
+    protected $_domain_controllers = array ("10.6.0.254");
 	
     /*
     * Optional account with higher privileges for searching
