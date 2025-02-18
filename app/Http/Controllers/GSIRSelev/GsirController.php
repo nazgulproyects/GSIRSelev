@@ -211,7 +211,6 @@ class GsirController extends Controller
    */
   public function doc_comercial_pdf($ruta, $pto_web_id)
   {
-
     $Lin_ = '$Lin_';
     $f4e2b823 = '$f4e2b823';
     $Item = '$Item$f4e2b823';
@@ -236,7 +235,7 @@ class GsirController extends Controller
     $direccion_transporte = '';
     $municipio_transporte = '';
     $cp_transporte = '';
-
+    $num_autoriz = '';
     if ($empresa == 'SELEV') {
 
       $ruta_nav = DB::connection(SELEV_BC)->select("
@@ -265,12 +264,11 @@ class GsirController extends Controller
         left JOIN [SELEV_BC].[dbo].[" . SELEV_SQL . "$Vendor] AS P ON P.No_=R.[Cod_ empresa transporte]
         WHERE [Fecha emision ruta] = '$fechaActual' and [Cod_ conductor]='$cod_conductor'
       ");
-      
+
       $nombre_empresa_transporte = $ruta_nav[0]->{'Nombre empresa transporte'};
       // ! Estos remolque son los que ponga en Navision o los que haya guardados en la app de nsir ?
       $remolque1 = $ruta_nav[0]->{'Cod_ Remolque 1'};
       $remolque2 = $ruta_nav[0]->{'Cod_ Remolque 2'};
-
 
 
       // ====================================== DATOS DEL TRANSPORTISTA ======================================
@@ -335,6 +333,8 @@ class GsirController extends Controller
         }
       }
 
+      $punt_rec_actual = PuntoRecogida::where('id', $pto_web_id)->first();
+      $cli_prov_punto = $punt_rec_actual->no_prov_cli;
       $datos_ruta = DB::connection(SELEV_BC)->select("
         SELECT
         [No_ ruta]
@@ -389,6 +389,7 @@ class GsirController extends Controller
         ,[Forma de pago]
         ,[Nº Tienda]
         ,[Grupo]
+        ,P1.[Actividad]
           FROM [SELEV_BC].[dbo].[" . SELEV_SQL . "$Lin_ ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208] AS L
           INNER JOIN [SELEV_BC].[dbo].[" . SELEV_SQL . "$Item-5811-49c6-a41c-7c9707074208] AS T ON T.No_=L.[No_ producto]
           LEFT JOIN [SELEV_BC].[dbo].[" . SELEV_SQL . "$Vendor] AS P ON P.No_=
@@ -420,6 +421,12 @@ class GsirController extends Controller
       $municipio_destino = '';
       $cp_destino = '';
 
+      $actividad_destino = '';
+      if ($datos_ruta[0]->Actividad == 1) {
+        $actividad_destino = 'Planta Intermedia';
+      } else if ($datos_ruta[0]->Actividad == 2) {
+        $actividad_destino = 'Planta Transformadora';
+      }
       $tolva_entrada = $ruta_nav[0]->{'Tolva Entrada'};
       $lista_tolvas_selev = ['TC-IN-CAM', 'TC-IN-ORGA', 'TC-IN-PS1', 'TC-IN-PS2', 'TC-INTER', 'TC-PA1', 'TC-PA2', 'TC-PESCADO', 'TC-PP1', 'TC-PS1', 'TC-PS2', 'TC-PSH1'];
 
@@ -457,30 +464,11 @@ class GsirController extends Controller
 
 
       $ruta_nav = DB::connection(SELEV_BC)->select("
-        SELECT [No_ ruta diaria]
-        ,[Descripcion]
-        ,[Fecha emision ruta]
-        ,[Kms_ ruta]
-        ,[Cod_ conductor]
-        ,[Nombre conductor]
-        ,[Cod_ empresa transporte]
-        ,[Nombre empresa transporte]
-        ,P1.[No_ Autorizac_ Transportista] AS NAutorizacion
-        ,P.Address AS Direccionproveedor
-        ,P.City AS Municipioproveedor
-        ,P.[Post Code] AS Codpostalproveedor
-        ,[Cod_ vehiculo]
-        ,[Cod_ Remolque 1]
-        ,[Cod_ Remolque 2]
-        ,[Bloquear]
-        ,[Tolva Entrada]    
-        ,[Ruta secundaria]
-        ,[Ruta principal]
-        ,[Ruta de Gestion Externa]
+        SELECT  *
         FROM [SELEV_BC].[dbo].[" . REMITTEL_SQL . "$Ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208] AS R
         LEFT JOIN [SELEV_BC].[dbo].[" . REMITTEL_SQL . "$Vendor2-5811-49c6-a41c-7c9707074208] AS P1 ON P1.No_=R.[Cod_ empresa transporte]
         left JOIN [SELEV_BC].[dbo].[" . REMITTEL_SQL . "$Vendor] AS P ON P.No_=R.[Cod_ empresa transporte]
-        WHERE [Fecha emision ruta] = '$fechaActual' and [Cod_ conductor]='$cod_conductor'
+        WHERE [Fecha emision ruta] = '$fechaActual' and [Cod_ conductor]='$cod_conductor' and [No_ ruta diaria] = '$ruta'
       ");
 
       $nombre_empresa_transporte = $ruta_nav[0]->{'Nombre empresa transporte'};
@@ -488,6 +476,7 @@ class GsirController extends Controller
       $remolque1 = $ruta_nav[0]->{'Cod_ Remolque 1'};
       $remolque2 = $ruta_nav[0]->{'Cod_ Remolque 2'};
 
+      // ====================================== DATOS DEL TRANSPORTISTA ======================================
       // Si el campo cod_ empresa transporte esta informado, es que el transporte lo hace un tercero, pero hay que comprobar que no sea ningun remolque de Selev, sinos sera selev
       if ($ruta_nav[0]->{'Cod_ empresa transporte'} != "") {
 
@@ -496,8 +485,15 @@ class GsirController extends Controller
           $propiedad_selev_r2 = DB::connection(SELEV_BC)->select("select [Cod_ vehiculo] FROM [SELEV_BC].[dbo].[" . REMITTEL_SQL . "$Vehiculo2-5811-49c6-a41c-7c9707074208] where Remolque=1 and Baja=0 and [Tipo vehiculo]=0 and App=1 and [Cod_ vehiculo]='$remolque2'");
           if (sizeof($propiedad_selev_r2) == 0) { // El transporte es de un TERCERO
 
-            // Aqui sí, buscamos en vendor el codigo que ponga
-            dd('El cliente es un tercero.');
+            $prov_empresa_transporte = $ruta_nav[0]->{'Cod_ empresa transporte'};
+            $datos_empresa_transporte = DB::connection(SELEV_BC)->select("select Name, Address, City, [Post Code] FROM [SELEV_BC].[dbo].[" . REMITTEL_SQL . "$Vendor] WHERE No_ = '$prov_empresa_transporte'");
+            $datos_empresa_transporte2 = DB::connection(SELEV_BC)->select("select * FROM [SELEV_BC].[dbo].[" . REMITTEL_SQL . "$Vendor2-5811-49c6-a41c-7c9707074208] WHERE No_ = '$prov_empresa_transporte'");
+
+            $empresa_transporte = $datos_empresa_transporte[0]->Name;
+            $direccion_transporte = $datos_empresa_transporte[0]->Address;
+            $municipio_transporte = $datos_empresa_transporte[0]->City;
+            $cp_transporte = $datos_empresa_transporte[0]->{'Post Code'};
+            $num_autoriz = $datos_empresa_transporte2[0]->{'No_ Autorizac_ Transportista'};
           } else { // El transporte es SELEV
             $empresa_transporte = 'SELEV Pet Industry, S.L.U.';
             $direccion_transporte = 'Autovía A-7 Km. 356';
@@ -520,11 +516,11 @@ class GsirController extends Controller
           $municipio_transporte = 'Silla';
           $cp_transporte = 'ES-46460';
         } else if ($nombre_empresa_transporte == 'REMITTEL 2017, S.L.U.' || $nombre_empresa_transporte == 'TEST_REMITTEL 2017, S.L.') { // El transporte es REMITTEL
-
           $empresa_transporte = 'REMITTEL 2017, S.L.U.';
-          $direccion_transporte = 'C/Jose Perez Llácer Nº 10 pta. 1 edif.AS Center';
-          $municipio_transporte = 'Alfafar';
+          $direccion_transporte = 'C/ José Pérez Llácer n 10 Pta. 1 Edif. As Center';
+          $municipio_transporte = 'ALFAFAR';
           $cp_transporte = 'ES-46910';
+          $num_autoriz = 'S46022003';
         } else { // En este caso vemos si alguno de los dos remolques son de Selev, de ser así, el DATO TRANSPORTE será Selev
 
           $propiedad_selev_r1 = DB::connection(SELEV_BC)->select("select [Cod_ vehiculo] FROM [SELEV_BC].[dbo].[" . REMITTEL_SQL . "$Vehiculo2-5811-49c6-a41c-7c9707074208] where Remolque=1 and Baja=0 and [Tipo vehiculo]=0 and App=1 and [Cod_ vehiculo]='$remolque1'");
@@ -532,7 +528,7 @@ class GsirController extends Controller
             $propiedad_selev_r2 = DB::connection(SELEV_BC)->select("select [Cod_ vehiculo] FROM [SELEV_BC].[dbo].[" . REMITTEL_SQL . "$Vehiculo2-5811-49c6-a41c-7c9707074208] where Remolque=1 and Baja=0 and [Tipo vehiculo]=0 and App=1 and [Cod_ vehiculo]='$remolque2'");
             if (sizeof($propiedad_selev_r2) == 0) { // El transporte es de un TERCERO
               // Aqui sí, buscamos en vendor el codigo que ponga
-              dd('El cliente es un tercero.');
+              dd('El cliente es un tercero 2.');
             } else { // El transporte es SELEV
               $empresa_transporte = 'SELEV Pet Industry, S.L.U.';
               $direccion_transporte = 'Autovía A-7 Km. 356';
@@ -548,7 +544,10 @@ class GsirController extends Controller
         }
       }
 
-      $datos_ruta = DB::connection(SELEV_BC)->select("
+      $punt_rec_actual = PuntoRecogida::where('id', $pto_web_id)->first();
+      $cli_prov_punto = $punt_rec_actual->no_prov_cli;
+
+      $productos_ruta = DB::connection(SELEV_BC)->select("
         SELECT
         [No_ ruta]
         ,[No_ linea]
@@ -614,16 +613,18 @@ class GsirController extends Controller
           when 'P' then L.[No_ Proveedor_Cliente]
           when 'C' then ('PR'+ substring(L.[No_ Proveedor_Cliente],3,5))
           end)
-        WHERE [No_ ruta]='$ruta'
+        WHERE [No_ ruta]='$ruta' and [No_ Proveedor_Cliente] = '$cli_prov_punto'
 
       ");
+
+
 
       $datos_conductor = DB::connection(SELEV_BC)->table(REMITTEL_Conductores)->where('Cod_ Conductor', $cod_conductor)->get();
 
       // $prov_empresa_transporte = $datos_conductor[0]->{'Cod_ empresa transporte'};
       // $datos_empresa_transporte = DB::connection(SELEV_BC)->select("select Name, Address, City, [Post Code] FROM [SELEV_BC].[dbo].[SEBOS LEVANTINOS, S_L_$Vendor] WHERE No_ = '$prov_empresa_transporte'");
 
-      // DATOS DEL DESTINO
+      // ====================================== DATOS DEL DESTINO ======================================
       $nombre_destino = '';
       $cif_destino = '';
       $num_autorizacion_destino = '';
@@ -631,39 +632,50 @@ class GsirController extends Controller
       $municipio_destino = '';
       $cp_destino = '';
 
-      $tolva_entrada = $ruta_nav[0]->{'Tolva Entrada'};
+
+      $tolva_entrada = $productos_ruta[0]->{'Tolva entrada'};
+
       $lista_tolvas_selev = ['TC-IN-CAM', 'TC-IN-ORGA', 'TC-IN-PS1', 'TC-IN-PS2', 'TC-INTER', 'TC-PA1', 'TC-PA2', 'TC-PESCADO', 'TC-PP1', 'TC-PS1', 'TC-PS2', 'TC-PSH1'];
+
+      $actividad_destino = '';
 
       if (in_array($tolva_entrada, $lista_tolvas_selev)) {
         $nombre_destino = 'SELEV PET INDUSTRY, S.L.';
         $cif_destino = 'B46062071';
-        $num_autorizacion_destino = 'SANDACH S46230001';
+        $num_autorizacion_destino = 'S46230001';
         $direccion_destino = 'AUTOVIA A-7 KM. 356';
         $municipio_destino = 'Silla';
         $cp_destino = 'ES-46460';
+
+        $actividad_destino = 'Planta Transformadora';
+
       } else {
 
         $Location = '$Location$f4e2b823';
         $datos_destino = DB::connection(SELEV_BC)->select("
-          SELECT 
-            P.Name
-            ,P.[VAT Registration No_]
-            ,P1.[No_ Autorizac_ Transportista] AS NAutorizacion
-            ,P.Address AS Direccionproveedor
-            ,P.City AS Municipioproveedor
-            ,P.[Post Code] AS Codpostalproveedor
+          SELECT *
           FROM [SELEV_BC].[dbo].[" . REMITTEL_SQL . "$Location-5811-49c6-a41c-7c9707074208] as L
           LEFT JOIN [SELEV_BC].[dbo].[" . REMITTEL_SQL . "$Vendor] AS P ON P.No_=L.[Proveedor Asociado]
           LEFT JOIN [SELEV_BC].[dbo].[" . REMITTEL_SQL . "$Vendor2-5811-49c6-a41c-7c9707074208] AS P1 ON P1.No_=L.[Proveedor Asociado]
           WHERE L.Code='$tolva_entrada'
         ");
+
+
         if (sizeof($datos_destino) == 1) {
+
+          if ($datos_destino[0]->Actividad == 1) {
+            $actividad_destino = 'Planta Intermedia';
+          } else if ($datos_destino[0]->Actividad == 2) {
+            $actividad_destino = 'Planta Transformadora';
+          }
+
+
           $nombre_destino = $datos_destino[0]->Name;
           $cif_destino = $datos_destino[0]->{'VAT Registration No_'};
-          $num_autorizacion_destino = $datos_destino[0]->NAutorizacion;
-          $direccion_destino = $datos_destino[0]->Direccionproveedor;
-          $municipio_destino = $datos_destino[0]->Municipioproveedor;
-          $cp_destino = $datos_destino[0]->Codpostalproveedor;
+          $num_autorizacion_destino = $datos_destino[0]->{'No_ Autorizac_ Transportista'};
+          $direccion_destino = $datos_destino[0]->Address;
+          $municipio_destino = $datos_destino[0]->City;
+          $cp_destino = $datos_destino[0]->{'Post Code'};
         }
       }
     }
@@ -674,11 +686,20 @@ class GsirController extends Controller
     $cant_recogidos = ProductosAdicionales::where('punto_recogida_id', $pto_web_id)->where('tipo', 'RECOGER')->sum('cantidad');
     $fechaActual = Carbon::parse($productos_punto[0]->created_at)->locale('es')->translatedFormat('j \d\e F \d\e Y');
 
+
+    // Aqui guardamos la especie correcta para cada producto
+    $datos_ruta_collect = collect($productos_ruta);
+    foreach ($productos_punto as $prod) {
+      $registro = $datos_ruta_collect->firstWhere('No_ linea', $prod->no_linea);
+      $prod->especie = $registro ? $registro->Especie : '';
+    }
+
+
     // Si la direccion del proveedor no es la misma que la de recogida, en Lugar recobida tendremos ese campo de recogida, sinos el texto del paréntesis.
-    $lugar_recogida = $datos_ruta[0]->Direccionproveedor !== $datos_ruta[0]->Direccionrecogida ? $datos_ruta[0]->Direccionrecogida : '(Si no coincide con la dirección)';
+    $lugar_recogida = $productos_ruta[0]->Direccionproveedor !== $productos_ruta[0]->Direccionrecogida ? $productos_ruta[0]->Direccionrecogida : '(Si no coincide con la dirección)';
 
     $data = [
-      'datos_ruta' => $datos_ruta[0],
+      'datos_ruta' => $productos_ruta[0],
       'productos_punto' => $productos_punto,
       'fechaActual' => $fechaActual,
       'cant_entregados' => $cant_entregados,
@@ -695,7 +716,9 @@ class GsirController extends Controller
       'num_autorizacion_destino' => $num_autorizacion_destino,
       'direccion_destino' => $direccion_destino,
       'municipio_destino' => $municipio_destino,
-      'cp_destino' => $cp_destino
+      'cp_destino' => $cp_destino,
+      'actividad_destino' => $actividad_destino,
+      'num_autoriz' => $num_autoriz
     ];
 
     return PDF::loadView('GSIRSelev.documentos.doc_comercial', $data)->stream('doc_comercial.pdf');

@@ -224,16 +224,32 @@ class RutasController extends BaseController
         */
 
 
-
         $cod_conductor = $service->codigoConductor();
+
+        $contacto = '';
+        $email = '';
+        $telefono = '';
 
         if (auth()->user()->empresa == 'SELEV') {
             $ruta_nav = DB::connection(SELEV_BC)->table(SELEV_Ruta_diaria)->where('Cod_ conductor', $cod_conductor)->where('No_ ruta diaria', $cod_ruta)->first();
             $punto_productos_nav = DB::connection(SELEV_BC)->table(SELEV_Linea_Ruta_diaria)->where('No_ ruta', $cod_ruta)->where('No_ Proveedor_Cliente', $cod_prov_cli)->orderBy('Orden Impresion', 'ASC')->get();
+
+            $cli_prov = DB::connection(SELEV_BC)->table(SELEV_Customer)->where('No_', $cod_prov_cli)->first();
+            if ($cli_prov == null) $cli_prov = DB::connection(SELEV_BC)->table(SELEV_Vendor)->where('No_', $cod_prov_cli)->first();
         } else if (auth()->user()->empresa == 'REMITTEL') {
             $ruta_nav = DB::connection(SELEV_BC)->table(REMITTEL_Ruta_diaria)->where('Cod_ conductor', $cod_conductor)->where('No_ ruta diaria', $cod_ruta)->first();
             $punto_productos_nav = DB::connection(SELEV_BC)->table(REMITTEL_Linea_Ruta_diaria)->where('No_ ruta', $cod_ruta)->where('No_ Proveedor_Cliente', $cod_prov_cli)->orderBy('Orden Impresion', 'ASC')->get();
+
+            $cli_prov = DB::connection(SELEV_BC)->table(REMITTEL_Customer)->where('No_', $cod_prov_cli)->first();
+            if ($cli_prov == null) $cli_prov = DB::connection(SELEV_BC)->table(REMITTEL_Vendor)->where('No_', $cod_prov_cli)->first();
         }
+        
+        if ($cli_prov != null) {
+            $contacto = $cli_prov->Contact;
+            $email = $cli_prov->{'E-Mail'};
+            $telefono = $cli_prov->{'Phone No_'};
+        }
+
 
         if (sizeof($punto_productos_nav) == 0) dd('LA RUTA NO TIENE NINGÚN PRODUCTO ASIGNADO PARA RECOGER');
 
@@ -303,7 +319,7 @@ class RutasController extends BaseController
             'CMPSERV' => 'SERVICIO LIMPIEZA CAMPANA'
         ];
 
-        return view('GSIRSelev.ruta_pto_recogida')->with(compact('ruta_nav', 'punto_productos_nav', 'punto_recogida_web', 'total_cantidad', 'productos_adicionales', 'lista_prods'));
+        return view('GSIRSelev.ruta_pto_recogida')->with(compact('ruta_nav', 'punto_productos_nav', 'punto_recogida_web', 'total_cantidad', 'productos_adicionales', 'lista_prods', 'contacto', 'email', 'telefono'));
     }
 
 

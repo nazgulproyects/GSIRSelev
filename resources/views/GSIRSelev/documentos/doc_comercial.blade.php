@@ -85,7 +85,8 @@
                 </tr>
                 <tr>
                     <td>Nº de autorización/registro</td>
-                    <td colspan="5">{{ $datos_ruta->NAutorizacion }}</td>
+                    <td>(SANDACH,RGSEA)</td>
+                    <td colspan="4">{{ $datos_ruta->NAutorizacion }}</td>
                 </tr>
                 <tr>
                     <td>Dirección</td>
@@ -123,30 +124,38 @@
                 <tr>
                     <td>{{$prod->nombre}}</td>
                     <td>{{$prod->cantidad}} KG</td>
-                    <td>{{$datos_ruta->Especie}}</td>
-                    <td>Planta Transformadora</td>
+                    <td>{{$prod->especie}}</td>
+                    <td>{{$actividad_destino}}</td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
     <div style="border: 1px solid black; padding: 2px; width: fit-content;">
-        <b>CONTROL ENVASES</b>
         <table>
             <tbody>
                 <tr>
-                    <td style="width: 30%;">ENTREGADOS: Nº</td>
-                    <td style="width: 70%;">{{$cant_entregados}}</td>
+                    <td colspan="3"><b>CONTROL ENVASES</b></td>
+                    <td colspan="2">ESTADO DE LIMPIEZA</td>
+                </tr>
+                <tr>
+                    <td style="width: 20%;">ENTREGADOS: Nº</td>
+                    <td style="width: 30%;">{{$cant_entregados}}</td>
+                    <td style="width: 10%;">APTO</td>
+                    <td style="width: 10%; border: 1px solid black;"></td>
+                    <td style="width: 30%;"></td>
                 </tr>
                 <tr>
                     <td>RECOGIDOS: Nº</td>
                     <td>{{$cant_recogidos}}</td>
+                    <td>NO APTO</td>
+                    <td style="border: 1px solid black;"></td>
+                    <td></td>
                 </tr>
             </tbody>
         </table>
     </div>
-    <span>El abajo firmante declara que la información descrita en este apartado es correcta y que se han adoptado todas las precauciones necesarias
-        para evitar riesgos para la salud pública o animal.</span>
+    <span>El abajo firmante declara que la información descrita en este apartado es correcta y que se han adoptado todas las precauciones necesarias para evitar riesgos para la salud pública o animal.</span>
     <p>{{$fechaActual}}</p>
     <p>Nombre y apellidos en mayusculas:</p>
 
@@ -165,7 +174,7 @@
                 </tr>
                 <tr>
                     <td>Nº de autorización/registro</td>
-                    <td colspan="5">{{ $datos_ruta->NAutorizacion }}</td>
+                    <td colspan="5">@if($num_autoriz != "")<span style="margin-right: 40px;">SANDACH</span> {{ $num_autoriz }} @endif</td>
                 </tr>
                 <tr>
                     <td>Nombre conductor</td>
@@ -185,8 +194,7 @@
         </table>
     </div>
 
-    <span>El abajo firmante declara que la información descrita en este apartado es correcta y que se han adoptado todas las precauciones necesarias
-        para evitar riesgos para la salud pública o animal.</span>
+    <span>El abajo firmante declara que la información descrita en este apartado es correcta y que se han adoptado todas las precauciones necesarias para evitar riesgos para la salud pública o animal.</span>
     <p>{{$fechaActual}}</p>
     <p>Nombre y apellidos en mayusculas:</p>
 
@@ -207,9 +215,9 @@
                 </tr>
                 <tr>
                     <td>Nº de autorización/registro</td>
-                    <td colspan="2">{{ $num_autorizacion_destino }}</td>
+                    <td colspan="2">@if($num_autorizacion_destino != "")<span style="margin-right: 40px;">SANDACH</span> {{ $num_autorizacion_destino }} @endif</td>
                     <td>Actividad</td>
-                    <td colspan="2">Planta Transformadora</td>
+                    <td colspan="2">{{ $actividad_destino }}</td>
                 </tr>
                 <tr>
                     <td>Dirección</td>
@@ -228,8 +236,7 @@
             </tbody>
         </table>
     </div>
-    <span>El abajo firmante declara que la información descrita en este apartado es correcta y que se han adoptado todas las precauciones necesarias
-        para evitar riesgos para la salud pública o animal.</span>
+    <span>El abajo firmante declara que la información descrita en este apartado es correcta y que se han adoptado todas las precauciones necesarias para evitar riesgos para la salud pública o animal.</span>
     <p>Nombre y apellidos en mayusculas:</p>
 
 </body>

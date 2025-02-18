@@ -20,9 +20,13 @@ define('SELEV_Ruta_diaria', SELEV . '$Ruta diaria$f4e2b823-5811-49c6-a41c-7c9707
 define('SELEV_Linea_Ruta_diaria', SELEV . '$Lin_ ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208');
 define('SELEV_Vehiculos', SELEV . '$Vehiculo$f4e2b823-5811-49c6-a41c-7c9707074208');
 define('SELEV_Conductores', SELEV . '$Conductor$f4e2b823-5811-49c6-a41c-7c9707074208');
+define('SELEV_Vendor', SELEV . '$Vendor');
+define('SELEV_Customer', SELEV . '$Customer');
 
 define('REMITTEL_Ruta_diaria', REMITTEL . '$Ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208');
 define('REMITTEL_Linea_Ruta_diaria', REMITTEL . '$Lin_ ruta diaria$f4e2b823-5811-49c6-a41c-7c9707074208');
 define('REMITTEL_Vehiculos', REMITTEL . '$Vehiculo$f4e2b823-5811-49c6-a41c-7c9707074208');
 define('REMITTEL_Conductores', REMITTEL . '$Conductor$f4e2b823-5811-49c6-a41c-7c9707074208');
+define('REMITTEL_Vendor', REMITTEL . '$Vendor');
+define('REMITTEL_Customer', REMITTEL . '$Customer');
 

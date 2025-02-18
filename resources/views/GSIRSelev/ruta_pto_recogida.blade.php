@@ -21,11 +21,7 @@
             align-items: center;
             justify-content: space-between !important;
             padding: 10px 0;
-            border-bottom: 1px solid #ccc;
-        }
-
-        .list-item:last-child {
-            border-bottom: none;
+            border: 1px solid #ccc;
         }
 
         .list-item i {
@@ -49,23 +45,10 @@
             display: inline-flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 15px;
-            background-color: #f1f1f1;
             color: #007bff;
             text-decoration: none;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
             font-weight: bold;
             width: fit-content;
-        }
-
-        .map-link:hover {
-            background-color: #007bff;
-            color: white;
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
-            text-decoration: none;
-            transform: translateY(-3px);
         }
 
         .map-icon {
@@ -263,6 +246,52 @@
             width: 100% !important;
         }
     </style>
+
+    <style>
+        .card-item {
+            display: flex;
+            align-items: center;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 10px 20px;
+            margin: 10px 0;
+            transition: box-shadow 0.2s ease-in-out;
+        }
+
+        .card-item:hover {
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .icon-container {
+            min-width: 40px;
+            color: #d32f2f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card-btn {
+            flex: 1;
+            background-color: transparent;
+            border: none;
+            color: #333333;
+            text-align: left;
+            padding: 0px 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: color 0.2s ease-in-out;
+        }
+
+        .card-btn:hover {
+            color: #0056b3;
+        }
+
+        .btn-text {
+            font-weight: bold;
+            color: #666666;
+        }
+    </style>
     @section('titulo_cabecera', 'Recogida')
 
 
@@ -298,25 +327,58 @@
             <b>1067217</b>
             </div> -->
 
-            <div class="list-item">
+            <!-- <div class="list-item">
                 <div style="min-width: 40px;">
                     <i class="fa-solid fa-file-pdf fa-xl"></i>
                 </div>
                 <button type="button" class="btn" onclick="modalDocumentos();" style="padding: 0px; width: 100% !important;">
-                    <div class="contact-card"><b style="color: #666666;">DOCUMENTOS</b></div>
+                    <div class="contact-card" style="width: 100%;"><b style="color: #666666; padding-right: 33%;">DOCUMENTOS</b></div>
+                </button>
+            </div> -->
+
+            <div class="list-item card-item">
+                <div class="icon-container">
+                    <i class="fa-solid fa-file-pdf fa-xl"></i>
+                </div>
+                <button type="button" class="btn card-btn" onclick="modalDocumentos();">
+                    <span class="btn-text">DOCUMENTOS</span>
                 </button>
             </div>
 
-            <div class="list-item">
+            <div class="list-item card-item">
+                <div class="icon-container">
+                    <i class="fa-solid fa-user fa-xl"></i>
+                </div>
+                <button type="button" class="btn card-btn" onclick="modalCliente('{{ $punto_productos_nav[0]->{'No_ ruta'} }}', '{{$punto_productos_nav[0]->{'No_ Proveedor_Cliente'} }}');">
+                    <span class="btn-text">{{ $punto_productos_nav[0]->Nombre }}</span>
+                </button>
+            </div>
+
+            <div class="list-item card-item">
+                <div class="icon-container">
+                    <i class="fa-solid fa-location-dot fa-xl"></i>
+                </div>
+                <!-- <button type="button" class="btn card-btn" onclick="modalCliente('{{ $punto_productos_nav[0]->{'No_ ruta'} }}', '{{$punto_productos_nav[0]->{'No_ Proveedor_Cliente'} }}');">
+                    <span class="btn-text">{{ $punto_productos_nav[0]->Nombre }}</span>
+                </button> -->
+                <div class="card-btn">
+                    <a href="https://www.google.com/maps/search/?api=1&query={{$punto_productos_nav[0]->C_P_}} {{ urlencode($punto_productos_nav[0]->{'Direccion 1'} )}} {{$punto_productos_nav[0]->Nombre }}" target="_blank" class="map-link" style="width: 100% !important;">
+                        {{ $punto_productos_nav[0]->{'Direccion 1'} }}
+                        <img src="{{ asset('images/google_icon.png') }}" alt="Google Maps" class="map-icon">
+                    </a>
+                </div>
+            </div>
+
+            <!-- <div class="list-item">
                 <div style="min-width: 40px;">
                     <i class="fa-solid fa-user fa-xl"></i>
                 </div>
                 <button type="button" class="btn" onclick="modalCliente('{{ $punto_productos_nav[0]->{'No_ ruta'} }}', '{{$punto_productos_nav[0]->{'No_ Proveedor_Cliente'} }}');" style="padding: 0px; width: 100% !important;">
                     <div class="contact-card"><b style="color: #666666;">{{ $punto_productos_nav[0]->Nombre }}</b></div>
                 </button>
-            </div>
+            </div> -->
 
-            <div class="list-item">
+            <!-- <div class="list-item">
                 <div style="min-width: 40px;">
                     <i class="fa-solid fa-location-dot fa-xl"></i>
                 </div>
@@ -325,34 +387,52 @@
                     <img src="{{ asset('images/google_icon.png') }}" alt="Google Maps" class="map-icon">
                 </a>
 
+            </div> -->
+
+            <div class="list-item card-item">
+                <div class="icon-container">
+                    <i class="fa-solid fa-address-card fa-xl"></i>
+                </div>
+                <div class="card-btn" style="padding: 0px 10px;">
+                    <div class="row">
+                        <span style="font-size: 14px;"><i class="fa-regular fa-user"></i>{{ $contacto }}</span>
+                    </div>
+                    <div class="row">
+                        <span style="font-size: 14px;"><i class="fa-solid fa-phone"></i>{{ $telefono }}</span>
+                    </div>
+                    <div class="row">
+                        <span style="font-size: 14px;"><i class="fa-solid fa-envelope"></i> {{ $email }}</span>
+                    </div>
+                </div>
             </div>
 
-            <div class="list-item">
-                <div style="min-width: 40px;">
-                    <i class="fa-regular fa-address-card fa-xl"></i>
-                </div>
-                <div class="contact-card" style="width: 100% !important;">
-                    <span style="font-size: 13px;"><i class="fa-regular fa-user"></i></span>
-                    <a href="tel:+123456789" class="contact-link" style="font-size: 13px;"><i class="fa-solid fa-phone"></i>{{ $punto_productos_nav[0]->{'No_ telefono'} }}</a>
-                    <span style="font-size: 13px;"><i class="fa-solid fa-envelope"></i></span>
-                </div>
-            </div>
-
-            <div class="list-item divider">
-                <div style="min-width: 40px;">
+            <div class="list-item card-item">
+                <div class="icon-container">
                     <i class="fa-regular fa-message fa-xl"></i>
                 </div>
-                <span>{{$punto_productos_nav[0]->{'Observaciones'} }}</span>
+                <div class="card-btn" style="padding: 0px 10px;">
+                    <span class="btn-text">{{$punto_productos_nav[0]->{'Observaciones'} }}</span>
+                </div>
             </div>
 
-            <div class="list-item divider">
+            <div class="list-item card-item">
+                <div class="icon-container">
+                    <i class="fa-solid fa-triangle-exclamation fa-xl"></i>
+                </div>
+                <div class="card-btn" style="padding: 0px 10px;">
+                    <span class="btn-text"></span>
+                </div>
+            </div>
+
+
+            <!-- <div class="list-item divider">
                 <div style="min-width: 40px;">
                     <i class="fa-solid fa-triangle-exclamation fa-xl"></i>
                 </div>
                 <span> </span>
-                <!-- <button type="button" class="btn ml-2" style="background-color: #dcdcdc;"><i class="fa-solid fa-camera fa-xl" style="color: #5cbfff; margin-right: 0px;"></i></button> -->
+                <button type="button" class="btn ml-2" style="background-color: #dcdcdc;"><i class="fa-solid fa-camera fa-xl" style="color: #5cbfff; margin-right: 0px;"></i></button> 
 
-            </div>
+            </div> -->
         </div>
     </div>
 
@@ -360,7 +440,7 @@
     <div id="productos" class="content-section">
         <div class="list-container" style="width: 100%;">
             <!-- Contenido existente de la lista... -->
-            <div class="list-item">
+            <div class="list-item" style="border: none;">
                 <i class="fa-solid fa-weight-hanging fa-xl"></i>
                 <span>Total peso:</span>
                 <b id="total_cantidad_productos">{{ $total_cantidad }} KG</b>
@@ -432,42 +512,42 @@
                     <button type="button" class="btn-close" style="padding-bottom: 12px;" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <div class="modal-body">
-                    <div class="list-item">
+                    <div class="list-item p-2 mb-1" style="border-radius: 10px;">
                         <i class="fa-regular fa-building fa-xl"></i>
                         <span>Localidad</span>
                         <b id="cli_localidad"></b>
                     </div>
-                    <div class="list-item">
+                    <div class="list-item p-2 mb-1" style="border-radius: 10px;">
                         <i class="fa-regular fa-map fa-xl"></i>
                         <span>Provincia</span>
                         <b id="cli_provincia"></b>
                     </div>
-                    <div class="list-item">
+                    <div class="list-item p-2 mb-1" style="border-radius: 10px;">
                         <i class="fa-solid fa-earth-americas fa-xl"></i>
                         <span>Dirección</span>
                         <b id="cli_direccion"></b>
                     </div>
-                    <div class="list-item">
+                    <div class="list-item p-2 mb-1" style="border-radius: 10px;">
                         <i class="fa-solid fa-layer-group fa-xl"></i>
                         <span>Grupo</span>
                         <b id="cli_grupo"></b>
                     </div>
-                    <div class="list-item">
+                    <div class="list-item p-2 mb-1" style="border-radius: 10px;">
                         <i class="fa-solid fa-shop fa-xl"></i>
                         <span>Tienda</span>
                         <b id="cli_tienda"></b>
                     </div>
-                    <div class="list-item">
+                    <div class="list-item p-2 mb-1" style="border-radius: 10px;">
                         <i class="fa-solid fa-sack-dollar fa-xl"></i>
                         <span>Tipo pago</span>
                         <b id="cli_tipo_pago"></b>
                     </div>
-                    <div class="list-item">
+                    <div class="list-item p-2 mb-1" style="border-radius: 10px;">
                         <i class="fa-solid fa-hand-holding-dollar fa-xl"></i>
                         <span>Remuneración</span>
                         <b id="cli_remuneracion"></b>
                     </div>
-                    <div class="list-item">
+                    <div class="list-item p-2" style="border-radius: 10px;">
                         <i class="fa-solid fa-square-plus fa-xl"></i>
                         <span>Productos Adicionales</span>
                         <b id="cli_prod_adicionales"></b>
@@ -483,36 +563,40 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="documentosModalLabel"><b>DOCUMENTOS</b></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" style="padding-bottom: 12px;" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+
                 </div>
                 <div class="modal-body">
-                    <div class="list-item d-flex align-items-center mb-3">
-                        <i class="fa-solid fa-file-pdf fa-xl text-danger me-2"></i>
 
-                        <a href="/documento_pdf/di" target="_blank" class="btn btn-primary btn-sm">
-                            Traslado de Residuos (DI)
-                        </a>
+                    <div class="list-item card-item" style="background-color: #ebebeb;">
+                        <div class="icon-container"><i class="fa-solid fa-file-pdf text-danger fa-xl"></i></div>
+                        <div class="card-btn" style="padding: 0px 10px;">
+                            <a href="/documento_pdf/di" target="_blank" class="btn btn-sm" style="color: #555555 !important; font-size: 15px !important;">Traslado de Residuos</a>
+                        </div>
                     </div>
-                    <div class="list-item d-flex align-items-center mb-3">
-                        <i class="fa-solid fa-file-pdf fa-xl text-danger me-2"></i>
-                        <a href="/documento_pdf/ad" target="_blank" class="btn btn-primary btn-sm">
-                            Autodeclaración
-                        </a>
+
+                    <div class="list-item card-item" style="background-color: #ebebeb;">
+                        <div class="icon-container"><i class="fa-solid fa-file-pdf text-danger fa-xl"></i></div>
+                        <div class="card-btn" style="padding: 0px 10px;">
+                            <a href="/documento_pdf/ad" target="_blank" class="btn btn-sm" style="color: #555555 !important; font-size: 15px !important;">Autodeclaración</a>
+                        </div>
                     </div>
-                    <div class="list-item d-flex align-items-center mb-3">
-                        <i class="fa-solid fa-file-pdf fa-xl text-danger me-2"></i>
-                        <a href="/documento_pdf/doc_comercial/{{ urlencode($punto_productos_nav[0]->{'No_ ruta'}) }}/{{$punto_recogida_web->id}}" target="_blank" class="btn btn-primary btn-sm">
-                            Documento Comercial
-                        </a>
+
+                    <div class="list-item card-item" style="background-color: #ebebeb;">
+                        <div class="icon-container"><i class="fa-solid fa-file-pdf text-danger fa-xl"></i></div>
+                        <div class="card-btn" style="padding: 0px 10px;">
+                            <a href="/documento_pdf/doc_comercial/{{ urlencode($punto_productos_nav[0]->{'No_ ruta'}) }}/{{$punto_recogida_web->id}}" target="_blank" class="btn btn-sm" style="color: #555555 !important; font-size: 15px !important;">Documento Comercial</a>
+                        </div>
                     </div>
-                    <div class="list-item d-flex align-items-center mb-3">
-                        <i class="fa-solid fa-file-pdf fa-xl text-danger me-2"></i>
-                        <button class="btn btn-secondary btn-sm" class="btn btn-primary btn-sm">
-                            Carta de Porte Nacional
-                        </button>
+
+                    <div class="list-item card-item mb-3" style="background-color: #ebebeb;">
+                        <div class="icon-container"><i class="fa-solid fa-file-pdf text-danger fa-xl"></i></div>
+                        <div class="card-btn" style="padding: 0px 10px;">
+                            <a href="/documento_pdf/di" target="_blank" class="btn btn-sm" style="color: #555555 !important; font-size: 15px !important;">Carta de Porte Nacional</a>
+                        </div>
                     </div>
+
+
                 </div>
 
             </div>
